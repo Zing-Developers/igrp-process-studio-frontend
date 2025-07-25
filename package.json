@@ -1,0 +1,50 @@
+{
+  "name": "igrp-process-studio-frontend",
+  "version": "0.0.1-alpha.5",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "format": "prettier --write .",
+    "publish:template": "powershell -ExecutionPolicy Bypass -File ./create-template/create-zip-template.ps1"
+  },
+  "dependencies": {
+    "@bpmn-io/properties-panel": "^3.30.2",
+    "@bprogress/next": "^3.2.12",
+    "@igrp/framework-next": "0.0.1-alpha.4",
+    "@igrp/framework-next-types": "0.0.1-alpha.4",
+    "@igrp/framework-next-ui": "0.0.1-alpha.4",
+    "@igrp/igrp-framework-react-design-system": "latest",
+    "@tanstack/react-query": "^5.80.7",
+    "bpmn-js": "^18.6.2",
+    "bpmn-js-properties-panel": "^5.38.1",
+    "camunda-bpmn-js-behaviors": "^1.10.2",
+    "camunda-bpmn-moddle": "^7.0.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.518.0",
+    "next": "15.3.4",
+    "next-auth": "^4.24.11",
+    "next-themes": "^0.4.6",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "tailwind-merge": "^3.3.1",
+    "zod": "^3.25.67"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@tailwindcss/postcss": "^4.1.10",
+    "@types/node": "^24.0.3",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "eslint": "^9.29.0",
+    "eslint-config-next": "15.3.4",
+    "eslint-config-prettier": "10.1.5",
+    "eslint-plugin-prettier": "5.5.1",
+    "prettier": "^3.5.3",
+    "tailwindcss": "^4.1.10",
+    "tw-animate-css": "^1.3.4",
+    "typescript": "^5.8.3"
+  }
+}

@@ -1,0 +1,140 @@
+'use client'
+
+/* THIS FILE WAS GENERATED AUTOMATICALLY BY iGRP STUDIO. */
+/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME. */
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { use, useState, useEffect, useRef } from 'react';
+import { cn, useIGRPMenuNavigation, useIGRPToast } from '@igrp/igrp-framework-react-design-system';
+import {BpmnModeler} from '@/app/(myapp)/components/BpmnModeler'
+import { 
+  IGRPPageHeader,
+	IGRPButton 
+} from "@igrp/igrp-framework-react-design-system";
+import {saveDiagramProcessDefinition} from '@/app/(myapp)/functions/process-definition'
+import {deployProcessDefinition} from '@/app/(myapp)/functions/process-definition'
+import {useCallback } from 'react';
+import {useDetailProcessDefinition} from '@/app/(myapp)/hooks/process'
+import { IGRPLoadingSpinner } from '@igrp/igrp-framework-react-design-system'
+
+
+export default function PageEditorComponent({ params } : { params: Promise<{ code: string }> } ) {
+
+  const { code } = use(params);
+
+  
+  
+  
+const [bpmnXml, setBpmnXml] = useState<string>(undefined);
+
+const [pageHeader1Description, setPageHeader1Description] = useState<string>(undefined);
+
+const { igrpToast } = useIGRPToast()
+
+async function handleSave (): Promise<void  | undefined> {
+
+  try {
+  await saveDiagramProcessDefinition(data.processDefinitionId,{content: bpmnXml});
+  igrpToast({
+    title: 'Success',
+    description: 'Process definition saved successfully',
+    type: 'success',
+  });
+} catch (error: any) {
+  igrpToast({
+    title: 'Error',
+    description: `An error occurred while processing the data. [${error.message}]`,
+    type: 'error',
+  });
+  console.log(error);
+}
+
+}
+
+async function handleDeploy (): Promise<void  | undefined> {
+
+  try {
+  await deployProcessDefinition(data.processDefinitionId,{content: bpmnXml});
+  igrpToast({
+    title: 'Success',
+    description: 'Process definition published successfully',
+    type: 'success',
+  });
+} catch (error: any) {
+  igrpToast({
+    title: 'Error',
+    description: `An error occurred while processing the data. [${error.message}]`,
+    type: 'error',
+  });
+  console.log(error);
+}
+
+}
+
+
+const { data, isLoading,error } = useDetailProcessDefinition(code);
+
+useEffect(() => {
+  if (isLoading) return
+  setPageHeader1Description(`${data.title} [${data.processKey}] - ${data.statusDesc}`)
+  setBpmnXml(data.bpmFileContent)
+}, [isLoading])
+
+if (isLoading && !error) {
+    return (
+      <div className="flex items-center gap2 flex-col">
+        <IGRPLoadingSpinner />
+        <span>loading process definitions...</span>
+      </div>
+    );
+  }
+
+
+  return (
+<div className={ cn('page','space-y-6',)}    >
+	<div className={ cn('section',' space-x-6 space-y-6',)}    >
+	<IGRPPageHeader
+  name={ `pageHeader1` }
+  title={ `Process Editor` }
+  iconBackButton={ `ArrowLeft` }
+  showBackButton={ true }
+  urlBackButton={ `/process` }
+  variant={ `h3` }
+  description={ pageHeader1Description }
+>
+  <div className="flex items-center gap-2">
+    <IGRPButton
+  name={ `button2` }
+  
+variant={ `destructive` }
+size={ `default` }
+showIcon={ false }
+
+  className={ cn() }
+  onClick={ handleDeploy }
+  
+>
+  Deploy
+</IGRPButton>
+    <IGRPButton
+  name={ `button1` }
+  
+variant={ `default` }
+size={ `default` }
+showIcon={ true }
+iconName={ `Save` }
+
+  className={ cn() }
+  onClick={ handleSave }
+  
+>
+  Save
+</IGRPButton>
+</div>
+</IGRPPageHeader>
+</div>
+<BpmnModeler  onChange={ setBpmnXml } xml={ bpmnXml } processName={ data?.title } processKey={ data?. processKey }   ></BpmnModeler></div>
+  );
+}
