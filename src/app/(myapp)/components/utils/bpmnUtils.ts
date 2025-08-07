@@ -44,7 +44,7 @@ export const validateBpmnFile = (file: File): Promise<boolean> => {
                        content.includes('bpmn2:') || 
                        content.includes('http://www.omg.org/spec/BPMN/');
         resolve(isValid);
-      } catch (error) {
+      } catch {
         resolve(false);
       }
     };

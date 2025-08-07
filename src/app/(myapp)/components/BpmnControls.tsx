@@ -1,6 +1,6 @@
 import { IGRPButton, IGRPSeparator } from '@igrp/igrp-framework-react-design-system';
-import { Download, Upload, Image, FileText } from 'lucide-react';
 import React, { useCallback, useRef, useState } from 'react';
+import BpmnJS from 'bpmn-js/lib/Modeler';
 import { 
   downloadFile, 
   validateBpmnFile, 
@@ -10,7 +10,7 @@ import {
 } from './utils/bpmnUtils';
 
 interface BpmnControlsProps {
-  modeler: any;
+  modeler: BpmnJS;
   processKey: string;
   processName: string;
 }
@@ -27,9 +27,11 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({ modeler, processKey, proces
     try {
       const { xml } = await modeler.saveXML({ format: true });
       
-      const filename = generateFilename(processKey, processName, 'bpmn');
-      downloadFile(xml, filename, 'application/xml');
-      showSuccess('Diagram downloaded successfully!');
+      if (xml) {
+        const filename = generateFilename(processKey, processName, 'bpmn');
+        downloadFile(xml, filename, 'application/xml');
+        showSuccess('Diagram downloaded successfully!');
+      }
     } catch (error) {
       showError('Error downloading diagram. Please try again.', error as Error);
     } finally {

@@ -26,7 +26,6 @@ import {
 	IGRPDataTableFilterInput,
 	IGRPDataTableFilterDropdown 
 } from "@igrp/igrp-framework-react-design-system";
-import {useProcess} from '@/app/(myapp)/hooks/process'
 import {useProcessDefinition} from '@/app/(myapp)/hooks/process'
 import { IGRPLoadingSpinner } from '@igrp/igrp-framework-react-design-system'
 
@@ -58,11 +57,11 @@ const [editingProcess, setEditingProcess] = useState<any>(undefined);
 
 const { igrpToast } = useIGRPToast()
 
-const { data, totalProcessDefinitions,totalProjects, isLoading,error } = useProcessDefinition();
+const { processDefinitions, totalProcessDefinitions,totalProjects, isLoading,error } = useProcessDefinition();
 
 useEffect(() => {
-  if (isLoading || !data) return
-  setContentTabletable1(data || [])
+  if (isLoading || !processDefinitions) return
+  setContentTabletable1(processDefinitions || [])
   setStatstatsCard1Value(totalProjects || 0)
   setStatstatsCard2Value(totalProcessDefinitions || 0)
 
@@ -254,14 +253,13 @@ return (
       {
         component: IGRPDataTableDropdownMenuCustom,
         props: {
-          labelTrigger: `Edit Process`,icon: `SquarePen`,          showIcon: true,          action: () => {setOpenProcess(!openProcess); setEditingProcess(rowData)
-},
+          labelTrigger: `Edit Process`,icon: `SquarePen`,          showIcon: true,          
 }
       },
       {
         component: IGRPDataTableDropdownMenuLink,
         props: {
-          labelTrigger: `Process Editor`,icon: `Network`,href: `/process/${row.original.processDefinitionId}/editor`,          showIcon: true,          action: (e) => {},
+          labelTrigger: `Process Editor`,icon: `Network`,href: `/process/${row.original.processDefinitionId}/editor`,          showIcon: true,          
 }
       },
 ]

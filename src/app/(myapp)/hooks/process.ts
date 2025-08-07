@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { convertToMapOptions } from '../lib/utils';
 import { getProject } from '../functions/project';
 import { useProject } from './project';
 import { useMemo } from 'react';
 import { getProcessDefinitionById } from '../functions/process-definition';
 import { PaginatedResponse, ProcessDefinition, Project } from '@igrp/framework-process-studio-types';
+import { convertToMapOptions } from '@igrp/framework-process-studio-client';
 
 export const useProcessDefinition = () => {
   const queryResult = useQuery<PaginatedResponse<Project>>({
@@ -26,7 +26,7 @@ export const useProcessDefinition = () => {
     const totalProjects = queryResult.data?.content.length || 0;
 
     return {
-      data: allProcessDefinitions,
+      processDefinitions: allProcessDefinitions,
       totalProcessDefinitions,
       totalProjects,
     };
@@ -59,7 +59,8 @@ export function useProjectConfiguration() {
       isError,
       processOptions,
     };
-  } catch (error) {
+  } catch (error: unknown) {
+    console.error(error);
     return {
       isLoading: false,
       isError: true,

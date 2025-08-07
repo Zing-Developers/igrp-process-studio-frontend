@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import BpmnJS from 'bpmn-js/lib/Modeler';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
 import 'bpmn-js/dist/assets/bpmn-js.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css';
 import 'bpmn-js/dist/assets/diagram-js.css';
@@ -30,6 +30,29 @@ interface BpmnModelerProps {
 const BpmnModeler = ({ xml, onChange, onLoad, processKey, processName }: BpmnModelerProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const modelerRef = useRef<BpmnJS | null>(null);
+
+  const createNewDiagram = useCallback(async (modeler: BpmnJS) => {
+    try {
+      // Garantir que o canvas esteja inicializado
+      const xml = diagramXML(processKey, processName);
+      const canvas = modeler.get('canvas');
+
+      // Usar Promise API para importXML
+      const result = await modeler.importXML(xml);
+      const { warnings } = result;
+      if (warnings && warnings.length) {
+        console.warn('Warnings during default diagram import:', warnings);
+      }
+
+      // Ajustar o zoom após a importação
+      canvas.zoom('fit-viewport');
+
+      // Notificar a mudança
+      onChange?.(xml);
+    } catch (err) {
+      console.error('Error creating new diagram:', err);
+    }
+  }, [processKey, processName, onChange]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -68,7 +91,7 @@ const BpmnModeler = ({ xml, onChange, onLoad, processKey, processName }: BpmnMod
               console.warn('Warnings during BPMN import:', warnings);
             }
             // Ajustar o zoom após a importação
-            (canvas as any).zoom('fit-viewport');
+            canvas.zoom('fit-viewport');
           })
           .catch((err) => {
             console.error('Error importing BPMN XML:', err);
@@ -94,32 +117,11 @@ const BpmnModeler = ({ xml, onChange, onLoad, processKey, processName }: BpmnMod
     }, 100); // Pequeno atraso para garantir que o DOM esteja pronto
 
     return () => {
-      (modeler as any).destroy();
+      modeler.destroy();
     };
-  }, [onLoad, onChange, xml]); // Adicionado xml de volta às dependências
+  }, [onLoad, onChange, xml, createNewDiagram]); // Added createNewDiagram to dependencies
 
-  const createNewDiagram = async (modeler: BpmnJS) => {
-    try {
-      // Garantir que o canvas esteja inicializado
-      const xml = diagramXML(processKey, processName);
-      const canvas = modeler.get('canvas');
 
-      // Usar Promise API para importXML
-      const result = await modeler.importXML(xml);
-      const { warnings } = result;
-      if (warnings && warnings.length) {
-        console.warn('Warnings during default diagram import:', warnings);
-      }
-
-      // Ajustar o zoom após a importação
-      (canvas as any).zoom('fit-viewport');
-
-      // Notificar a mudança
-      onChange?.(xml);
-    } catch (err) {
-      console.error('Error creating new diagram:', err);
-    }
-  };
 
 
   return (

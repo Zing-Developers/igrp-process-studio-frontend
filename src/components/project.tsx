@@ -97,7 +97,6 @@ const router = useRouter();
   
 >
   <IGRPModalDialogTitle
-  name={ `modalDialogTitle1` }
   
 
   

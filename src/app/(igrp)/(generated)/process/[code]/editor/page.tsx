@@ -27,15 +27,16 @@ export default function PageEditorComponent({ params } : { params: Promise<{ cod
   
   
   
-const [bpmnXml, setBpmnXml] = useState<string>(undefined);
+const [bpmnXml, setBpmnXml] = useState<any>(undefined);
 
-const [pageHeader1Description, setPageHeader1Description] = useState<string>(undefined);
+const [pageHeader1Description, setPageHeader1Description] = useState<any>(undefined);
 
 const { igrpToast } = useIGRPToast()
 
 async function handleSave (): Promise<void  | undefined> {
 
   try {
+   if ( !data) return
   await saveDiagramProcessDefinition(data.processDefinitionId,{content: bpmnXml});
   igrpToast({
     title: 'Success',
@@ -56,6 +57,7 @@ async function handleSave (): Promise<void  | undefined> {
 async function handleDeploy (): Promise<void  | undefined> {
 
   try {
+   if (!data) return
   await deployProcessDefinition(data.processDefinitionId,{content: bpmnXml});
   igrpToast({
     title: 'Success',
@@ -82,7 +84,7 @@ useEffect(() => {
   setBpmnXml(data.bpmFileContent)
 }, [isLoading])
 
-if (isLoading && !error) {
+if (isLoading || !error || !data) {
     return (
       <div className="flex items-center gap2 flex-col">
         <IGRPLoadingSpinner />
@@ -136,6 +138,6 @@ iconName={ `Save` }
 </div>
 </IGRPPageHeader>
 </div>
-<BpmnModeler  onChange={ setBpmnXml } xml={ bpmnXml } processName={ data?.title } processKey={ data?. processKey }   ></BpmnModeler></div>
+<BpmnModeler  onChange={ setBpmnXml } xml={ bpmnXml } processName={ data.title } processKey={ data.processKey }   ></BpmnModeler></div>
   );
 }

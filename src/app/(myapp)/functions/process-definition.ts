@@ -14,14 +14,38 @@ export const createOrUpdateProcessDefinition = async (processDefinition: Process
 
 export const saveDiagramProcessDefinition = async (
   processDefinitionId: string,
-  processDefinition: ProcessDefinition,
+  processDefinition: { content: string },
 ) => {
-  return await client.processDefinitions.saveDiagram(processDefinitionId, processDefinition);
+  const data = {
+    processDefinitionId,
+    title: '',
+    description: '',
+    projectId: '',
+    status: '',
+    version: '',
+    statusDesc: '',
+    bpmFileContent: '',
+    processKey: '',
+    ...processDefinition,
+  };
+  return await client.processDefinitions.saveDiagram(processDefinitionId, data);
 };
 
 export const deployProcessDefinition = async (
   processDefinitionId: string,
-  processDefinition: ProcessDefinition,
+  processDefinition: {content: string},
 ) => {
-  return await client.processDefinitions.deploy(processDefinitionId, processDefinition);
+  const data = {
+    processDefinitionId,
+    title: '',
+    description: '',
+    projectId: '',
+    status: '',
+    version: '',
+    statusDesc: '',
+    bpmFileContent: '',
+    processKey: '',
+    ...processDefinition,
+  };
+  return await client.processDefinitions.deploy(processDefinitionId, data);
 };

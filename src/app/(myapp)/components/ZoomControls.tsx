@@ -1,14 +1,12 @@
 import { IGRPButton, IGRPSeparator } from '@igrp/igrp-framework-react-design-system';
-import { Maximize, ZoomIn, ZoomOut } from 'lucide-react';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
+import BpmnJS from 'bpmn-js/lib/Modeler';
 
 interface ZoomControlsProps {
-  modeler: any;
+  modeler: BpmnJS;
 }
 
 const ZoomControls: React.FC<ZoomControlsProps> = ({ modeler }) => {
-  const [zoomLevel, setZoomLevel] = useState<number>(1);
-
   // Zoom step size
   const ZOOM_STEP = 0.1;
   const MIN_ZOOM = 0.2;
@@ -21,14 +19,15 @@ const ZoomControls: React.FC<ZoomControlsProps> = ({ modeler }) => {
     try {
       const canvas = modeler.get('canvas');
       if (canvas) {
-        setZoomLevel(canvas.zoom());
+        // Initialize zoom level if needed
+        canvas.zoom();
       }
 
       // Listen for zoom changes
       const eventBus = modeler.get('eventBus');
       if (eventBus) {
         const onZoomChanged = () => {
-          setZoomLevel(canvas.zoom());
+          // Handle zoom changes if needed
         };
 
         eventBus.on('canvas.viewbox.changed', onZoomChanged);
@@ -94,7 +93,7 @@ const ZoomControls: React.FC<ZoomControlsProps> = ({ modeler }) => {
       // Removida a linha que causava o erro: const keyboardBindings = keyboard.getBindings();
 
       // Add zoom in shortcut (Ctrl/Cmd + +)
-      const zoomInListener = function (context: { keyEvent: any }) {
+      const zoomInListener = function (context: { keyEvent: KeyboardEvent }) {
         const event = context.keyEvent;
 
         if (keyboard.isKey(['=', '+'], event) && keyboard.isCmd(event)) {
@@ -104,7 +103,7 @@ const ZoomControls: React.FC<ZoomControlsProps> = ({ modeler }) => {
       };
 
       // Add zoom out shortcut (Ctrl/Cmd + -)
-      const zoomOutListener = function (context: { keyEvent: any }) {
+      const zoomOutListener = function (context: { keyEvent: KeyboardEvent }) {
         const event = context.keyEvent;
 
         if (keyboard.isKey(['-', '_'], event) && keyboard.isCmd(event)) {
@@ -114,7 +113,7 @@ const ZoomControls: React.FC<ZoomControlsProps> = ({ modeler }) => {
       };
 
       // Add reset zoom shortcut (Ctrl/Cmd + 0)
-      const resetZoomListener = function (context: { keyEvent: any }) {
+      const resetZoomListener = function (context: { keyEvent: KeyboardEvent }) {
         const event = context.keyEvent;
 
         if (keyboard.isKey(['0'], event) && keyboard.isCmd(event)) {
