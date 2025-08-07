@@ -11,7 +11,7 @@ export const createProcessDefinition = async (
   projectId: string,
   processDefinition: ProcessDefinition,
 ) => {
-  const response = await fetch(`/api/project/${projectId}/process`, {
+  const response = await fetch(`/api/project/process?projectId=${projectId}`, {
     method: 'POST',
     body: JSON.stringify(processDefinition),
   });
@@ -30,6 +30,7 @@ export const updateProcessDefinition = async (
 };
 
 export const createOrUpdateProcessDefinition = async (processDefinition: ProcessDefinition) => {
+  console.log(processDefinition)
   if (processDefinition.processDefinitionId) {
     return updateProcessDefinition(processDefinition.processDefinitionId, processDefinition);
   } else {
