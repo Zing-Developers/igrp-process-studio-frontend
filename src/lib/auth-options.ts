@@ -13,7 +13,7 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 4 * 60 * 60, // 4 hours
   },
   callbacks: {
     async jwt({ token, account }: { token: JWT; account: Account | null }) {
@@ -77,13 +77,16 @@ export const authOptions: NextAuthOptions = {
   },
   cookies: {
     sessionToken: {
-      name: `__Secure-next-auth.session-token`,
+      name: `next-auth.session-token`,
       options: {
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        secure: true,
-        domain: process.env.IGRP_NEXTAUTH_CALLBACK ?? '',
+        secure: process.env.NODE_ENV === 'production',      
+        ...(process.env.NODE_ENV === 'production' && process.env.IGRP_NEXTAUTH_CALLBACK
+          ? { domain: process.env.IGRP_NEXTAUTH_CALLBACK }
+          : {}
+        ),
       },
     },
   },

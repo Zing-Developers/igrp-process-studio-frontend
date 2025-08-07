@@ -44,6 +44,7 @@ export default function PageProcessComponent() {
 }
 
   const [statstatsCard2Value, setStatstatsCard2Value] = useState<string | number>(0);
+  const [statstatsCard3Value, setStatstatsCard3Value] = useState<string | number>(0);
   const [statstatsCard1Value, setStatstatsCard1Value] = useState<string | number>(0);
   const [contentTabletable1, setContentTabletable1] = useState<Table1[]>([]);
   const [dropdownFiltertableDropdownFilter1Options, setDropdownFiltertableDropdownFilter1Options] = useState<IGRPOptionsProps[]>([]);
@@ -129,7 +130,7 @@ iconName={ `Plus` }
 cardBorder={ `rounded-xl` }
 cardVariant={ `info` }
 iconBackground={ `none` }
-title={ `Total Project` }
+title={ `Total Processos` }
 titleSize={ `sm` }
 valueSize={ `2xl` }
 showIcon={ true }
@@ -144,12 +145,32 @@ itemPlacement={ `start` }
 >
 </IGRPStatsCard>
 <IGRPStatsCard
+  name={ `statsCard3` }
+  cardBorderPosition={ `top` }
+cardBorder={ `rounded-xl` }
+cardVariant={ `primary` }
+iconBackground={ `none` }
+title={ `Total Publicados` }
+titleSize={ `sm` }
+valueSize={ `2xl` }
+showIcon={ true }
+iconName={ `Box` }
+iconSize={ `md` }
+iconVariant={ `primary` }
+iconPlacement={ `end` }
+itemPlacement={ `start` }
+
+  onClick={ () => {} }
+  value={ statstatsCard3Value }
+>
+</IGRPStatsCard>
+<IGRPStatsCard
   name={ `statsCard1` }
   cardBorderPosition={ `top` }
 cardBorder={ `rounded-xl` }
 cardVariant={ `success` }
 iconBackground={ `none` }
-title={ `Total Process` }
+title={ `Total Rascunhos` }
 titleSize={ `sm` }
 valueSize={ `2xl` }
 showIcon={ true }

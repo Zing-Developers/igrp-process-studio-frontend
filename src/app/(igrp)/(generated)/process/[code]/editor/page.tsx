@@ -77,7 +77,7 @@ async function handleDeploy (): Promise<void  | undefined> {
 const { data, isLoading,error } = useDetailProcessDefinition(code);
 
 useEffect(() => {
-  if (isLoading) return
+  if (isLoading || !data) return
   setPageHeader1Description(`${data.title} [${data.processKey}] - ${data.statusDesc}`)
   setBpmnXml(data.bpmFileContent)
 }, [isLoading])
@@ -112,7 +112,8 @@ variant={ `destructive` }
 size={ `default` }
 showIcon={ false }
 
-  className={ cn() }
+
+  className={ cn('bg-green-500',) }
   onClick={ handleDeploy }
   
 >

@@ -9,7 +9,7 @@
 import { use, useState, useEffect, useRef } from 'react';
 import { cn, useIGRPMenuNavigation, useIGRPToast } from '@igrp/igrp-framework-react-design-system';
 import { IGRPFormHandle } from "@igrp/igrp-framework-react-design-system";
-import { z } from "@igrp/igrp-framework-react-design-system"
+import { z } from "zod"
 import { 
   IGRPModalDialog,
 	IGRPModalDialogContent,
