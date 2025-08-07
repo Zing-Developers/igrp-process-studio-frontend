@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { convertToMapOptions } from '../lib/utils';
 import { getProject } from '../functions/project';
-import { PaginatedResponse, ProcessDefinition, Project } from '../types/global';
 import { useProject } from './project';
 import { useMemo } from 'react';
 import { getProcessDefinitionById } from '../functions/process-definition';
+import { PaginatedResponse, ProcessDefinition, Project } from '@igrp/framework-process-studio-types';
 
 export const useProcessDefinition = () => {
   const queryResult = useQuery<PaginatedResponse<Project>>({
