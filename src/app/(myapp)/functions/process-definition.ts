@@ -17,15 +17,6 @@ export const saveDiagramProcessDefinition = async (
   processDefinition: { content: string },
 ) => {
   const data = {
-    processDefinitionId,
-    title: '',
-    description: '',
-    projectId: '',
-    status: '',
-    version: '',
-    statusDesc: '',
-    bpmFileContent: '',
-    processKey: '',
     ...processDefinition,
   };
   return await client.processDefinitions.saveDiagram(processDefinitionId, data);
@@ -36,15 +27,6 @@ export const deployProcessDefinition = async (
   processDefinition: {content: string},
 ) => {
   const data = {
-    processDefinitionId,
-    title: '',
-    description: '',
-    projectId: '',
-    status: '',
-    version: '',
-    statusDesc: '',
-    bpmFileContent: '',
-    processKey: '',
     ...processDefinition,
   };
   return await client.processDefinitions.deploy(processDefinitionId, data);

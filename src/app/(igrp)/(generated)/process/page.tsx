@@ -57,7 +57,7 @@ const [editingProcess, setEditingProcess] = useState<any>(undefined);
 
 const { igrpToast } = useIGRPToast()
 
-const { processDefinitions, totalProcessDefinitions,totalProjects, isLoading,error } = useProcessDefinition();
+const { processDefinitions, totalProcessDefinitions,totalProjects, isLoading } = useProcessDefinition();
 
 useEffect(() => {
   if (isLoading || !processDefinitions) return
@@ -67,7 +67,7 @@ useEffect(() => {
 
 }, [isLoading])
 
-if (isLoading && !error) {
+if (isLoading) {
     return (
       <div className="flex items-center gap2 flex-col">
         <IGRPLoadingSpinner />
@@ -240,8 +240,7 @@ badgeClassName={ `` }
           filterFn: IGRPDataTableFacetedFilterFn
         },
         {
-          header: 'Actions'
-,accessorKey: 'tableActionListCell1',
+          id: 'tableActionListCell1',
           enableHiding: false,cell: ({ row }) => {
           const rowData = row.original;
 

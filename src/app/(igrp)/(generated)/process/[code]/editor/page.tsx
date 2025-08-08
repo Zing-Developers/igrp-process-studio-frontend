@@ -37,7 +37,7 @@ async function handleSave (): Promise<void  | undefined> {
 
   try {
    if ( !data) return
-  await saveDiagramProcessDefinition(data.processDefinitionId,{content: bpmnXml});
+  await saveDiagramProcessDefinition(data.processKey,{content: bpmnXml});
   igrpToast({
     title: 'Success',
     description: 'Process definition saved successfully',
@@ -58,7 +58,7 @@ async function handleDeploy (): Promise<void  | undefined> {
 
   try {
    if (!data) return
-  await deployProcessDefinition(data.processDefinitionId,{content: bpmnXml});
+  await deployProcessDefinition(data.processKey,{content: bpmnXml});
   igrpToast({
     title: 'Success',
     description: 'Process definition published successfully',
@@ -84,7 +84,7 @@ useEffect(() => {
   setBpmnXml(data.bpmFileContent)
 }, [isLoading])
 
-if (isLoading || !error || !data) {
+if (isLoading || !data) {
     return (
       <div className="flex items-center gap2 flex-col">
         <IGRPLoadingSpinner />
@@ -115,7 +115,7 @@ size={ `default` }
 showIcon={ false }
 
 
-  className={ cn('bg-green-500',) }
+  className={ cn('bg-green-600 hover:bg-green-600',) }
   onClick={ handleDeploy }
   
 >

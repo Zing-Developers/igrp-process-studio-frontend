@@ -46,7 +46,16 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({ modeler, processKey, proces
     setIsLoading(true);
     try {
       const canvas = modeler.get('canvas');
+      if (!canvas) {
+        showError('Canvas not available. Please try again.');
+        return;
+      }
+      
       const container = canvas.get('container');
+      if (!container) {
+        showError('Container not available. Please try again.');
+        return;
+      }
       
       // Get the SVG element from the canvas
       const svgElement = container.querySelector('svg');
@@ -135,7 +144,9 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({ modeler, processKey, proces
           
           // Fit to viewport after import
           const canvas = modeler.get('canvas');
-          canvas.zoom('fit-viewport');
+          if (canvas) {
+            canvas.zoom('fit-viewport');
+          }
           
           showSuccess('Diagram uploaded successfully!');
           
@@ -168,7 +179,16 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({ modeler, processKey, proces
     setIsLoading(true);
     try {
       const canvas = modeler.get('canvas');
+      if (!canvas) {
+        showError('Canvas not available. Please try again.');
+        return;
+      }
+      
       const container = canvas.get('container');
+      if (!container) {
+        showError('Container not available. Please try again.');
+        return;
+      }
       
       // Get the SVG element from the canvas
       const svgElement = container.querySelector('svg');

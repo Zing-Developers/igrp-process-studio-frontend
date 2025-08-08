@@ -18,7 +18,7 @@ const ZoomControls: React.FC<ZoomControlsProps> = ({ modeler }) => {
 
     try {
       const canvas = modeler.get('canvas');
-      if (canvas) {
+      if (canvas && canvas._container) {
         // Initialize zoom level if needed
         canvas.zoom();
       }
@@ -47,6 +47,8 @@ const ZoomControls: React.FC<ZoomControlsProps> = ({ modeler }) => {
 
     try {
       const canvas = modeler.get('canvas');
+      if (!canvas) return;
+      
       const currentZoom = canvas.zoom();
       const newZoom = Math.min(currentZoom + ZOOM_STEP, MAX_ZOOM);
 
@@ -62,6 +64,8 @@ const ZoomControls: React.FC<ZoomControlsProps> = ({ modeler }) => {
 
     try {
       const canvas = modeler.get('canvas');
+      if (!canvas) return;
+      
       const currentZoom = canvas.zoom();
       const newZoom = Math.max(currentZoom - ZOOM_STEP, MIN_ZOOM);
 
@@ -77,6 +81,8 @@ const ZoomControls: React.FC<ZoomControlsProps> = ({ modeler }) => {
 
     try {
       const canvas = modeler.get('canvas');
+      if (!canvas) return;
+      
       canvas.zoom('fit-viewport');
     } catch (error) {
       console.error('Error handling reset zoom:', error);
@@ -89,8 +95,7 @@ const ZoomControls: React.FC<ZoomControlsProps> = ({ modeler }) => {
 
     try {
       const keyboard = modeler.get('keyboard');
-
-      // Removida a linha que causava o erro: const keyboardBindings = keyboard.getBindings();
+      if (!keyboard) return;
 
       // Add zoom in shortcut (Ctrl/Cmd + +)
       const zoomInListener = function (context: { keyEvent: KeyboardEvent }) {
@@ -146,59 +151,69 @@ const ZoomControls: React.FC<ZoomControlsProps> = ({ modeler }) => {
   useEffect(() => {
     if (!modeler) return;
 
-    try {
-      const canvas = modeler.get('canvas');
-      if (!canvas || !canvas._container) return;
-
-      const container = canvas._container;
-
-      let initialDistance = 0;
-      let initialZoom = 1;
-
-      const handleTouchStart = (event: TouchEvent) => {
-        if (event.touches.length === 2) {
-          const touch1 = event.touches[0];
-          const touch2 = event.touches[1];
-
-          initialDistance = Math.hypot(
-            touch2.clientX - touch1.clientX,
-            touch2.clientY - touch1.clientY,
-          );
-
-          initialZoom = canvas.zoom();
+    // Wait for the modeler to be fully initialized
+    const setupTouchGestures = () => {
+      try {
+        const canvas = modeler.get('canvas');
+        if (!canvas || !canvas._container) {
+          // If canvas is not ready, retry after a short delay
+          setTimeout(setupTouchGestures, 100);
+          return;
         }
-      };
 
-      const handleTouchMove = (event: TouchEvent) => {
-        if (event.touches.length === 2) {
-          const touch1 = event.touches[0];
-          const touch2 = event.touches[1];
+        const container = canvas._container;
 
-          const currentDistance = Math.hypot(
-            touch2.clientX - touch1.clientX,
-            touch2.clientY - touch1.clientY,
-          );
+        let initialDistance = 0;
+        let initialZoom = 1;
 
-          const distanceRatio = currentDistance / initialDistance;
-          const newZoom = Math.min(Math.max(initialZoom * distanceRatio, MIN_ZOOM), MAX_ZOOM);
+        const handleTouchStart = (event: TouchEvent) => {
+          if (event.touches.length === 2) {
+            const touch1 = event.touches[0];
+            const touch2 = event.touches[1];
 
-          canvas.zoom(newZoom);
+            initialDistance = Math.hypot(
+              touch2.clientX - touch1.clientX,
+              touch2.clientY - touch1.clientY,
+            );
 
-          event.preventDefault();
-        }
-      };
+            initialZoom = canvas.zoom();
+          }
+        };
 
-      container.addEventListener('touchstart', handleTouchStart);
-      container.addEventListener('touchmove', handleTouchMove);
+        const handleTouchMove = (event: TouchEvent) => {
+          if (event.touches.length === 2) {
+            const touch1 = event.touches[0];
+            const touch2 = event.touches[1];
 
-      return () => {
-        container.removeEventListener('touchstart', handleTouchStart);
-        container.removeEventListener('touchmove', handleTouchMove);
-      };
-    } catch (error) {
-      console.error('Error setting up touch gestures:', error);
-      // Continue rendering the component even if touch gestures fail
-    }
+            const currentDistance = Math.hypot(
+              touch2.clientX - touch1.clientX,
+              touch2.clientY - touch1.clientY,
+            );
+
+            const distanceRatio = currentDistance / initialDistance;
+            const newZoom = Math.min(Math.max(initialZoom * distanceRatio, MIN_ZOOM), MAX_ZOOM);
+
+            canvas.zoom(newZoom);
+
+            event.preventDefault();
+          }
+        };
+
+        container.addEventListener('touchstart', handleTouchStart);
+        container.addEventListener('touchmove', handleTouchMove);
+
+        return () => {
+          container.removeEventListener('touchstart', handleTouchStart);
+          container.removeEventListener('touchmove', handleTouchMove);
+        };
+      } catch (error) {
+        console.error('Error setting up touch gestures:', error);
+        // Continue rendering the component even if touch gestures fail
+      }
+    };
+
+    // Start the setup process
+    setupTouchGestures();
   }, [modeler]);
 
   return (

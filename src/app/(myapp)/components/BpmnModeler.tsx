@@ -33,21 +33,27 @@ const BpmnModeler = ({ xml, onChange, onLoad, processKey, processName }: BpmnMod
 
   const createNewDiagram = useCallback(async (modeler: BpmnJS) => {
     try {
-      // Garantir que o canvas esteja inicializado
+      // Ensure canvas is initialized
       const xml = diagramXML(processKey, processName);
       const canvas = modeler.get('canvas');
+      
+      if (!canvas) {
+        console.warn('Canvas not available, retrying...');
+        setTimeout(() => createNewDiagram(modeler), 100);
+        return;
+      }
 
-      // Usar Promise API para importXML
+      // Use Promise API for importXML
       const result = await modeler.importXML(xml);
       const { warnings } = result;
       if (warnings && warnings.length) {
         console.warn('Warnings during default diagram import:', warnings);
       }
 
-      // Ajustar o zoom após a importação
+      // Adjust zoom after import
       canvas.zoom('fit-viewport');
 
-      // Notificar a mudança
+      // Notify change
       onChange?.(xml);
     } catch (err) {
       console.error('Error creating new diagram:', err);
@@ -75,54 +81,64 @@ const BpmnModeler = ({ xml, onChange, onLoad, processKey, processName }: BpmnMod
     modelerRef.current = modeler;
     onLoad?.(modeler);
 
-    // Inicializar o canvas e criar as camadas necessárias
+    // Initialize canvas and create necessary layers
     const canvas = modeler.get('canvas');
 
-    // Garantir que o diagrama seja renderizado antes de qualquer operação
-    setTimeout(() => {
-      // Inicializar com um diagrama vazio para garantir que as camadas sejam criadas
-      if (xml) {
-        // Usar Promise API para importXML
-        modeler
-          .importXML(xml)
-          .then((result) => {
-            const { warnings } = result;
-            if (warnings && warnings.length) {
-              console.warn('Warnings during BPMN import:', warnings);
-            }
-            // Ajustar o zoom após a importação
-            canvas.zoom('fit-viewport');
-          })
-          .catch((err) => {
-            console.error('Error importing BPMN XML:', err);
-            // Em caso de erro, criar um diagrama padrão
-            createNewDiagram(modeler);
-          });
-      } else {
-        createNewDiagram(modeler);
-      }
-
-      // Setup change events
-      modeler.on('commandStack.changed', async () => {
-        try {
-          const { xml } = await modeler.saveXML({ format: true });
-          // Ensure onChange is called only when xml is successfully retrieved
-          if (xml) {
-            onChange?.(xml);
-          }
-        } catch (err) {
-          console.error('Failed to save BPMN XML:', err);
+    // Ensure diagram is rendered before any operation
+    const initializeDiagram = () => {
+      try {
+        // Initialize with an empty diagram to ensure layers are created
+        if (xml) {
+          // Use Promise API for importXML
+          modeler
+            .importXML(xml)
+            .then((result) => {
+              const { warnings } = result;
+              if (warnings && warnings.length) {
+                console.warn('Warnings during BPMN import:', warnings);
+              }
+              // Adjust zoom after import
+              canvas.zoom('fit-viewport');
+            })
+            .catch((err) => {
+              console.error('Error importing BPMN XML:', err);
+              // In case of error, create a default diagram
+              createNewDiagram(modeler);
+            });
+        } else {
+          createNewDiagram(modeler);
         }
-      });
-    }, 100); // Pequeno atraso para garantir que o DOM esteja pronto
+
+        // Setup change events
+        modeler.on('commandStack.changed', async () => {
+          try {
+            const { xml } = await modeler.saveXML({ format: true });
+            // Ensure onChange is called only when xml is successfully retrieved
+            if (xml) {
+              onChange?.(xml);
+            }
+          } catch (err) {
+            console.error('Failed to save BPMN XML:', err);
+          }
+        });
+      } catch (error) {
+        console.error('Error during diagram initialization:', error);
+        // Retry initialization after a delay
+        setTimeout(initializeDiagram, 200);
+      }
+    };
+
+    // Small delay to ensure DOM is ready
+    setTimeout(initializeDiagram, 100);
 
     return () => {
-      modeler.destroy();
+      try {
+        modeler.destroy();
+      } catch (error) {
+        console.error('Error destroying modeler:', error);
+      }
     };
   }, [onLoad, onChange, xml, createNewDiagram]); // Added createNewDiagram to dependencies
-
-
-
 
   return (
     <div className={cn('flex h-[78vh] relative', 'border rounded-lg', 'bg-white')}>
