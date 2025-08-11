@@ -23,11 +23,13 @@ import {
 	IGRPDataTableDropdownMenu,
 	IGRPDataTableDropdownMenuCustom,
 	IGRPDataTableDropdownMenuLink,
+	IGRPDataTableDropdownMenuAlert,
 	IGRPDataTableFilterInput,
 	IGRPDataTableFilterDropdown 
 } from "@igrp/igrp-framework-react-design-system";
 import {useProcessDefinition} from '@/app/(myapp)/hooks/process'
 import { IGRPLoadingSpinner } from '@igrp/igrp-framework-react-design-system'
+import {deleteProcessDefinition} from '@/app/(myapp)/functions/process-definition'
 
 
 export default function PageProcessComponent() {
@@ -39,6 +41,7 @@ export default function PageProcessComponent() {
     processKey: string;
     statusDesc: string;
     version: string;
+    deploymentDate: string;
     processDefinitionId: string;
 }
 
@@ -240,6 +243,14 @@ badgeClassName={ `` }
           filterFn: IGRPDataTableFacetedFilterFn
         },
         {
+          header: 'Deployment Date'
+,accessorKey: 'deploymentDate',
+          cell: ({ row }) => {
+          return row.getValue("deploymentDate")
+          },
+          filterFn: IGRPDataTableFacetedFilterFn
+        },
+        {
           id: 'tableActionListCell1',
           enableHiding: false,cell: ({ row }) => {
           const rowData = row.original;
@@ -252,13 +263,25 @@ return (
       {
         component: IGRPDataTableDropdownMenuCustom,
         props: {
-          labelTrigger: `Edit Process`,icon: `SquarePen`,          showIcon: true,          
+          labelTrigger: `Edit Process`,icon: `SquarePen`,          showIcon: true,          action: ()=>{
+  setOpenProcess(!openProcess);
+  setEditingProcess(rowData)
+
+
+},
 }
       },
       {
         component: IGRPDataTableDropdownMenuLink,
         props: {
           labelTrigger: `Process Editor`,icon: `Network`,href: `/process/${row.original.processDefinitionId}/editor`,          showIcon: true,          
+}
+      },
+      {
+        component: IGRPDataTableDropdownMenuAlert,
+        props: {
+          modalTitle: `Delete Process Definition`,labelTrigger: `Delete`,icon: `Trash`,          showIcon: true,showCancel: true,labelCancel: `Cancel`,variantCancel: `outline`,showConfirm: true,labelConfirm: `Confirm`,variantConfirm: `destructive`,          onClickConfirm: (e) => {deleteProcessDefinition(rowData.processDefinitionId);},
+          children: <>Do you want delete this process definition?</>
 }
       },
 ]

@@ -12,6 +12,10 @@ export const createOrUpdateProcessDefinition = async (processDefinition: Process
   return await client.processDefinitions.createOrUpdate(processDefinition);
 };
 
+export const deleteProcessDefinition = async (processDefinitionId: string) => {
+  return await client.processDefinitions.delete(processDefinitionId);
+};
+
 export const saveDiagramProcessDefinition = async (
   processDefinitionId: string,
   processDefinition: { content: string },
