@@ -6,7 +6,6 @@ import 'bpmn-js/dist/assets/bpmn-font/css/bpmn.css';
 import 'bpmn-js/dist/assets/diagram-js.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css';
 import '@bpmn-io/properties-panel/assets/properties-panel.css';
-
 import diagramXML from '@/app/(myapp)/resources/newDiagram';
 
 import {
@@ -18,6 +17,8 @@ import ZoomControls from './ZoomControls';
 
 import CamundaBpmnModdle from 'camunda-bpmn-moddle/resources/camunda.json';
 import BpmnControls from './BpmnControls';
+
+import TokenSimulationModule from 'bpmn-js-token-simulation';
 
 interface BpmnModelerProps {
   xml?: string;
@@ -31,34 +32,37 @@ const BpmnModeler = ({ xml, onChange, onLoad, processKey, processName }: BpmnMod
   const containerRef = useRef<HTMLDivElement>(null);
   const modelerRef = useRef<BpmnJS | null>(null);
 
-  const createNewDiagram = useCallback(async (modeler: BpmnJS) => {
-    try {
-      // Ensure canvas is initialized
-      const xml = diagramXML(processKey, processName);
-      const canvas = modeler.get('canvas');
-      
-      if (!canvas) {
-        console.warn('Canvas not available, retrying...');
-        setTimeout(() => createNewDiagram(modeler), 100);
-        return;
+  const createNewDiagram = useCallback(
+    async (modeler: BpmnJS) => {
+      try {
+        // Ensure canvas is initialized
+        const xml = diagramXML(processKey, processName);
+        const canvas = modeler.get('canvas');
+
+        if (!canvas) {
+          console.warn('Canvas not available, retrying...');
+          setTimeout(() => createNewDiagram(modeler), 100);
+          return;
+        }
+
+        // Use Promise API for importXML
+        const result = await modeler.importXML(xml);
+        const { warnings } = result;
+        if (warnings && warnings.length) {
+          console.warn('Warnings during default diagram import:', warnings);
+        }
+
+        // Adjust zoom after import
+        canvas.zoom('fit-viewport');
+
+        // Notify change
+        onChange?.(xml);
+      } catch (err) {
+        console.error('Error creating new diagram:', err);
       }
-
-      // Use Promise API for importXML
-      const result = await modeler.importXML(xml);
-      const { warnings } = result;
-      if (warnings && warnings.length) {
-        console.warn('Warnings during default diagram import:', warnings);
-      }
-
-      // Adjust zoom after import
-      canvas.zoom('fit-viewport');
-
-      // Notify change
-      onChange?.(xml);
-    } catch (err) {
-      console.error('Error creating new diagram:', err);
-    }
-  }, [processKey, processName, onChange]);
+    },
+    [processKey, processName, onChange],
+  );
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -72,6 +76,7 @@ const BpmnModeler = ({ xml, onChange, onLoad, processKey, processName }: BpmnMod
         BpmnPropertiesPanelModule,
         BpmnPropertiesProviderModule,
         CamundaPlatformPropertiesProviderModule,
+        TokenSimulationModule,
       ],
       moddleExtensions: {
         camunda: CamundaBpmnModdle,
@@ -154,10 +159,14 @@ const BpmnModeler = ({ xml, onChange, onLoad, processKey, processName }: BpmnMod
         {/* BPMN Controls */}
         {modelerRef.current && (
           <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg shadow-lg p-2 z-10">
-            <BpmnControls modeler={modelerRef.current} processKey={processKey} processName={processName} />
+            <BpmnControls
+              modeler={modelerRef.current}
+              processKey={processKey}
+              processName={processName}
+            />
           </div>
         )}
-        
+
         {/* Zoom Controls */}
         {modelerRef.current && (
           <div className="absolute bottom-10 right-4 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg shadow-lg p-2 z-10">

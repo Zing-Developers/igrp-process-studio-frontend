@@ -11,15 +11,9 @@ export interface BpmnDownloadOptions {
 /**
  * Download a file with the given content
  */
-export const downloadFile = (
-  content: string | Blob,
-  filename: string,
-  mimeType: string
-): void => {
-  const blob = typeof content === 'string' 
-    ? new Blob([content], { type: mimeType })
-    : content;
-  
+export const downloadFile = (content: string | Blob, filename: string, mimeType: string): void => {
+  const blob = typeof content === 'string' ? new Blob([content], { type: mimeType }) : content;
+
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
@@ -39,10 +33,13 @@ export const validateBpmnFile = (file: File): Promise<boolean> => {
     reader.onload = (e) => {
       try {
         const content = e.target?.result as string;
+
         // Basic validation - check if it contains BPMN elements
-        const isValid = content.includes('bpmn:') || 
-                       content.includes('bpmn2:') || 
-                       content.includes('http://www.omg.org/spec/BPMN/');
+        const isValid =
+          content.includes('bpmn:') ||
+          content.includes('bpmn2:') ||
+          content.includes('http://www.omg.org/spec/BPMN/');
+
         resolve(isValid);
       } catch {
         resolve(false);
@@ -58,7 +55,7 @@ export const validateBpmnFile = (file: File): Promise<boolean> => {
 export const generateFilename = (
   processKey: string,
   processName: string,
-  extension: string
+  extension: string,
 ): string => {
   const sanitizedKey = processKey.replace(/[^a-zA-Z0-9-_]/g, '_');
   const sanitizedName = processName.replace(/[^a-zA-Z0-9-_]/g, '_');
@@ -90,4 +87,4 @@ export const formatFileSize = (bytes: number): string => {
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-}; 
+};

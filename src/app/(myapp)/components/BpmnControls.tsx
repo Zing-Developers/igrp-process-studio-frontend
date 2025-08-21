@@ -1,12 +1,14 @@
+//https://blog.logrocket.com/communicating-between-node-js-microservices-with-grpc/
 import { IGRPButton, IGRPSeparator } from '@igrp/igrp-framework-react-design-system';
 import React, { useCallback, useRef, useState } from 'react';
 import BpmnJS from 'bpmn-js/lib/Modeler';
-import { 
-  downloadFile, 
-  validateBpmnFile, 
-  generateFilename, 
-  showError, 
-  showSuccess 
+import Canvas from 'diagram-js/lib/core/Canvas';
+import {
+  downloadFile,
+  validateBpmnFile,
+  generateFilename,
+  showError,
+  showSuccess,
 } from './utils/bpmnUtils';
 
 interface BpmnControlsProps {
@@ -26,7 +28,7 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({ modeler, processKey, proces
     setIsLoading(true);
     try {
       const { xml } = await modeler.saveXML({ format: true });
-      
+
       if (xml) {
         const filename = generateFilename(processKey, processName, 'bpmn');
         downloadFile(xml, filename, 'application/xml');
@@ -45,18 +47,20 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({ modeler, processKey, proces
 
     setIsLoading(true);
     try {
-      const canvas = modeler.get('canvas');
+    
+      const canvas = modeler.get<Canvas>('canvas');
       if (!canvas) {
         showError('Canvas not available. Please try again.');
         return;
       }
-      
-      const container = canvas.get('container');
+      console.log('modeler', modeler);
+      console.log('canvas', canvas);
+      const container = canvas.getContainer();
       if (!container) {
         showError('Container not available. Please try again.');
         return;
       }
-      
+
       // Get the SVG element from the canvas
       const svgElement = container.querySelector('svg');
       if (!svgElement) {
@@ -67,47 +71,51 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({ modeler, processKey, proces
       // Get the current viewbox to capture the full diagram
       const viewbox = canvas.viewbox();
       const { x, y, width, height } = viewbox;
-      
+
       // Create a temporary SVG with the current view
       const tempSvg = svgElement.cloneNode(true) as SVGElement;
       tempSvg.setAttribute('width', width.toString());
       tempSvg.setAttribute('height', height.toString());
       tempSvg.setAttribute('viewBox', `${x} ${y} ${width} ${height}`);
-      
+
       // Convert SVG to data URL
       const svgData = new XMLSerializer().serializeToString(tempSvg);
       const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
       const svgUrl = URL.createObjectURL(svgBlob);
-      
+
       // Create canvas for conversion
       const tempCanvas = document.createElement('canvas');
       const ctx = tempCanvas.getContext('2d');
-      
+
       // Set canvas size with higher resolution
       const scale = 2;
       tempCanvas.width = width * scale;
       tempCanvas.height = height * scale;
-      
+
       if (ctx) {
         ctx.scale(scale, scale);
-        
+
         // Create image from SVG
         const img = new window.Image();
         img.onload = () => {
           ctx.drawImage(img, 0, 0, width, height);
-          
+
           // Download the PNG
-          tempCanvas.toBlob((blob) => {
-            if (blob) {
-              const filename = generateFilename(processKey, processName, 'png');
-              downloadFile(blob, filename, 'image/png');
-              showSuccess('Image downloaded successfully!');
-            }
-          }, 'image/png', 0.95);
+          tempCanvas.toBlob(
+            (blob) => {
+              if (blob) {
+                const filename = generateFilename(processKey, processName, 'png');
+                downloadFile(blob, filename, 'image/png');
+                showSuccess('Image downloaded successfully!');
+              }
+            },
+            'image/png',
+            0.95,
+          );
         };
         img.src = svgUrl;
       }
-      
+
       // Clean up
       setTimeout(() => URL.revokeObjectURL(svgUrl), 1000);
     } catch (error) {
@@ -118,54 +126,60 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({ modeler, processKey, proces
   }, [modeler, processKey, processName]);
 
   // Upload diagram from file
-  const handleUploadDiagram = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file || !modeler) return;
+  const handleUploadDiagram = useCallback(
+    async (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (!file || !modeler) return;
 
-    setIsLoading(true);
-    try {
-      // Validate the file
-      const isValid = await validateBpmnFile(file);
-      if (!isValid) {
-        showError('Invalid BPMN file. Please select a valid BPMN XML file.');
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        try {
-          const xml = e.target?.result as string;
-          const result = await modeler.importXML(xml);
-          
-          const { warnings } = result;
-          if (warnings && warnings.length) {
-            console.warn('Warnings during BPMN import:', warnings);
-          }
-          
-          // Fit to viewport after import
-          const canvas = modeler.get('canvas');
-          if (canvas) {
-            canvas.zoom('fit-viewport');
-          }
-          
-          showSuccess('Diagram uploaded successfully!');
-          
-          // Clear the file input
-          if (fileInputRef.current) {
-            fileInputRef.current.value = '';
-          }
-        } catch (error) {
-          showError('Error importing diagram. Please check if the file is a valid BPMN XML file.', error as Error);
-        } finally {
-          setIsLoading(false);
+      setIsLoading(true);
+      try {
+        // Validate the file
+        const isValid = await validateBpmnFile(file);
+        if (!isValid) {
+          showError('Invalid BPMN file. Please select a valid BPMN XML file.');
+          return;
         }
-      };
-      reader.readAsText(file);
-    } catch (error) {
-      showError('Error reading file. Please try again.', error as Error);
-      setIsLoading(false);
-    }
-  }, [modeler]);
+
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          try {
+            const xml = e.target?.result as string;
+            const result = await modeler.importXML(xml);
+
+            const { warnings } = result;
+            if (warnings && warnings.length) {
+              console.warn('Warnings during BPMN import:', warnings);
+            }
+
+            // Fit to viewport after import
+            const canvas = modeler.get<Canvas>('canvas');
+            if (canvas) {
+              canvas.zoom('fit-viewport');
+            }
+
+            showSuccess('Diagram uploaded successfully!');
+
+            // Clear the file input
+            if (fileInputRef.current) {
+              fileInputRef.current.value = '';
+            }
+          } catch (error) {
+            showError(
+              'Error importing diagram. Please check if the file is a valid BPMN XML file.',
+              error as Error,
+            );
+          } finally {
+            setIsLoading(false);
+          }
+        };
+        reader.readAsText(file);
+      } catch (error) {
+        showError('Error reading file. Please try again.', error as Error);
+        setIsLoading(false);
+      }
+    },
+    [modeler],
+  );
 
   // Trigger file input click
   const handleUploadClick = useCallback(() => {
@@ -178,18 +192,18 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({ modeler, processKey, proces
 
     setIsLoading(true);
     try {
-      const canvas = modeler.get('canvas');
+      const canvas = modeler.get<Canvas>('canvas');
       if (!canvas) {
         showError('Canvas not available. Please try again.');
         return;
       }
-      
-      const container = canvas.get('container');
+
+      const container = canvas.getContainer();
       if (!container) {
         showError('Container not available. Please try again.');
         return;
       }
-      
+
       // Get the SVG element from the canvas
       const svgElement = container.querySelector('svg');
       if (!svgElement) {
@@ -200,13 +214,13 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({ modeler, processKey, proces
       // Get the current viewbox to capture the full diagram
       const viewbox = canvas.viewbox();
       const { x, y, width, height } = viewbox;
-      
+
       // Create a temporary SVG with the current view
       const tempSvg = svgElement.cloneNode(true) as SVGElement;
       tempSvg.setAttribute('width', width.toString());
       tempSvg.setAttribute('height', height.toString());
       tempSvg.setAttribute('viewBox', `${x} ${y} ${width} ${height}`);
-      
+
       // Convert SVG to string and download
       const svgData = new XMLSerializer().serializeToString(tempSvg);
       const filename = generateFilename(processKey, processName, 'svg');
@@ -231,9 +245,9 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({ modeler, processKey, proces
         variant="outline"
         disabled={isLoading}
       />
-      
+
       <IGRPSeparator />
-      
+
       {/* Download Diagram as SVG */}
       <IGRPButton
         onClick={handleDownloadSvg}
@@ -244,9 +258,9 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({ modeler, processKey, proces
         variant="outline"
         disabled={isLoading}
       />
-      
+
       <IGRPSeparator />
-      
+
       {/* Download Diagram as Image */}
       <IGRPButton
         onClick={handleDownloadImage}
@@ -257,9 +271,9 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({ modeler, processKey, proces
         variant="outline"
         disabled={isLoading}
       />
-      
+
       <IGRPSeparator />
-      
+
       {/* Upload Diagram */}
       <IGRPButton
         onClick={handleUploadClick}
@@ -270,7 +284,7 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({ modeler, processKey, proces
         variant="outline"
         disabled={isLoading}
       />
-      
+
       {/* Hidden file input */}
       <input
         ref={fileInputRef}
@@ -283,4 +297,4 @@ const BpmnControls: React.FC<BpmnControlsProps> = ({ modeler, processKey, proces
   );
 };
 
-export default BpmnControls; 
+export default BpmnControls;

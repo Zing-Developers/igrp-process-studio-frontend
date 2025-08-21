@@ -27,9 +27,10 @@ import {
 	IGRPDataTableFilterInput,
 	IGRPDataTableFilterDropdown 
 } from "@igrp/igrp-framework-react-design-system";
+import {deleteProcessDefinition} from '@/app/(myapp)/functions/process-definition'
 import {useProcessDefinition} from '@/app/(myapp)/hooks/process'
 import { IGRPLoadingSpinner } from '@igrp/igrp-framework-react-design-system'
-import {deleteProcessDefinition} from '@/app/(myapp)/functions/process-definition'
+import { useRouter } from "next/navigation";
 
 
 export default function PageProcessComponent() {
@@ -60,6 +61,32 @@ const [editingProcess, setEditingProcess] = useState<any>(undefined);
 
 const { igrpToast } = useIGRPToast()
 
+function handleDelete (rowData: void): void  | undefined {
+
+  try {
+
+  deleteProcessDefinition(rowData.processDefinitionId);
+
+  igrpToast({
+    title: 'Sucesso',
+    description: 'Process definition has deleted sucessfully',
+    type: 'success',
+  });
+
+  router.push('/process')
+
+} catch (error: any) {
+  console.error('Error delete process definition:', error);
+  igrpToast({
+    title: 'Erro',
+    description: `${error.message}`,
+    type: 'error',
+  });
+}
+
+}
+
+const router = useRouter()
 const { processDefinitions, totalProcessDefinitions,totalProjects, isLoading } = useProcessDefinition();
 
 useEffect(() => {
@@ -280,7 +307,7 @@ return (
       {
         component: IGRPDataTableDropdownMenuAlert,
         props: {
-          modalTitle: `Delete Process Definition`,labelTrigger: `Delete`,icon: `Trash`,          showIcon: true,showCancel: true,labelCancel: `Cancel`,variantCancel: `outline`,showConfirm: true,labelConfirm: `Confirm`,variantConfirm: `destructive`,          onClickConfirm: (e) => {deleteProcessDefinition(rowData.processDefinitionId);},
+          modalTitle: `Delete Process Definition`,labelTrigger: `Delete`,icon: `Trash`,          showIcon: true,showCancel: true,labelCancel: `Cancel`,variantCancel: `outline`,showConfirm: true,labelConfirm: `Confirm`,variantConfirm: `destructive`,          onClickConfirm: ()=>{handleDelete(rowData)},
           children: <>Do you want delete this process definition?</>
 }
       },
