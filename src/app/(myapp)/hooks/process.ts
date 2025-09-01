@@ -2,8 +2,13 @@ import { useQuery } from '@tanstack/react-query';
 import { getProject } from '../functions/project';
 import { useProject } from './project';
 import { useMemo } from 'react';
-import { getProcessDefinitionById } from '../functions/process-definition';
-import { PaginatedResponse, ProcessDefinition, Project } from '@igrp/framework-process-studio-types';
+import { getProcessDefinitionById, getVariables } from '../functions/process-definition';
+import {
+  PaginatedResponse,
+  ProcessDefinition,
+  Project,
+  VariableDefinition,
+} from '@igrp/framework-process-studio-types';
 import { convertToMapOptions } from '@igrp/framework-process-studio-client';
 
 export const useProcessDefinition = () => {
@@ -68,3 +73,11 @@ export function useProjectConfiguration() {
     };
   }
 }
+
+export const useGetVariables = (processDefinitionId: string) => {
+  return useQuery<VariableDefinition[]>({
+    queryKey: ['variables'],
+    queryFn: () => getVariables(processDefinitionId),
+    enabled: !!processDefinitionId,
+  });
+};

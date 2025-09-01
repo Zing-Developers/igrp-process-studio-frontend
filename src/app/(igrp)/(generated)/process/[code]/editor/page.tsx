@@ -11,7 +11,10 @@ import { cn, useIGRPMenuNavigation, useIGRPToast } from '@igrp/igrp-framework-re
 import {BpmnModeler} from '@/app/(myapp)/components/BpmnModeler'
 import { 
   IGRPPageHeader,
-	IGRPButton 
+	IGRPButton,
+	IGRPTabs,
+	IGRPTabItem,
+	IGRPTextarea 
 } from "@igrp/igrp-framework-react-design-system";
 import {saveDiagramProcessDefinition} from '@/app/(myapp)/functions/process-definition'
 import {deployProcessDefinition} from '@/app/(myapp)/functions/process-definition'
@@ -24,12 +27,14 @@ export default function PageEditorComponent({ params } : { params: Promise<{ cod
 
   const { code } = use(params);
 
-  
+  const [tabstabs1Items, setTabstabs1Items] = useState<IGRPTabItem[]>([]);
   
   
 const [bpmnXml, setBpmnXml] = useState<any>(undefined);
 
 const [pageHeader1Description, setPageHeader1Description] = useState<any>(undefined);
+
+const [inputTextarea1Value, setInputTextarea1Value] = useState<string>('');
 
 const { igrpToast } = useIGRPToast()
 
@@ -82,6 +87,8 @@ useEffect(() => {
   if (isLoading || !data) return
   setPageHeader1Description(`${data.title} [${data.processKey}] - ${data.statusDesc}`)
   setBpmnXml(data.bpmFileContent)
+  setInputTextarea1Value(data.bpmFileContent)
+
 }, [isLoading])
 
 if (isLoading || !data) {
@@ -138,6 +145,43 @@ iconName={ `Save` }
 </div>
 </IGRPPageHeader>
 </div>
-<BpmnModeler  onChange={ setBpmnXml } xml={ bpmnXml } processName={ data.title } processKey={ data.processKey }   ></BpmnModeler></div>
+<IGRPTabs
+  variant={ `default` }
+  tabContentClassName={ `border rounded-lg border-transparent-none` }
+  showIcon={ true }
+  iconPlacement={ `start` }
+  tabListClassName={ cn() }
+  items={
+    [
+        {
+          value: `tabsItem1-eM2k`,
+          label: `Diagram Editor`,
+          icon: `Workflow`,
+content: (<>
+            <BpmnModeler  onChange={ setBpmnXml } xml={ bpmnXml } processName={ data.title } processKey={ data.processKey }   ></BpmnModeler>
+</>),
+        },
+        {
+          value: `tabsItem2-sYqo`,
+          label: `XML`,
+          icon: `CodeXml`,
+content: (<>
+            <IGRPTextarea
+  name={ `inputTextarea1` }
+  
+label={ `XML` }
+rows={ 30 }
+required={ false }
+
+
+  
+  value={ inputTextarea1Value }
+>
+</IGRPTextarea>
+</>),
+        },
+]
+  }
+/></div>
   );
 }

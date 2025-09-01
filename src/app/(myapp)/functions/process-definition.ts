@@ -1,5 +1,5 @@
 'use server';
-import { ProcessDefinition } from '@igrp/framework-process-studio-types';
+import { ProcessDefinition, VariableDefinition } from '@igrp/framework-process-studio-types';
 import { createServerClient } from '../lib/server-client';
 
 const client = createServerClient();
@@ -28,10 +28,38 @@ export const saveDiagramProcessDefinition = async (
 
 export const deployProcessDefinition = async (
   processDefinitionId: string,
-  processDefinition: {content: string},
+  processDefinition: { content: string },
 ) => {
   const data = {
     ...processDefinition,
   };
   return await client.processDefinitions.deploy(processDefinitionId, data);
+};
+
+export const createOrUpdateVariable = async (
+  processDefinitionId: string,
+  variable: VariableDefinition[],
+) => {
+  return await client.processDefinitions.createOrUpdateVariable(processDefinitionId, variable);
+};
+
+export const getVariables = async (processDefinitionId: string) => {
+  return await client.processDefinitions.getVariables(processDefinitionId);
+};
+
+export const getDataTypes = async () => {
+  return [
+    {
+      label: 'String',
+      value: 'string',
+    },
+    {
+      label: 'Number',
+      value: 'number',
+    },
+    {
+      label: 'Boolean',
+      value: 'boolean',
+    },
+  ];
 };

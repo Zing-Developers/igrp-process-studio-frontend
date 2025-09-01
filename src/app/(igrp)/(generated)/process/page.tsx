@@ -11,6 +11,7 @@ import { cn, useIGRPMenuNavigation, useIGRPToast } from '@igrp/igrp-framework-re
 import { IGRPDataTableFacetedFilterFn , IGRPDataTableDateRangeFilterFn } from "@igrp/igrp-framework-react-design-system";
 import { IGRPDataTableHeaderSortToggle, IGRPDataTableHeaderSortDropdown, IGRPDataTableHeaderRowsSelect } from "@igrp/igrp-framework-react-design-system";
 import { IGRPOptionsProps } from "@igrp/igrp-framework-react-design-system";
+import Variables from '@/components/variables'
 import New from '@/app/(igrp)/(generated)/process/components/new'
 import Project from '@/components/project'
 import { 
@@ -20,9 +21,9 @@ import {
 	IGRPDataTable,
 	IGRPDataTableCellBadge,
 	IGRPDataTableRowAction,
+	IGRPDataTableButtonLink,
 	IGRPDataTableDropdownMenu,
 	IGRPDataTableDropdownMenuCustom,
-	IGRPDataTableDropdownMenuLink,
 	IGRPDataTableDropdownMenuAlert,
 	IGRPDataTableFilterInput,
 	IGRPDataTableFilterDropdown 
@@ -58,6 +59,8 @@ const [openProject, setOpenProject] = useState<boolean>(false);
 const [openProcess, setOpenProcess] = useState<boolean>(false);
 
 const [editingProcess, setEditingProcess] = useState<any>(undefined);
+
+const [open, setOpen] = useState<boolean>(false);
 
 const { igrpToast } = useIGRPToast()
 
@@ -152,7 +155,7 @@ iconName={ `Plus` }
 </div>
 </IGRPPageHeader>
 
-<div className={ cn('grid','grid-cols-1 ','md:grid-cols-2 ','lg:grid-cols-4 ',' gap-4',)}    >
+<div className={ cn('grid','grid-cols-1 ','md:grid-cols-2 ','lg:grid-cols-3 ',' gap-4',)}    >
 	<IGRPStatsCard
   name={ `statsCard2` }
   cardBorderPosition={ `top` }
@@ -169,6 +172,7 @@ iconVariant={ `info` }
 iconPlacement={ `end` }
 itemPlacement={ `start` }
 
+  className={ cn('col-span-1',) }
   onClick={ () => {} }
   value={ statstatsCard2Value }
 >
@@ -189,6 +193,7 @@ iconVariant={ `primary` }
 iconPlacement={ `end` }
 itemPlacement={ `start` }
 
+  className={ cn('col-span-1',) }
   onClick={ () => {} }
   value={ statstatsCard3Value }
 >
@@ -209,6 +214,7 @@ iconVariant={ `success` }
 iconPlacement={ `end` }
 itemPlacement={ `start` }
 
+  className={ cn('col-span-1',) }
   onClick={ () => {} }
   value={ statstatsCard1Value }
 >
@@ -284,24 +290,22 @@ badgeClassName={ `` }
 
 return (
 <IGRPDataTableRowAction>
+  <IGRPDataTableButtonLink
+  labelTrigger={ `Process Editor` }
+  href={ `/process/${row.original.processDefinitionId}/editor` }
+  variant={ `ghost` }
+  icon={ `Workflow` }
+  className={ cn() }
+  action={ () => {} }
+>
+</IGRPDataTableButtonLink>
   <IGRPDataTableDropdownMenu
   items={
     [
       {
         component: IGRPDataTableDropdownMenuCustom,
         props: {
-          labelTrigger: `Edit Process`,icon: `SquarePen`,          showIcon: true,          action: ()=>{
-  setOpenProcess(!openProcess);
-  setEditingProcess(rowData)
-
-
-},
-}
-      },
-      {
-        component: IGRPDataTableDropdownMenuLink,
-        props: {
-          labelTrigger: `Process Editor`,icon: `Network`,href: `/process/${row.original.processDefinitionId}/editor`,          showIcon: true,          
+          labelTrigger: `Edit Process`,icon: `SquarePen`,          showIcon: true,          action: () => {setOpenProcess(!openProcess);setEditingProcess(rowData)},
 }
       },
       {
@@ -309,6 +313,12 @@ return (
         props: {
           modalTitle: `Delete Process Definition`,labelTrigger: `Delete`,icon: `Trash`,          showIcon: true,showCancel: true,labelCancel: `Cancel`,variantCancel: `outline`,showConfirm: true,labelConfirm: `Confirm`,variantConfirm: `destructive`,          onClickConfirm: ()=>{handleDelete(rowData)},
           children: <>Do you want delete this process definition?</>
+}
+      },
+      {
+        component: IGRPDataTableDropdownMenuCustom,
+        props: {
+          labelTrigger: `Add Variables`,          showIcon: true,          action: () => {setOpen(!open);setEditingProcess(rowData)},
 }
       },
 ]
@@ -346,6 +356,7 @@ return (
   
   data={ contentTabletable1 }
 /></div>
+<Variables  open={ open } currentProcess={ editingProcess }  setOpen={ setOpen } ></Variables>
 <New  open={ openProcess } initialData={ editingProcess }  setOpen={ setOpenProcess
  } ></New>
 <Project  open={ openProject }  setOpen={ setOpenProject
