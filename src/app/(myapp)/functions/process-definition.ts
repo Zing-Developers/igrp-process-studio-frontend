@@ -33,7 +33,9 @@ export const deployProcessDefinition = async (
   const data = {
     ...processDefinition,
   };
-  return await client.processDefinitions.deploy(processDefinitionId, data);
+  return await client.processDefinitions.deploy(processDefinitionId, {
+    content: data.content.replace('camunda:delegateExpression', 'activiti:delegateExpression')
+  });
 };
 
 export const createOrUpdateVariable = async (

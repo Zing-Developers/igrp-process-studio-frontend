@@ -90,13 +90,15 @@ function handleDelete (rowData: void): void  | undefined {
 }
 
 const router = useRouter()
-const { processDefinitions, totalProcessDefinitions,totalProjects, isLoading } = useProcessDefinition();
+const { processDefinitions,totalPublished, totalProcessDefinitions,totalRascunho, isLoading } = useProcessDefinition();
 
 useEffect(() => {
   if (isLoading || !processDefinitions) return
   setContentTabletable1(processDefinitions || [])
-  setStatstatsCard1Value(totalProjects || 0)
+  setStatstatsCard1Value(totalRascunho || 0)
   setStatstatsCard2Value(totalProcessDefinitions || 0)
+  setStatstatsCard3Value(totalPublished || 0)
+
 
 }, [isLoading])
 
@@ -242,19 +244,10 @@ itemPlacement={ `start` }
           filterFn: IGRPDataTableFacetedFilterFn
         },
         {
-          header: 'Status'
-,accessorKey: 'statusDesc',
+          header: 'Deployment Date'
+,accessorKey: 'deploymentDate',
           cell: ({ row }) => {
-          const rowData = row.original;
-
-
-return <IGRPDataTableCellBadge
-  label={ row.original.statusDesc }
-  variant={ `soft` }
-badgeClassName={ `` }
->
-
-</IGRPDataTableCellBadge>
+          return row.getValue("deploymentDate")
           },
           filterFn: IGRPDataTableFacetedFilterFn
         },
@@ -276,10 +269,19 @@ badgeClassName={ `` }
           filterFn: IGRPDataTableFacetedFilterFn
         },
         {
-          header: 'Deployment Date'
-,accessorKey: 'deploymentDate',
+          header: 'Status'
+,accessorKey: 'statusDesc',
           cell: ({ row }) => {
-          return row.getValue("deploymentDate")
+          const rowData = row.original;
+
+
+return <IGRPDataTableCellBadge
+  label={ row.original.statusDesc }
+  variant={ `soft` }
+badgeClassName={ `` }
+>
+
+</IGRPDataTableCellBadge>
           },
           filterFn: IGRPDataTableFacetedFilterFn
         },

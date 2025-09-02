@@ -28,12 +28,18 @@ export const useProcessDefinition = () => {
       })),
     );
     const totalProcessDefinitions = allProcessDefinitions?.length || 0;
-    const totalProjects = queryResult.data?.content.length || 0;
+    const totalRascunho =
+      allProcessDefinitions?.filter((processDefinition) => processDefinition.status === 'DRAFT')
+        .length || 0;
+    const totalPublished =
+      allProcessDefinitions?.filter((processDefinition) => processDefinition.status === 'PUBLISHED')
+        .length || 0;
 
     return {
       processDefinitions: allProcessDefinitions,
       totalProcessDefinitions,
-      totalProjects,
+      totalRascunho,
+      totalPublished,
     };
   }, [queryResult.data]);
 
