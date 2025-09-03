@@ -32,6 +32,7 @@ import {deleteProcessDefinition} from '@/app/(myapp)/functions/process-definitio
 import {useProcessDefinition} from '@/app/(myapp)/hooks/process'
 import { IGRPLoadingSpinner } from '@igrp/igrp-framework-react-design-system'
 import { useRouter } from "next/navigation";
+import { useQueryClient } from '@tanstack/react-query';
 
 
 export default function PageProcessComponent() {
@@ -62,6 +63,8 @@ const [editingProcess, setEditingProcess] = useState<any>(undefined);
 
 const [open, setOpen] = useState<boolean>(false);
 
+const [hasNewProcess, setHasNewProcess] = useState<boolean>(false);
+
 const { igrpToast } = useIGRPToast()
 
 function handleDelete (rowData: void): void  | undefined {
@@ -76,7 +79,8 @@ function handleDelete (rowData: void): void  | undefined {
     type: 'success',
   });
 
-  router.push('/process')
+  setHasNewProcess(true)
+ queryClient.invalidateQueries({ queryKey: ['process'] });
 
 } catch (error: any) {
   console.error('Error delete process definition:', error);
@@ -90,6 +94,8 @@ function handleDelete (rowData: void): void  | undefined {
 }
 
 const router = useRouter()
+const queryClient = useQueryClient();
+
 const { processDefinitions,totalPublished, totalProcessDefinitions,totalRascunho, isLoading } = useProcessDefinition();
 
 useEffect(() => {
@@ -148,7 +154,8 @@ showIcon={ true }
 iconName={ `Plus` }
 
   className={ cn() }
-  onClick={ () => {setOpenProcess(!openProcess); setEditingProcess(undefined)
+  onClick={ () => {setOpenProcess(!openProcess); setEditingProcess(undefined);setHasNewProcess(false)
+
 } }
   
 >
@@ -163,17 +170,18 @@ iconName={ `Plus` }
   cardBorderPosition={ `top` }
 cardBorder={ `rounded-xl` }
 cardVariant={ `info` }
-iconBackground={ `none` }
+iconBackground={ `square` }
 title={ `Total Processos` }
 titleSize={ `sm` }
 valueSize={ `2xl` }
 showIcon={ true }
-iconName={ `Box` }
+iconName={ `Workflow` }
 iconSize={ `md` }
 iconVariant={ `info` }
 iconPlacement={ `end` }
 itemPlacement={ `start` }
 
+showIconBackground={ true }
   className={ cn('col-span-1',) }
   onClick={ () => {} }
   value={ statstatsCard2Value }
@@ -184,17 +192,18 @@ itemPlacement={ `start` }
   cardBorderPosition={ `top` }
 cardBorder={ `rounded-xl` }
 cardVariant={ `primary` }
-iconBackground={ `none` }
+iconBackground={ `square` }
 title={ `Total Publicados` }
 titleSize={ `sm` }
 valueSize={ `2xl` }
 showIcon={ true }
-iconName={ `Box` }
+iconName={ `ArrowBigUp` }
 iconSize={ `md` }
 iconVariant={ `primary` }
 iconPlacement={ `end` }
 itemPlacement={ `start` }
 
+showIconBackground={ true }
   className={ cn('col-span-1',) }
   onClick={ () => {} }
   value={ statstatsCard3Value }
@@ -205,7 +214,7 @@ itemPlacement={ `start` }
   cardBorderPosition={ `top` }
 cardBorder={ `rounded-xl` }
 cardVariant={ `success` }
-iconBackground={ `none` }
+iconBackground={ `square` }
 title={ `Total Rascunhos` }
 titleSize={ `sm` }
 valueSize={ `2xl` }
@@ -216,19 +225,22 @@ iconVariant={ `success` }
 iconPlacement={ `end` }
 itemPlacement={ `start` }
 
+showIconBackground={ true }
   className={ cn('col-span-1',) }
   onClick={ () => {} }
   value={ statstatsCard1Value }
 >
 </IGRPStatsCard></div>
-<IGRPDataTable<Table1, Table1>
+<div className={ cn(' border rounded-lg p-3',)}    >
+	<IGRPDataTable<Table1, Table1>
   showFilter={ true }
   showPagination={ true }
   showToggleColumn={ true }
+  className={ cn() }
   columns={
     [
         {
-          header: 'Title'
+          header: 'Process Name'
 ,accessorKey: 'title',
           cell: ({ row }) => {
           return row.getValue("title")
@@ -313,14 +325,9 @@ return (
       {
         component: IGRPDataTableDropdownMenuAlert,
         props: {
-          modalTitle: `Delete Process Definition`,labelTrigger: `Delete`,icon: `Trash`,          showIcon: true,showCancel: true,labelCancel: `Cancel`,variantCancel: `outline`,showConfirm: true,labelConfirm: `Confirm`,variantConfirm: `destructive`,          onClickConfirm: ()=>{handleDelete(rowData)},
+          modalTitle: `Delete Process Definition`,labelTrigger: `Delete`,icon: `Trash`,          showIcon: true,showCancel: true,labelCancel: `Cancel`,variantCancel: `outline`,showConfirm: true,labelConfirm: `Confirm`,variantConfirm: `destructive`,          onClickConfirm: ()=>{handleDelete(rowData);setHasNewProcess(false)
+},
           children: <>Do you want delete this process definition?</>
-}
-      },
-      {
-        component: IGRPDataTableDropdownMenuCustom,
-        props: {
-          labelTrigger: `Add Variables`,          showIcon: true,          action: () => {setOpen(!open);setEditingProcess(rowData)},
 }
       },
 ]
@@ -357,9 +364,11 @@ return (
   }
   
   data={ contentTabletable1 }
-/></div>
+/></div></div>
 <Variables  open={ open } currentProcess={ editingProcess }  setOpen={ setOpen } ></Variables>
 <New  open={ openProcess } initialData={ editingProcess }  setOpen={ setOpenProcess
+ }
+setNewProcess={ setHasNewProcess
  } ></New>
 <Project  open={ openProject }  setOpen={ setOpenProject
  } ></Project></div>

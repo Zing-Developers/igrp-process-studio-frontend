@@ -19,7 +19,6 @@ import {
 	IGRPInputText,
 	IGRPTextarea,
 	IGRPModalDialogFooter,
-	IGRPModalDialogClose,
 	IGRPButton 
 } from "@igrp/igrp-framework-react-design-system";
 import {createOrUpdateProject} from '@/app/(myapp)/functions/project'
@@ -29,17 +28,17 @@ export default function Project({ open, setOpen, initialData } : { open: boolean
 
   
   const form1 = z.object({
-    code: z.string(),
-    name: z.string(),
+    code: z.string().nonempty(),
+    name: z.string().nonempty(),
     description: z.string().optional()
 })
 
 type Form1ZodType = typeof form1;
 
 const initForm1: z.infer<Form1ZodType> = {
-    code: ``,
-    name: ``,
-    description: ``
+    code: undefined,
+    name: undefined,
+    description: undefined
 }
 
 
@@ -97,6 +96,7 @@ const router = useRouter();
   
 >
   <IGRPModalDialogTitle
+  name={ `modalDialogTitle1` }
   
 
   
@@ -161,15 +161,6 @@ placeholder={ `Enter process description` }
   
   
 >
-  <IGRPModalDialogClose
-  name={ `modalDialogClose1` }
-  
-
-  onClick={ () => {} }
-  
->
-  Close
-</IGRPModalDialogClose>
   <IGRPButton
   name={ `button1` }
   

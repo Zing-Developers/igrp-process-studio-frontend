@@ -50,8 +50,9 @@ export const useProcessDefinition = () => {
 };
 
 export const useDetailProcessDefinition = (processDefinitionId: string) => {
+  console.log(processDefinitionId);
   return useQuery<ProcessDefinition>({
-    queryKey: ['processDefinition'],
+    queryKey: ['processDefinition', processDefinitionId],
     queryFn: () => getProcessDefinitionById(processDefinitionId),
   });
 };

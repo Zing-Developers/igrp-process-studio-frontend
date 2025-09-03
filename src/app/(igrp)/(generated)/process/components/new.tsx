@@ -21,14 +21,13 @@ import {
 	IGRPTextarea,
 	IGRPCombobox,
 	IGRPModalDialogFooter,
-	IGRPModalDialogClose,
 	IGRPButton 
 } from "@igrp/igrp-framework-react-design-system";
 import {createOrUpdateProcessDefinition} from '@/app/(myapp)/functions/process-definition'
 import {useProjectConfiguration} from '@/app/(myapp)/hooks/process'
 import { useRouter } from 'next/navigation';
 
-export default function New({ open, setOpen, initialData } : { open: boolean, setOpen: (prompt: boolean) => void, initialData?: any }) {
+export default function New({ open, setOpen, initialData, setNewProcess } : { open: boolean, setOpen: (prompt: boolean) => void, initialData?: any, setNewProcess: (prompt: boolean) => void }) {
 
   
   const form1 = z.object({
@@ -41,10 +40,10 @@ export default function New({ open, setOpen, initialData } : { open: boolean, se
 type Form1ZodType = typeof form1;
 
 const initForm1: z.infer<Form1ZodType> = {
-    title: ``,
-    processKey: ``,
-    description: ``,
-    projectId: ``
+    title: undefined,
+    processKey: undefined,
+    description: undefined,
+    projectId: undefined
 }
 
 
@@ -69,7 +68,8 @@ async function handleSubmit (values: z.infer<any>): Promise<void  | undefined> {
       : 'Process saved successfully',
     type: 'success',
   });
-  router.push('/process');
+  setNewProcess(true);
+  setOpen(false)
 } catch (error: any) {
   igrpToast({
     title: 'Error',
@@ -112,6 +112,7 @@ useEffect(() => {
   
 >
   <IGRPModalDialogTitle
+  name={ `modalDialogTitle1` }
   
 
   
@@ -194,15 +195,6 @@ iconName={ `CornerDownRight` }
   
   
 >
-  <IGRPModalDialogClose
-  name={ `modalDialogClose1` }
-  
-
-  onClick={ () => {} }
-  
->
-  Close
-</IGRPModalDialogClose>
   <IGRPButton
   name={ `button1` }
   

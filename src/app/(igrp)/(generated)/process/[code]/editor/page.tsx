@@ -86,7 +86,7 @@ const { data, isLoading,error } = useDetailProcessDefinition(code);
 useEffect(() => {
   if (isLoading || !data) return
   setPageHeader1Description(`${data.title} [${data.processKey}] - ${data.statusDesc}`)
-  setBpmnXml(data.bpmFileContent)
+  //setBpmnXml(data.bpmFileContent)
   setInputTextarea1Value(data.bpmFileContent)
 
 }, [isLoading])
@@ -158,7 +158,7 @@ iconName={ `Save` }
           label: `Diagram Editor`,
           icon: `Workflow`,
 content: (<>
-            <BpmnModeler  onChange={ setBpmnXml } xml={ bpmnXml } processName={ data.title } processKey={ data.processKey }   ></BpmnModeler>
+            <BpmnModeler  onChange={ setBpmnXml } processName={ data.title } processKey={ data.processKey } xml={ data.bpmFileContent }   ></BpmnModeler>
 </>),
         },
         {
