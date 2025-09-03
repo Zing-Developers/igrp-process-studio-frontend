@@ -23,6 +23,7 @@ export const saveDiagramProcessDefinition = async (
   const data = {
     ...processDefinition,
   };
+  console.log('data', data);
   return await client.processDefinitions.saveDiagram(processDefinitionId, data);
 };
 
