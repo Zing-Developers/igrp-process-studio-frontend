@@ -92,11 +92,11 @@ useEffect(() => {
 
 useEffect(() => {
   setModalDialogTitle1Content('Create a new Process')
-      setForm1Data(undefined)
+  setForm1Data(undefined)
 
 
   if (initialData) {
-    setForm1Data(initialData)
+    setForm1Data({ ...initialData })
     setModalDialogTitle1Content('Edit Process')
 
   }
