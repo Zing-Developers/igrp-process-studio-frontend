@@ -170,7 +170,7 @@ content: (<>
   name={ `inputTextarea1` }
   
 label={ `XML` }
-rows={ 30 }
+rows={ 20 }
 required={ false }
 
 

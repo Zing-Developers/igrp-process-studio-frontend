@@ -51,6 +51,8 @@ const initForm1: z.infer<Form1ZodType> = {
   const [form1Data, setForm1Data] = useState<any>(initForm1);
   const [selectprojectIdOptions, setSelectprojectIdOptions] = useState<IGRPOptionsProps[]>([]);
   
+const [modalDialogTitle1Content, setModalDialogTitle1Content] = useState<string>('Create a new Process');
+
 const { igrpToast } = useIGRPToast()
 
 async function handleSubmit (values: z.infer<any>): Promise<void  | undefined> {
@@ -89,8 +91,15 @@ useEffect(() => {
 }, [isLoading])
 
 useEffect(() => {
-  if (initialData)
+  setModalDialogTitle1Content('Create a new Process')
+      setForm1Data(undefined)
+
+
+  if (initialData) {
     setForm1Data(initialData)
+    setModalDialogTitle1Content('Edit Process')
+
+  }
 }, [initialData])
 
 
@@ -118,7 +127,7 @@ useEffect(() => {
   
   
 >
-  Create a new Process
+  { modalDialogTitle1Content }
 </IGRPModalDialogTitle>
 </IGRPModalDialogHeader>
   <IGRPForm
