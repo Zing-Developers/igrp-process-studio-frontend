@@ -29,6 +29,7 @@ import {
 	IGRPDataTableFilterDropdown 
 } from "@igrp/igrp-framework-react-design-system";
 import {deleteProcessDefinition} from '@/app/(myapp)/functions/process-definition'
+import z from 'zod';
 import {useProcessDefinition} from '@/app/(myapp)/hooks/process'
 import { IGRPLoadingSpinner } from '@igrp/igrp-framework-react-design-system'
 import { useRouter } from "next/navigation";
@@ -67,7 +68,7 @@ const [hasNewProcess, setHasNewProcess] = useState<boolean>(false);
 
 const { igrpToast } = useIGRPToast()
 
-function handleDelete (rowData: void): void  | undefined {
+function handleDelete (rowData: z.infer<any>): void  | undefined {
 
   try {
 
@@ -80,7 +81,6 @@ function handleDelete (rowData: void): void  | undefined {
   });
 
   setHasNewProcess(true)
- queryClient.invalidateQueries({ queryKey: ['process'] });
 
 } catch (error: any) {
   console.error('Error delete process definition:', error);
@@ -96,8 +96,17 @@ function handleDelete (rowData: void): void  | undefined {
 const router = useRouter()
 const queryClient = useQueryClient();
 
-const { processDefinitions,totalPublished, totalProcessDefinitions,totalRascunho, isLoading } = useProcessDefinition();
+const { processDefinitions, totalPublished, totalProcessDefinitions, totalRascunho, isLoading } = useProcessDefinition();
 
+ useEffect(() => {
+     console.log(hasNewProcess);
+     if (hasNewProcess) {
+       // Force refetch the data
+      queryClient.invalidateQueries({ queryKey: ['process'] });
+       // Reset the flag after refetch
+       setHasNewProcess(false);
+     }
+   }, [hasNewProcess, queryClient]);
 useEffect(() => {
   if (isLoading || !processDefinitions) return
   setContentTabletable1(processDefinitions || [])
@@ -106,16 +115,16 @@ useEffect(() => {
   setStatstatsCard3Value(totalPublished || 0)
 
 
-}, [isLoading])
+}, [isLoading,processDefinitions,hasNewProcess])
 
 if (isLoading) {
-    return (
-      <div className="flex items-center gap2 flex-col">
+  return (
+     <div className="flex items-center gap2 flex-col">
         <IGRPLoadingSpinner />
-        <span>loading process definitions...</span>
+        <span> loading process definitions...</span>
       </div>
     );
-  }
+}
 
 
   return (
@@ -325,7 +334,7 @@ return (
       {
         component: IGRPDataTableDropdownMenuAlert,
         props: {
-          modalTitle: `Delete Process Definition`,labelTrigger: `Delete`,icon: `Trash`,          showIcon: true,showCancel: true,labelCancel: `Cancel`,variantCancel: `outline`,showConfirm: true,labelConfirm: `Confirm`,variantConfirm: `destructive`,          onClickConfirm: ()=>{handleDelete(rowData);setHasNewProcess(false)
+          modalTitle: `Delete Process Definition`,labelTrigger: `Delete`,icon: `Trash`,          showIcon: true,showCancel: true,labelCancel: `Cancel`,variantCancel: `outline`,showConfirm: true,labelConfirm: `Confirm`,variantConfirm: `destructive`,          onClickConfirm: ()=>{handleDelete(rowData);
 },
           children: <>Do you want delete this process definition?</>
 }
