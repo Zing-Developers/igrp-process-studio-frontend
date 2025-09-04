@@ -18,7 +18,7 @@
     "@igrp/framework-process-studio-client": "0.0.1-beta.6",
     "@igrp/framework-process-studio-types": "0.0.1-beta.6",
     "@igrp/igrp-framework-react-design-system": "0.1.0-beta.1",
-    "@igrp/framework-process-studio-bpmn-editor": "0.1.0-beta.1",
+    "@igrp/framework-process-studio-bpmn-editor": "0.1.0-beta.3",
     "@tanstack/react-query": "^5.80.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
