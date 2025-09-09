@@ -41,7 +41,7 @@ export default function Variables({ open, setOpen, currentProcess } : { open: bo
 type Form1ZodType = typeof form1;
 
 const initForm1: z.infer<Form1ZodType> = {
-    variables: [{ name: undefined, type: undefined, defaultValue: undefined, required: undefined, id: undefined }]
+    variables: [{ name: ``, type: ``, defaultValue: undefined, required: undefined, id: undefined }]
 }
 
 
@@ -108,18 +108,14 @@ useEffect(() => {
   
 >
   <IGRPModalDialogTitle
-  name={ `modalDialogTitle1` }
   
-
   
   
 >
   Process Varaibles
 </IGRPModalDialogTitle>
   <IGRPModalDialogDescription
-  name={ `modalDialogDescription1` }
   
-
   
   
 >
@@ -151,8 +147,6 @@ renderItem={ (_: any, index: number) => (
   label={ `Name` }
 showIcon={ false }
 required={ true }
-
-
   className={ cn('col-span-1',) }
   
   
@@ -168,9 +162,6 @@ selectLabel={ `No option found` }
 showSearch={ true }
 showIcon={ false }
 iconName={ `CornerDownRight` }
-
-
-
   className={ cn('col-span-1',) }
   onChange={ () => {} }
   options={ selecttypeOptions }
@@ -181,8 +172,6 @@ iconName={ `CornerDownRight` }
   label={ `Default Value` }
 showIcon={ false }
 required={ false }
-
-
   className={ cn('col-span-1',) }
   
   
@@ -191,8 +180,6 @@ required={ false }
 <IGRPCheckbox
   name={ `variables.${index}.required` }
   label={ `Required` }
-
-
   className={ cn('col-span-1',) }
   
   
@@ -202,8 +189,6 @@ required={ false }
   name={ `variables.${index}.id` }
   label={ `Hidden` }
 required={ false }
-
-
   className={ cn('col-span-1',) }
   
   
@@ -231,7 +216,6 @@ required={ false }
   <IGRPModalDialogClose
   name={ `modalDialogClose1` }
   
-
   onClick={ () => {} }
   
 >
@@ -239,12 +223,10 @@ required={ false }
 </IGRPModalDialogClose>
   <IGRPButton
   name={ `button1` }
-  
-variant={ `default` }
+  variant={ `default` }
 size={ `default` }
 showIcon={ true }
 iconName={ `Save` }
-
   onClick={ () => formform1Ref.current?.submit() }
   
 >

@@ -1,0 +1,9 @@
+services:
+  process-studio-frontend-ui-development:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    image: process-studio-frontend-ui-development
+    ports:
+      - '3001:3000'

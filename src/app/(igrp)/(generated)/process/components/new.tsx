@@ -121,7 +121,6 @@ useEffect(() => {
   
 >
   <IGRPModalDialogTitle
-  name={ `modalDialogTitle1` }
   
 
   

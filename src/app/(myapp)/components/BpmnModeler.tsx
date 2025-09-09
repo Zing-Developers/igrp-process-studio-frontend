@@ -1,4 +1,3 @@
-import BpmnJS from 'bpmn-js/lib/Modeler';
 import { useEffect, useState } from 'react';
 import diagramXML from '@/app/(myapp)/resources/newDiagram';
 
@@ -7,7 +6,7 @@ import { IGRPBpmnModeler } from '@igrp/framework-process-studio-bpmn-editor';
 interface BpmnModelerProps {
   xml?: string;
   onChange?: (xml: string) => void;
-  onLoad?: (modeler: BpmnJS) => void;
+  onLoad?: (modeler: any) => void;
   processKey: string;
   processName: string;
 }
