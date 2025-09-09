@@ -4,11 +4,11 @@ import { createServerClient } from '../lib/server-client';
 
 const client = createServerClient();
 
-export const getProcessDefinitionById = async (processDefinitionId: string) => {
+export const getProcessDefinitionById = async (processDefinitionId: string): Promise<ProcessDefinition> => {
   return await client.processDefinitions.getById(processDefinitionId);
 };
 
-export const createOrUpdateProcessDefinition = async (processDefinition: ProcessDefinition) => {
+export const createOrUpdateProcessDefinition = async (processDefinition: ProcessDefinition): Promise<ProcessDefinition> => {
   return await client.processDefinitions.createOrUpdate(processDefinition);
 };
 

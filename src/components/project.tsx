@@ -36,8 +36,8 @@ export default function Project({ open, setOpen, initialData } : { open: boolean
 type Form1ZodType = typeof form1;
 
 const initForm1: z.infer<Form1ZodType> = {
-    code: undefined,
-    name: undefined,
+    code: ``,
+    name: ``,
     description: undefined
 }
 
@@ -96,9 +96,7 @@ const router = useRouter();
   
 >
   <IGRPModalDialogTitle
-  name={ `modalDialogTitle1` }
   
-
   
   
 >
@@ -119,8 +117,6 @@ formRef={ formform1Ref }
   label={ `Code` }
 showIcon={ false }
 required={ true }
-
-
 placeholder={ `Enter process code` }
   className={ cn() }
   
@@ -132,8 +128,6 @@ placeholder={ `Enter process code` }
   label={ `Name` }
 showIcon={ false }
 required={ true }
-
-
 placeholder={ `Enter process name` }
   className={ cn() }
   
@@ -142,12 +136,9 @@ placeholder={ `Enter process name` }
 </IGRPInputText>
   <IGRPTextarea
   name={ `description` }
-  
-label={ `Description` }
+  label={ `Description` }
 rows={ 3 }
 required={ false }
-
-
 placeholder={ `Enter process description` }
   className={ cn() }
   
@@ -163,12 +154,10 @@ placeholder={ `Enter process description` }
 >
   <IGRPButton
   name={ `button1` }
-  
-variant={ `default` }
+  variant={ `default` }
 size={ `default` }
 showIcon={ true }
 iconName={ `Save` }
-
   onClick={ () => formform1Ref.current?.submit() }
   
 >

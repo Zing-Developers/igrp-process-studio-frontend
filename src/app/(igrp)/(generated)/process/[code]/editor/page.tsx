@@ -42,7 +42,7 @@ async function handleSave (): Promise<void  | undefined> {
 
   try {
    if ( !data) return
-  await saveDiagramProcessDefinition(data.processKey,{content: bpmnXml});
+  await saveDiagramProcessDefinition(data?.processKey,{content: bpmnXml});
   igrpToast({
     title: 'Success',
     description: 'Process definition saved successfully',
@@ -63,7 +63,7 @@ async function handleDeploy (): Promise<void  | undefined> {
 
   try {
    if (!data) return
-  await deployProcessDefinition(data.processKey,{content: bpmnXml});
+  await deployProcessDefinition(data?.processKey,{content: bpmnXml});
   igrpToast({
     title: 'Success',
     description: 'Process definition published successfully',
@@ -85,9 +85,9 @@ const { data, isLoading,error } = useDetailProcessDefinition(code);
 
 useEffect(() => {
   if (isLoading || !data) return
-  setPageHeader1Description(`${data.title} [${data.processKey}] - ${data.statusDesc}`)
-  setBpmnXml(data.bpmFileContent)
-  setInputTextarea1Value(data.bpmFileContent)
+  setPageHeader1Description(`${data?.title} [${data?.processKey}] - ${data?.statusDesc}`)
+  setBpmnXml(data?.bpmFileContent)
+  setInputTextarea1Value(data?.bpmFileContent)
 
 }, [isLoading])
 
