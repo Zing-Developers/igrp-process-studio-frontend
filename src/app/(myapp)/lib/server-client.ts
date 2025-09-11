@@ -3,7 +3,7 @@ import { createProcessStudioClient } from '@igrp/framework-process-studio-client
 // Environment configuration for server-side
 const getServerConfig = () => {
   const config = {
-    baseUrl: process.env.NEXT_PUBLIC_API_GATEWAY || 'http://localhost:8085',
+    baseUrl: process.env.API_GATEWAY || 'http://localhost:8085',
     timeout: 30000,
     headers: {
       'Content-Type': 'application/json',
