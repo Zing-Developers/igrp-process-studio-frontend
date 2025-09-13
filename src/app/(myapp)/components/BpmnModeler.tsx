@@ -6,7 +6,7 @@ import { IGRPBpmnModeler } from '@igrp/framework-process-studio-bpmn-editor';
 interface BpmnModelerProps {
   xml?: string;
   onChange?: (xml: string) => void;
-  onLoad?: (modeler: any) => void;
+  onLoad?: (modeler: unknown) => void;
   processKey: string;
   processName: string;
 }
