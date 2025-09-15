@@ -6,7 +6,7 @@ export const IGRP_MOCK_USER: IGRPUserArgs = {
   username: 'igrp.user',
   fullname: 'IGRP USER',
   name: 'IGRP USER',
-  email: 'igrp.user@nosi.cv',
+  email: 'igrp.user@igrp.cv',
   roles: [],
   departments: [],
   apps: ['igrp-demo', 'igrp-test'],
