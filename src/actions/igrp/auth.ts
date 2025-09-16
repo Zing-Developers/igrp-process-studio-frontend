@@ -1,9 +1,14 @@
 'use server';
 
-import { getServerSession as getNextAuthServerSession } from 'next-auth/next';
+import { resetIGRPAccessClientConfig, setIGRPAccessClientConfig } from '@igrp/framework-next';
+import { getServerSession as getNextAuthServerSession } from '@igrp/framework-next-auth';
+import { Session } from '@igrp/framework-next-auth';
+
 import { authOptions } from '@/lib/auth-options';
 
 export async function serverSession() {
+  const apiManagement = process.env.IGRP_APP_MANAGER_API ?? '';
+
   try {
     if (!process.env.NEXTAUTH_SECRET) {
       console.warn('Warning: NEXTAUTH_SECRET is not set. This is required for production.');
@@ -22,6 +27,13 @@ export async function serverSession() {
     }
 
     const session = await getNextAuthServerSession(authOptions);
+
+    if (session !== null) {
+      setIGRPAccessClientConfig({
+        token: session.accessToken || '',
+        baseUrl: apiManagement,
+      });
+    }
     return session;
   } catch (error) {
     console.error('::Error getting server session::', error);
@@ -30,26 +42,38 @@ export async function serverSession() {
 }
 
 export async function getSession() {
-  let session;
+  let session: Session | null;
   const isPreviewMode = process.env.IGRP_PREVIEW_MODE === 'true';
 
-  if (isPreviewMode) return (session = null);
+  console.log('getSession - Preview Mode:', isPreviewMode);
+  console.log('getSession - Environment variables:', {
+    KEYCLOAK_CLIENT_ID: !!process.env.KEYCLOAK_CLIENT_ID,
+    KEYCLOAK_CLIENT_SECRET: !!process.env.KEYCLOAK_CLIENT_SECRET,
+    KEYCLOAK_ISSUER: !!process.env.KEYCLOAK_ISSUER,
+    NEXTAUTH_SECRET: !!process.env.NEXTAUTH_SECRET,
+  });
 
-  if (process.env.NODE_ENV === 'production') {
-    try {
-      session = await serverSession();
-      session = null;
-    } catch (error) {
-      console.error('Failed to get session in layout:', error);
-      session = null;
-    }
-  } else {
+  if (isPreviewMode) {
+    console.log('getSession - Preview mode enabled, returning null session');
+    return (session = null);
+  }
+
+  try {
+    session = await serverSession();
+    console.log('getSession - Session result:', {
+      hasSession: !!session,
+      hasAccessToken: !!session?.accessToken,
+      tokenLength: session?.accessToken?.length || 0,
+    });
+  } catch (error) {
+    console.error('Failed to get session in layout:', error);
     session = null;
   }
 
-  console.log({ isPreviewMode });
-  console.log('NODE_ENV:::', process.env.NODE_ENV);
-  console.log({ session });
-
   return session;
+}
+
+export async function refreshAccessClient() {
+  resetIGRPAccessClientConfig();
+  await serverSession();
 }
