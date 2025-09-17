@@ -122,7 +122,7 @@ size={ `default` }
 showIcon={ false }
 
 
-  className={ cn('bg-green-600 hover:bg-green-600 hidden',) }
+  className={ cn('bg-green-600 hover:bg-green-600',) }
   onClick={ handleDeploy }
   
 >
