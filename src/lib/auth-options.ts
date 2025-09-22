@@ -18,7 +18,7 @@ export const authOptions: NextAuthOptions = {
 
   session: {
     strategy: 'jwt',
-    maxAge: 4 * 60 * 60, // 4 hours
+    maxAge: 8 * 60 * 60, // 8 hours
   },
 
   cookies: {
@@ -35,6 +35,10 @@ export const authOptions: NextAuthOptions = {
   },
 
   callbacks: {
+    async redirect({ url, baseUrl }) {      
+      const forced = process.env.NEXTAUTH_URL ?? baseUrl;
+      return forced;     
+    },
     async jwt({ token, user, account, profile }) {
       if (account) {
         if (user && !('user' in token)) {
@@ -48,6 +52,7 @@ export const authOptions: NextAuthOptions = {
         token.accessToken = account.access_token;
         token.refreshToken = account.refresh_token;
         token.expiresAt = account.expires_at;
+
         delete token.error;
         return token;
       }
@@ -76,7 +81,7 @@ export const authOptions: NextAuthOptions = {
           idToken: tokens.id_token,
           accessToken: tokens.access_token,
           expiresAt: Math.floor(Date.now() / 1000 + Number(tokens.expires_in)),
-          refreshToken: tokens.refresh_token ?? token.refreshToken,
+          refreshToken: tokens.refresh_token || token.refreshToken,
           error: undefined,
         };
         return updatedToken;
@@ -94,17 +99,9 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-
-  events: {
-    async signOut({ token }) {
-      if (token) {
-        await doFinalSignoutHandshake(token as JWT);
-      }
-    },
-  },
 };
 
-async function requestRefreshOfAccessToken(token: JWT) {
+export async function requestRefreshOfAccessToken(token: JWT) {
   if (
     !process.env.KEYCLOAK_ISSUER ||
     !process.env.KEYCLOAK_CLIENT_ID ||
@@ -131,37 +128,20 @@ async function requestRefreshOfAccessToken(token: JWT) {
   });
 }
 
-async function doFinalSignoutHandshake(jwt: JWT) {
+export function buildKeycloakEndSessionUrl(jwt: JWT) {
   const issuer = process.env.KEYCLOAK_ISSUER;
-  const { idToken } = jwt;
+  if (!issuer) throw new Error('KEYCLOAK_ISSUER not set');
 
-  if (idToken && issuer) {
-    const postLogoutRedirectUri = process.env.NEXTAUTH_URL
-      ? `${process.env.NEXTAUTH_URL}/login`
-      : undefined;
+  const idToken = jwt?.idToken as string | undefined;
+  const postLogoutRedirectUri = process.env.NEXTAUTH_URL
+    ? `${process.env.NEXTAUTH_URL}/login`
+    : undefined;
 
-    try {
-      const body = new URLSearchParams({ id_token_hint: idToken });
-      if (postLogoutRedirectUri) {
-        body.append('post_logout_redirect_uri', postLogoutRedirectUri);
-      }
+  const url = new URL(`${issuer}/protocol/openid-connect/logout`);
+  if (idToken) url.searchParams.set('id_token_hint', idToken);
+  if (postLogoutRedirectUri)
+    url.searchParams.set('post_logout_redirect_uri', postLogoutRedirectUri);
 
-      const params = new URLSearchParams();
-      params.append('id_token_hint', idToken as string);
-
-      const response = await fetch(`${issuer}/protocol/openid-connect/logout`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      });
-      console.log('Completed post-logout handshake', response.status, response.statusText);
-    } catch (e) {
-      console.error(
-        'Unable to perform post-logout handshake',
-        e instanceof Error ? e.message : String(e),
-      );
-    }
-  } else {
-    if (!idToken) console.warn('No idToken found for Keycloak post-logout handshake.');
-    if (!issuer) console.warn('KEYCLOAK_ISSUER not set for post-logout handshake.');
-  }
+  return url.toString();
 }
+ 
