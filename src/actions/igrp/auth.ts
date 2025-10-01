@@ -7,7 +7,7 @@ import { Session } from '@igrp/framework-next-auth';
 import { authOptions } from '@/lib/auth-options';
 
 export async function serverSession() {
-  const apiManagement = process.env.IGRP_APP_MANAGER_API ?? '';
+  const apiManagement = process.env.IGRP_APP_MANAGER_API || '';
 
   try {
     if (!process.env.NEXTAUTH_SECRET) {
@@ -45,26 +45,10 @@ export async function getSession() {
   let session: Session | null;
   const isPreviewMode = process.env.IGRP_PREVIEW_MODE === 'true';
 
-  console.log('getSession - Preview Mode:', isPreviewMode);
-  console.log('getSession - Environment variables:', {
-    KEYCLOAK_CLIENT_ID: !!process.env.KEYCLOAK_CLIENT_ID,
-    KEYCLOAK_CLIENT_SECRET: !!process.env.KEYCLOAK_CLIENT_SECRET,
-    KEYCLOAK_ISSUER: !!process.env.KEYCLOAK_ISSUER,
-    NEXTAUTH_SECRET: !!process.env.NEXTAUTH_SECRET,
-  });
-
-  if (isPreviewMode) {
-    console.log('getSession - Preview mode enabled, returning null session');
-    return (session = null);
-  }
+  if (isPreviewMode) return (session = null);
 
   try {
     session = await serverSession();
-    console.log('getSession - Session result:', {
-      hasSession: !!session,
-      hasAccessToken: !!session?.accessToken,
-      tokenLength: session?.accessToken?.length || 0,
-    });
   } catch (error) {
     console.error('Failed to get session in layout:', error);
     session = null;
