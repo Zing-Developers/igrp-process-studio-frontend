@@ -1,7 +1,7 @@
 import { IGRP_MOCK_USER } from './user';
 
-export const getMockUser = () => {
+export function getMockUser() {
   return {
     mockUser: IGRP_MOCK_USER,
   };
-};
+}

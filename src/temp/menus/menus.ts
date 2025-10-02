@@ -2,16 +2,17 @@ import { IGRPMenuItemArgs } from '@igrp/framework-next-types';
 
 export const IGRP_DEFAULT_MENU: IGRPMenuItemArgs[] = [
   {
-    id: 0,
+    id: 43,
+    code: 'PROCESS_STUDIO',
     name: 'Process Studio',
-    type: 'FOLDER',
-    position: 1,
+    type: 'MENU_PAGE',
+    position: 0,
     icon: 'AppWindow',
     status: 'ACTIVE',
-    target: 'INTERNAL',
     url: 'process',
-    parentId: null,
-    applicationId: 1,
-    resourceId: null,
-  }
+    pageSlug: 'process',
+    parentCode: null,
+    applicationCode: 'IGRP',
+    permissions: [],
+  },
 ];
