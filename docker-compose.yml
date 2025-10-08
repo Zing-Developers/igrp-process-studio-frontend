@@ -6,4 +6,4 @@ services:
 
     image: process-studio-frontend-ui-development
     ports:
-      - '3001:3000'
+      - '3002:3000'
