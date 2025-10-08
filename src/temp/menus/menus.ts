@@ -13,6 +13,6 @@ export const IGRP_DEFAULT_MENU: IGRPMenuItemArgs[] = [
     pageSlug: 'process',
     parentCode: null,
     applicationCode: 'IGRP',
-    permissions: [],
+    roles: [],
   },
 ];
