@@ -2,13 +2,15 @@
 import { Project } from '@igrp/framework-process-studio-types';
 import { createServerClient } from '../lib/server-client';
 
-const client = createServerClient();
+
 
 export const getProject = async () => {
+  const client = await createServerClient();
   return await client.projects.getAll();
 };
 
 export const getProjectByCode = async (code: string) => {
+  const client = await createServerClient();
   return await client.projects.getById(code);
 };
 
@@ -21,14 +23,16 @@ export const createOrUpdateProject = async (project: Project) => {
 };
 
 export const createProject = async (project: Project) => {
-  console.log('createProject', project);
+  const client = await createServerClient();
   return await client.projects.create(project);
 };
 
 export const updateProject = async (project: Project) => {
+  const client = await createServerClient();
   return await client.projects.update(project);
 };
 
 export const deleteProject = async (code: string) => {
+  const client = await createServerClient();
   return await client.projects.delete(code);
 };

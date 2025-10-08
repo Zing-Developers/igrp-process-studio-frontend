@@ -1,31 +1,32 @@
+import { getServerSession } from '@igrp/framework-next-auth';
+import { authOptions } from '@/lib/auth-options';
 import { createProcessStudioClient } from '@igrp/framework-process-studio-client';
 
 // Environment configuration for server-side
-const getServerConfig = () => {
+const getServerConfig = async () => {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.accessToken) {
+    throw new Error('Authentication required. Please log in to access this feature.');
+  }
+  
   const config = {
     baseUrl: process.env.API_GATEWAY || 'http://localhost:8085',
     timeout: 30000,
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
+      Authorization: `Bearer ${session?.accessToken}`,
     },
   };
 
   return config;
 };
 
-// Create server-side client instance
-export const serverClient = createProcessStudioClient(getServerConfig());
-
 // Helper function to create client with custom config
-export const createServerClient = (customConfig?: {
-  baseUrl?: string;
-  timeout?: number;
-  headers?: Record<string, string>;
-}) => {
-  const baseConfig = getServerConfig();
+export const createServerClient = async () => {
+  const baseConfig = await getServerConfig();
   return createProcessStudioClient({
     ...baseConfig,
-    ...customConfig,
   });
 };
