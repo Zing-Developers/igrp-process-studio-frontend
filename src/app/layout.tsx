@@ -1,4 +1,5 @@
 import '@/styles/globals.css';
+import '@igrp/framework-process-studio-bpmn-editor/dist/src/styles.css';
 import '@igrp/framework-next-ui/dist/styles.css';
 import '@igrp/igrp-framework-react-design-system/dist/styles.css';
 
