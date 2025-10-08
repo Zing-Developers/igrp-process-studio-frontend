@@ -4,7 +4,9 @@ import KeycloakProvider from 'next-auth/providers/keycloak';
 import { redirect as nextRedirect } from 'next/navigation';
 
 const isProd = process.env.NODE_ENV === 'production';
-const cookieDomain = process.env.IGRP_NEXTAUTH_CALLBACK || undefined;
+const baseUrl = process.env.NEXTAUTH_URL ?? '';
+const url = new URL(baseUrl);
+const cookieDomain = isProd && url.hostname !== 'localhost' ? url.hostname : undefined;
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -37,22 +39,18 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     async redirect({ url, baseUrl }) {
-      const NEXTAUTH_URL = process.env.NEXTAUTH_URL;
-      const forced = NEXTAUTH_URL ?? baseUrl;
+      const basePath = process.env.IGRP_APP_BASE_PATH || '';
+      if (url.startsWith('/')) return `${baseUrl}${basePath}${url}`;
 
-      if (url.startsWith('/')) {
-        const u = new URL(url, forced).toString();
-        return u;
+      if (url.startsWith(baseUrl)) {
+        const hasBasePath = baseUrl.includes(basePath);
+        if (hasBasePath) return url;
+
+        const _url = url.replace(baseUrl, '');
+        return `${baseUrl}${basePath}${_url}`;
       }
 
-      try {
-        const u = new URL(url);
-        const f = new URL(forced);
-        const origin = u.origin === f.origin;
-        return origin ? url : f.toString();
-      } catch {
-        return forced;
-      }
+      return `${baseUrl}${basePath}`;
     },
     async jwt({ token, user, account, profile }) {
       if (account) {
@@ -114,6 +112,10 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
+
+  pages: {
+    signIn: '/api/auth/signin',
+  },
 };
 
 export async function requestRefreshOfAccessToken(token: JWT) {
@@ -148,14 +150,15 @@ export function buildKeycloakEndSessionUrl(jwt: JWT) {
   if (!issuer) throw new Error('KEYCLOAK_ISSUER not set');
 
   const idToken = jwt?.idToken as string | undefined;
+  const loginUrl = '/login';
+  const basePath = process.env.IGRP_APP_BASE_PATH || '';
   const postLogoutRedirectUri = process.env.NEXTAUTH_URL
-    ? `${process.env.NEXTAUTH_URL}/login`
+    ? `${process.env.NEXTAUTH_URL}${basePath}${loginUrl}`
     : undefined;
 
   const url = new URL(`${issuer}/protocol/openid-connect/logout`);
   if (!idToken) {
     console.error('No your or not login, available for logout.');
-    const loginUrl = process.env.IGRP_LOGIN_URL || '/login';
     nextRedirect(loginUrl);
   }
   url.searchParams.set('id_token_hint', idToken);

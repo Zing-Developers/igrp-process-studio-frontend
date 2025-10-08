@@ -12,9 +12,18 @@ export function createConfig(config: IGRPLayoutConfigArgs): Promise<IGRPConfigAr
   const footerMwnu = getMockMenusFooter().mockMenusFooter;
   const apps = getMockApps().mockApps;
 
+  function basePath(bp: string) {
+    if (!bp) return '/api/auth';
+
+    if (bp.startsWith('/') && bp.endsWith('/')) return `${bp}api/auth`;
+    if (bp.startsWith('/') && !bp.endsWith('/')) return `${bp}/api/auth/`;
+    if (!bp.startsWith('/') && bp.endsWith('/')) return `/${bp}api/auth`;
+    return `${bp}/api/auth`;
+  }
+
   return igrpBuildConfig({
     appCode: process.env.IGRP_APP_CODE || '',
-    previewMode: process.env.IGRP_PREVIEW_MODE === 'true',
+    previewMode: process.env.IGRP_PREVIEW_MODE === 'true' ? true : false,
     layoutMockData: {
       getHeaderData: async () => ({
         user: user,
@@ -50,8 +59,11 @@ export function createConfig(config: IGRPLayoutConfigArgs): Promise<IGRPConfigAr
       richColors: true,
       closeButton: true,
     },
-    loginUrl: process.env.IGRP_LOGIN_URL || '',
-    logoutUrl: process.env.IGRP_LOGOUT_URL || '',
     showSettings: true,
+    sessionArgs: {
+      refetchInterval: 5 * 60,
+      refetchOnWindowFocus: true,
+      basePath: basePath(process.env.IGRP_APP_BASE_PATH || ''),
+    },
   });
 }
