@@ -2,8 +2,6 @@
 import { Project } from '@igrp/framework-process-studio-types';
 import { createServerClient } from '../lib/server-client';
 
-
-
 export const getProject = async () => {
   const client = await createServerClient();
   return await client.projects.getAll();
