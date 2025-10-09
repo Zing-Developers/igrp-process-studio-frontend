@@ -5,8 +5,16 @@ import { redirect as nextRedirect } from 'next/navigation';
 
 const isProd = process.env.NODE_ENV === 'production';
 const baseUrl = process.env.NEXTAUTH_URL ?? '';
-const url = new URL(baseUrl);
-const cookieDomain = isProd && url.hostname !== 'localhost' ? url.hostname : undefined;
+let cookieDomain: string | undefined;
+
+try {
+  const url = new URL(baseUrl);
+  cookieDomain = isProd && url.hostname !== 'localhost' ? url.hostname : undefined;
+} catch {
+  // During build time, NEXTAUTH_URL might not be set yet
+  // This is okay as the actual URL will be available at runtime
+  cookieDomain = undefined;
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [
