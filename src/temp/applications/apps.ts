@@ -4,8 +4,8 @@ export const IGRP_MOCK_APPS_DATA: IGRPApplicationArgs[] = [
   {
     id: 35,
     code: 'APP_TEST_1',
-    name: 'test 1',
-    description: null,
+    name: 'iGRP Process Studio',
+    description: 'iGRP Process Studio',
     status: 'ACTIVE',
     type: 'INTERNAL',
     owner: 'superadmin',
@@ -13,18 +13,5 @@ export const IGRP_MOCK_APPS_DATA: IGRPApplicationArgs[] = [
     url: null,
     slug: 'test-1',
     departments: ['DEPT_IGRP']
-  },
-  {
-    id: 36,
-    code: 'APP_TESTE_2',
-    name: 'test 2',
-    description: 'teste app ',
-    status: 'ACTIVE',
-    type: 'INTERNAL',
-    owner: 'superadmin',
-    picture: '',
-    url: null,
-    slug: 'test-2',
-    departments: ['DEPT_IGRP']
-  },
+  }
 ];

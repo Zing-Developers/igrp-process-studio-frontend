@@ -62,7 +62,7 @@ async function handleSubmit (values: z.infer<any>): Promise<void  | undefined> {
       : 'Process saved successfully',
     type: 'success',
   });
-  router.push('/process');
+  setOpen(false)
 } catch (error: any) {
   igrpToast({
     title: 'Error',
@@ -96,6 +96,7 @@ const router = useRouter();
   
 >
   <IGRPModalDialogTitle
+  name={ `modalDialogTitle1` }
   
   
   
