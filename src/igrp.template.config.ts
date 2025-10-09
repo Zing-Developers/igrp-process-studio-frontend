@@ -23,7 +23,7 @@ export function createConfig(config: IGRPLayoutConfigArgs): Promise<IGRPConfigAr
 
   return igrpBuildConfig({
     appCode: process.env.IGRP_APP_CODE || '',
-    previewMode: process.env.IGRP_PREVIEW_MODE === 'true' ? true : false,
+    previewMode: process.env.IGRP_PREVIEW_MODE === 'true',
     layoutMockData: {
       getHeaderData: async () => ({
         user: user,
