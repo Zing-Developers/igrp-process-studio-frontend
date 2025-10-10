@@ -4,7 +4,7 @@ import { PaginatedResponse, Project } from '@igrp/framework-process-studio-types
 
 export const useProject = () => {
   return useQuery<PaginatedResponse<Project>>({
-    queryKey: ['process'],
+    queryKey: ['project'],
     queryFn: () => getProject(),
   });
 };

@@ -1,30 +1,33 @@
 import { NextConfig } from 'next';
 
-// use this if you are using a custom domain for igrp-applications-center
-// const basePath = process.env.IGRP_APP_BASE_PATH || '';
+const basePath = process.env.IGRP_APP_BASE_PATH || '';
+
+// Função para parsear domains de variável de ambiente
+const getRemotePatterns = () => {
+  const patterns: any[] = [];
+
+  // Adicionar domains extras via env (separados por vírgula)
+  // Ex: NEXT_PUBLIC_ALLOWED_DOMAINS=example.com,cdn.example.com
+  const extraDomains = process.env.NEXT_PUBLIC_ALLOWED_DOMAINS?.split(',') || [];
+
+  extraDomains.forEach((domain) => {
+    const trimmedDomain = domain.trim();
+    if (trimmedDomain) {
+      patterns.push({
+        protocol: 'https' as const,
+        hostname: trimmedDomain,
+      });
+    }
+  });
+
+  return patterns;
+};
 
 const nextConfig: NextConfig = {
-  // uncomment this line when you build this build,
   output: 'standalone',
-
-  // use this if you are using a custom domain for igrp-applications-center
-  basePath: process.env.IGRP_APP_BASE_PATH || '',
-
+  basePath: basePath,
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'nosi.cv',
-      },
-      {
-        protocol: 'https',
-        hostname: 'img.youtube.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'igrp.cv',
-      },
-    ],
+    remotePatterns: getRemotePatterns(),
   },
 };
 
