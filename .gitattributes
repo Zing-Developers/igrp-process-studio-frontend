@@ -1,0 +1,4 @@
+.github/workflows/** merge=ours
+docker-compose.yml merge=ours
+/k8s/* merge=ours
+/env/* merge=ours
