@@ -24,7 +24,7 @@ import {
 import {createOrUpdateProject} from '@/app/(myapp)/functions/project'
 import { useRouter } from 'next/navigation';
 
-export default function Project({ open, setOpen, initialData } : { open: boolean, setOpen: (prompt: boolean) => void, initialData?: any }) {
+export default function Project({ open, setOpen, initialData, invalidateQueries } : { open: boolean, setOpen: (prompt: boolean) => void, initialData?: any, invalidateQueries: () => void }) {
 
   
   const form1 = z.object({
@@ -63,6 +63,7 @@ async function handleSubmit (values: z.infer<any>): Promise<void  | undefined> {
     type: 'success',
   });
   setOpen(false)
+  invalidateQueries()
 } catch (error: any) {
   igrpToast({
     title: 'Error',
@@ -153,17 +154,19 @@ placeholder={ `Enter process description` }
   
   
 >
-  <IGRPButton
+  <div className={ cn('flex','flex flex-row flex-wrap items-center justify-end gap-2',)}    >
+	<IGRPButton
   name={ `button1` }
   variant={ `default` }
 size={ `default` }
 showIcon={ true }
 iconName={ `Save` }
+  className={ cn() }
   onClick={ () => formform1Ref.current?.submit() }
   
 >
   Save
-</IGRPButton>
+</IGRPButton></div>
 </IGRPModalDialogFooter>
 </IGRPModalDialogContent>
 </IGRPModalDialog></div>
