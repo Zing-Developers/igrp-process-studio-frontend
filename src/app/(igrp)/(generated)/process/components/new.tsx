@@ -27,7 +27,7 @@ import {createOrUpdateProcessDefinition} from '@/app/(myapp)/functions/process-d
 import {useProjectConfiguration} from '@/app/(myapp)/hooks/process'
 import { useRouter } from 'next/navigation';
 
-export default function New({ open, setOpen, initialData, setNewProcess } : { open: boolean, setOpen: (prompt: boolean) => void, initialData?: any, setNewProcess: (prompt: boolean) => void }) {
+export default function New({ open, setOpen, initialData, setNewProcess, invalidateQueries } : { open: boolean, setOpen: (prompt: boolean) => void, initialData?: any, setNewProcess: (prompt: boolean) => void, invalidateQueries: () => void }) {
 
   
   const form1 = z.object({
@@ -70,7 +70,7 @@ async function handleSubmit (values: z.infer<any>): Promise<void  | undefined> {
       : 'Process saved successfully',
     type: 'success',
   });
-  setNewProcess(true);
+  invalidateQueries();
   setOpen(false)
 } catch (error: any) {
   igrpToast({
@@ -88,7 +88,7 @@ const { processOptions, isLoading } = useProjectConfiguration();
 useEffect(() => {
   if (isLoading) return
   setSelectprojectIdOptions(processOptions || [])
-}, [isLoading])
+}, [isLoading,open])
 
 useEffect(() => {
   setModalDialogTitle1Content('Create a new Process')
@@ -121,8 +121,8 @@ useEffect(() => {
   
 >
   <IGRPModalDialogTitle
+  name={ `modalDialogTitle1` }
   
-
   
   
 >
@@ -143,8 +143,6 @@ formRef={ formform1Ref }
   label={ `Title` }
 showIcon={ false }
 required={ true }
-
-
 placeholder={ `Enter process title` }
   className={ cn() }
   
@@ -156,8 +154,6 @@ placeholder={ `Enter process title` }
   label={ `Process Key` }
 showIcon={ false }
 required={ true }
-
-
 placeholder={ `Enter process key` }
   className={ cn() }
   
@@ -166,12 +162,9 @@ placeholder={ `Enter process key` }
 </IGRPInputText>
   <IGRPTextarea
   name={ `description` }
-  
-label={ `Description` }
+  label={ `Description` }
 rows={ 3 }
 required={ false }
-
-
 placeholder={ `Enter process description` }
   className={ cn() }
   
@@ -188,9 +181,6 @@ selectLabel={ `No option found` }
 showSearch={ true }
 showIcon={ false }
 iconName={ `CornerDownRight` }
-
-
-
   className={ cn() }
   onChange={ () => {} }
   options={ selectprojectIdOptions }
@@ -199,23 +189,23 @@ iconName={ `CornerDownRight` }
 </>
 </IGRPForm>
   <IGRPModalDialogFooter
-  className={ cn('',) }
+  className={ cn('','',) }
   
   
 >
-  <IGRPButton
+  <div className={ cn('flex','flex flex-row flex-wrap items-center justify-end gap-2',)}    >
+	<IGRPButton
   name={ `button1` }
-  
-variant={ `default` }
+  variant={ `default` }
 size={ `default` }
 showIcon={ true }
 iconName={ `Save` }
-
+  className={ cn() }
   onClick={ () => formform1Ref.current?.submit() }
   
 >
   Save
-</IGRPButton>
+</IGRPButton></div>
 </IGRPModalDialogFooter>
 </IGRPModalDialogContent>
 </IGRPModalDialog></div>

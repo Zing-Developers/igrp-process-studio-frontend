@@ -11,6 +11,7 @@ import { cn, useIGRPMenuNavigation, useIGRPToast } from '@igrp/igrp-framework-re
 import { IGRPDataTableFacetedFilterFn , IGRPDataTableDateRangeFilterFn } from "@igrp/igrp-framework-react-design-system";
 import { IGRPDataTableHeaderSortToggle, IGRPDataTableHeaderSortDropdown, IGRPDataTableHeaderRowsSelect } from "@igrp/igrp-framework-react-design-system";
 import { IGRPOptionsProps } from "@igrp/igrp-framework-react-design-system";
+import {IgrpLoading} from '@/app/(myapp)/components/igrp-loading'
 import New from '@/app/(igrp)/(generated)/process/components/new'
 import Project from '@/components/project'
 import { 
@@ -62,8 +63,6 @@ const [openProcess, setOpenProcess] = useState<boolean>(false);
 
 const [editingProcess, setEditingProcess] = useState<any>(undefined);
 
-const [open, setOpen] = useState<boolean>(false);
-
 const [hasNewProcess, setHasNewProcess] = useState<boolean>(false);
 
 const { igrpToast } = useIGRPToast()
@@ -80,7 +79,7 @@ function handleDelete (rowData: z.infer<any>): void  | undefined {
     type: 'success',
   });
 
-  setHasNewProcess(true)
+  invalidateQueries()
 
 } catch (error: any) {
   console.error('Error delete process definition:', error);
@@ -93,20 +92,17 @@ function handleDelete (rowData: z.infer<any>): void  | undefined {
 
 }
 
-const router = useRouter()
+function invalidateQueries (): void  | undefined {
+
+  queryClient.invalidateQueries({ queryKey: ['process'] });
+queryClient.invalidateQueries({ queryKey: ['project'] });
+
+}
+
 const queryClient = useQueryClient();
 
 const { processDefinitions, totalPublished, totalProcessDefinitions, totalRascunho, isLoading } = useProcessDefinition();
 
- useEffect(() => {
-     console.log(hasNewProcess);
-     if (hasNewProcess) {
-       // Force refetch the data
-      queryClient.invalidateQueries({ queryKey: ['process'] });
-       // Reset the flag after refetch
-       setHasNewProcess(false);
-     }
-   }, [hasNewProcess, queryClient]);
 useEffect(() => {
   if (isLoading || !processDefinitions) return
   setContentTabletable1(processDefinitions || [])
@@ -115,16 +111,8 @@ useEffect(() => {
   setStatstatsCard3Value(totalPublished || 0)
 
 
-}, [isLoading,processDefinitions,hasNewProcess])
+}, [isLoading, processDefinitions])
 
-if (isLoading) {
-  return (
-     <div className="flex items-center gap2 flex-col">
-        <IGRPLoadingSpinner />
-        <span> loading process definitions...</span>
-      </div>
-    );
-}
 
 
   return (
@@ -231,7 +219,7 @@ showIconBackground={ true }
   value={ statstatsCard1Value }
 >
 </IGRPStatsCard></div>
-<div className={ cn(' border rounded-lg p-3',)}    >
+{ !isLoading && (<div className={ cn(' border rounded-lg p-3',)}    >
 	<IGRPDataTable<Table1, Table1>
   showFilter={ true }
   showPagination={ true }
@@ -364,12 +352,15 @@ return (
   }
   
   data={ contentTabletable1 }
-/></div></div>
+/></div>)}
+<IgrpLoading  loading={ isLoading }   ></IgrpLoading></div>
 <New  open={ openProcess } initialData={ editingProcess }  setOpen={ setOpenProcess
  }
 setNewProcess={ setHasNewProcess
- } ></New>
+ }
+invalidateQueries={ invalidateQueries } ></New>
 <Project  open={ openProject }  setOpen={ setOpenProject
- } ></Project></div>
+ }
+invalidateQueries={ invalidateQueries } ></Project></div>
   );
 }
