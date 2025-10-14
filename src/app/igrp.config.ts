@@ -45,5 +45,5 @@ export default {
   types: [],
   actions: [],
   functions: ['hooks/process', 'functions/project', 'functions/process-definition'],
-  components: ['components/BpmnModeler']
+  components: ['components/BpmnModeler', 'components/igrp-loading']
 };

@@ -31,7 +31,7 @@ importers:
         version: 0.0.1-beta.9(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(diagram-js@15.4.0)(next-auth@4.24.11(next@15.5.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(next@15.5.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(zeebe-bpmn-moddle@1.11.0)
       '@igrp/framework-process-studio-client':
         specifier: latest
-        version: 0.0.1-beta.9
+        version: 0.0.1-beta.11
       '@igrp/framework-process-studio-types':
         specifier: latest
         version: 0.0.1-beta.9
@@ -86,7 +86,7 @@ importers:
         version: 3.0.6
       '@types/node':
         specifier: ^24.2.0
-        version: 24.7.0
+        version: 24.7.1
       '@types/react':
         specifier: ^19.1.8
         version: 19.2.2
@@ -318,8 +318,8 @@ packages:
       react: 19.1.1
       react-dom: 19.1.1
 
-  '@igrp/framework-process-studio-client@0.0.1-beta.9':
-    resolution: {integrity: sha512-KL1MPzww8G9UDhy/LXfagD9ratbPx4GSAou9Z9/kEU5cUD5ID4P3jKPex4sw6HGl+GgpTlgspTixG4Y8ZtPKtQ==}
+  '@igrp/framework-process-studio-client@0.0.1-beta.11':
+    resolution: {integrity: sha512-gTedBlLcD5iQNHvazpvIgk9ENwbnBmb2wMYhlL7IJ7vHp7TeP2Qf5V4D/Gf2XN2BLdqEn92WhGIsgfuKLc9/Zg==}
     engines: {node: '>=20.x.x'}
 
   '@igrp/framework-process-studio-types@0.0.1-beta.9':
@@ -1351,8 +1351,8 @@ packages:
   '@types/json5@0.0.29':
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
 
-  '@types/node@24.7.0':
-    resolution: {integrity: sha512-IbKooQVqUBrlzWTi79E8Fw78l8k1RNtlDDNWsFZs7XonuQSJ8oNYfEeclhprUldXISRMLzBpILuKgPlIxm+/Yw==}
+  '@types/node@24.7.1':
+    resolution: {integrity: sha512-CmyhGZanP88uuC5GpWU9q+fI61j2SkhO3UGMUdfYRE6Bcy0ccyzn1Rqj9YAB/ZY4kOXmNf0ocah5GtphmLMP6Q==}
 
   '@types/react-dom@19.2.1':
     resolution: {integrity: sha512-/EEvYBdT3BflCWvTMO7YkYBHVE9Ci6XdqZciZANQgKpaiDRGOLIlRo91jbTNRQjgPFWVaRxcYc0luVNFitz57A==}
@@ -1595,8 +1595,8 @@ packages:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
     engines: {node: '>= 0.4'}
 
-  axe-core@4.10.3:
-    resolution: {integrity: sha512-Xm7bpRXnDSX2YE2YFfBk2FnF0ep6tmG7xPh8iHee8MIcrgq762Nkce856dYtJYLkuIoYZvGfTs/PbZhideTcEg==}
+  axe-core@4.11.0:
+    resolution: {integrity: sha512-ilYanEU8vxxBexpJd8cWM4ElSQq4QctCLKih0TSfjIfCQTeyH/6zVrmIJfLPrKTKJRbiG+cfnZbQIjAlJmF1jQ==}
     engines: {node: '>=4'}
 
   axobject-query@4.1.0:
@@ -2151,8 +2151,8 @@ packages:
     resolution: {integrity: sha512-w9UMqWwJxHNOvoNzSJ2oPF5wvYcvP7jUvYzhp67yEhTi17ZDBBC1z9pTdGuzjD+EFIqLSYRweZjqfiPzQ06Ebg==}
     engines: {node: '>= 0.4'}
 
-  get-tsconfig@4.11.0:
-    resolution: {integrity: sha512-sNsqf7XKQ38IawiVGPOoAlqZo1DMrO7TU+ZcZwi7yLl7/7S0JwmoBMKz/IkUPhSoXM0Ng3vT0yB1iCe5XavDeQ==}
+  get-tsconfig@4.12.0:
+    resolution: {integrity: sha512-LScr2aNr2FbjAjZh2C6X6BxRx1/x+aTDExct/xyq2XKbYOiG5c0aK7pMsSuyc0brz3ibr/lbQiHD9jzt4lccJw==}
 
   glob-parent@5.1.2:
     resolution: {integrity: sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==}
@@ -2422,8 +2422,8 @@ packages:
   lezer-feel@1.9.0:
     resolution: {integrity: sha512-x8z6pCih3I3BOq3kBbhw6VUOU9Sg61PBJ1nigTgDl1yM5f0OPzEjK7GRJXutrSJDiUK8zwgqBvUJFlSfGLNZUg==}
 
-  libphonenumber-js@1.12.23:
-    resolution: {integrity: sha512-RN3q3gImZ91BvRDYjWp7ICz3gRn81mW5L4SW+2afzNCC0I/nkXstBgZThQGTE3S/9q5J90FH4dP+TXx8NhdZKg==}
+  libphonenumber-js@1.12.24:
+    resolution: {integrity: sha512-l5IlyL9AONj4voSd7q9xkuQOL4u8Ty44puTic7J88CmdXkxfGsRfoVLXHCxppwehgpb/Chdb80FFehHqjN3ItQ==}
 
   lightningcss-darwin-arm64@1.30.1:
     resolution: {integrity: sha512-c8JK7hyE65X1MHMN+Viq9n11RRC7hgin3HhYKhrMyaXflk5GVplZ60IxyoVtzILeKr+xAJwg6zK6sjTBJ0FKYQ==}
@@ -3508,7 +3508,7 @@ snapshots:
       - diagram-js
       - zeebe-bpmn-moddle
 
-  '@igrp/framework-process-studio-client@0.0.1-beta.9':
+  '@igrp/framework-process-studio-client@0.0.1-beta.11':
     dependencies:
       '@igrp/framework-process-studio-types': 0.0.1-beta.9
 
@@ -4542,7 +4542,7 @@ snapshots:
 
   '@types/json5@0.0.29': {}
 
-  '@types/node@24.7.0':
+  '@types/node@24.7.1':
     dependencies:
       undici-types: 7.14.0
 
@@ -4810,7 +4810,7 @@ snapshots:
     dependencies:
       possible-typed-array-names: 1.1.0
 
-  axe-core@4.10.3: {}
+  axe-core@4.11.0: {}
 
   axobject-query@4.1.0: {}
 
@@ -5237,7 +5237,7 @@ snapshots:
       '@nolyfill/is-core-module': 1.0.39
       debug: 4.4.3
       eslint: 9.37.0(jiti@2.6.1)
-      get-tsconfig: 4.11.0
+      get-tsconfig: 4.12.0
       is-bun-module: 2.0.0
       stable-hash: 0.0.5
       tinyglobby: 0.2.15
@@ -5293,7 +5293,7 @@ snapshots:
       array-includes: 3.1.9
       array.prototype.flatmap: 1.3.3
       ast-types-flow: 0.0.8
-      axe-core: 4.10.3
+      axe-core: 4.11.0
       axobject-query: 4.1.0
       damerau-levenshtein: 1.0.8
       emoji-regex: 9.2.2
@@ -5543,7 +5543,7 @@ snapshots:
       es-errors: 1.3.0
       get-intrinsic: 1.3.0
 
-  get-tsconfig@4.11.0:
+  get-tsconfig@4.12.0:
     dependencies:
       resolve-pkg-maps: 1.0.0
 
@@ -5802,7 +5802,7 @@ snapshots:
       '@lezer/lr': 1.4.2
       min-dash: 4.2.3
 
-  libphonenumber-js@1.12.23: {}
+  libphonenumber-js@1.12.24: {}
 
   lightningcss-darwin-arm64@1.30.1:
     optional: true
@@ -6151,7 +6151,7 @@ snapshots:
       classnames: 2.5.1
       country-flag-icons: 1.5.21
       input-format: 0.3.14(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      libphonenumber-js: 1.12.23
+      libphonenumber-js: 1.12.24
       prop-types: 15.8.1
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
