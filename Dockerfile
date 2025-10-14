@@ -39,6 +39,9 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
+RUN mkdir -p /app/certs
+COPY certs/irn/* /app/certs
+
 USER nextjs
 
 EXPOSE 3000
