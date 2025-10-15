@@ -41,6 +41,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
 RUN mkdir -p /app/certs
 
+
 COPY certs/irn/*.crt /usr/local/share/ca-certificates/
 
 RUN apk update \
