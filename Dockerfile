@@ -40,7 +40,13 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
 RUN mkdir -p /app/certs
-COPY certs/irn/* /app/certs
+
+COPY certs/irn/*.crt /usr/local/share/ca-certificates/
+
+RUN apk update \
+&& apk upgrade --available \
+&& apk add ca-certificates \
+&& update-ca-certificates
 
 USER nextjs
 
