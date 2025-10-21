@@ -8,7 +8,7 @@ variables:
   DOCKER_HOST: tcp://docker:2375
   DOCKER_REGISTRY: registry.nosi.cv
   DOCKER_PROJECT: igrp
-  IMAGE_NAME: igrp-process-studio-frontend-temp
+  IMAGE_NAME: igrp-process-studio-frontend
   IMAGE_NAME_FULL: "$DOCKER_REGISTRY/$DOCKER_PROJECT/$IMAGE_NAME"
   IMAGE_TAG: latest
   
