@@ -18,8 +18,8 @@ stages:
   - deploy
 
 .build-template:
-  tags:
-    - nosi-runner
+#  tags:
+#    - nosi-runner
   only:
     - main
   before_script:
