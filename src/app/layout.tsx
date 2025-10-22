@@ -2,6 +2,7 @@ import '@/styles/globals.css';
 /* start area to add custom styles */
 
 /* end area to add custom styles */
+import '@igrp/framework-process-studio-bpmn-editor/dist/src/styles.css';
 
 import '@igrp/framework-next-ui/dist/styles.css';
 import '@igrp/igrp-framework-react-design-system/dist/styles.css';
