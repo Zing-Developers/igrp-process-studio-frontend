@@ -1,19 +1,17 @@
-
-FROM node:24-alpine AS base
-RUN apk add --no-cache libc6-compat && corepack enable
-# ENV PNPM_HOME=/pnpm
-# ENV PATH="$PNPM_HOME:$PATH"
+FROM node:22-alpine AS base
+FROM base AS deps
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-FROM base AS deps
-COPY package.json .npmrc ./
-COPY pnpm-lock.yaml ./
-RUN node -v && pnpm -v
-RUN if [ -f pnpm-lock.yaml ]; then \
-    echo "Using frozen lockfile" && pnpm i --frozen-lockfile; \
-  else \
-    echo "No lockfile found, installing dependencies"; \
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc ./
+
+RUN \
+  if [ -f yarn.lock ]; then yarn; \
+  elif [ -f package-lock.json ]; then npm ci; \
+  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i; \
+  else echo "Lockfile not found." && exit 1; \
   fi
+
 
 FROM base AS builder
 WORKDIR /app
@@ -21,7 +19,13 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 COPY ./env/.env.production .env.production
 
-RUN pnpm build
+
+RUN \
+  if [ -f yarn.lock ]; then yarn run build; \
+  elif [ -f package-lock.json ]; then npm run build; \
+  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
+  else echo "Lockfile not found." && exit 1; \
+  fi
 
 FROM base AS runner
 WORKDIR /app
@@ -35,11 +39,20 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
+RUN mkdir -p /app/certs
+
+
+COPY certs/irn/*.crt /usr/local/share/ca-certificates/
+
+RUN apk update \
+&& apk upgrade --available \
+&& apk add ca-certificates \
+&& update-ca-certificates
+
 USER nextjs
 
 EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
-
 
 CMD ["node", "server.js"]
