@@ -106,7 +106,6 @@ const { processDefinitions, totalPublished, totalProcessDefinitions, totalRascun
 
 useEffect(() => {
   if (isLoading || !processDefinitions) return
-  console.log(processDefinitions)
   setContentTabletable1(processDefinitions || [])
   setStatstatsCard1Value(totalRascunho || 0)
   setStatstatsCard2Value(totalProcessDefinitions || 0)
