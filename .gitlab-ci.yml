@@ -47,6 +47,8 @@ build-amd64:
     - docker buildx inspect --bootstrap
     - docker build --build-arg SPRING_PROFILES_ACTIVE=$SPRING_PROFILES_ACTIVE --platform linux/amd64 -t $IMAGE_NAME_FULL:amd64 --push --output=type=image,name="$IMAGE_NAME_FULL:amd64",push=true .
   
+  tags:
+    - nosi-runner
   only:
     - main
 
