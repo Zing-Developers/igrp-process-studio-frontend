@@ -14,10 +14,38 @@ function convertCamundaToActiviti(xml: string): string {
 
   let convertedXml = xml;
 
-  // Replace Camunda namespace with Activiti namespace
+  // Check if XML already has Activiti namespace to avoid duplicates
+  const hasActivitiNamespace = convertedXml.includes('xmlns:activiti=');
+  
+  // Only replace Camunda namespace if Activiti namespace doesn't exist
+  if (!hasActivitiNamespace) {
+    convertedXml = convertedXml.replace(
+      /xmlns:camunda="http:\/\/camunda\.org\/schema\/1\.0\/bpmn"/g,
+      'xmlns:activiti="http://activiti.org/bpmn"'
+    );
+  } else {
+    // If Activiti namespace already exists, just remove the Camunda namespace
+    convertedXml = convertedXml.replace(
+      /xmlns:camunda="http:\/\/camunda\.org\/schema\/1\.0\/bpmn"/g,
+      ''
+    );
+  }
+
+  // Handle duplicate attributes by removing existing activiti attributes before converting camunda ones
+  // This prevents duplicate attribute errors
   convertedXml = convertedXml.replace(
-    /xmlns:camunda="http:\/\/camunda\.org\/schema\/1\.0\/bpmn"/g,
-    'xmlns:activiti="http://activiti.org/bpmn"'
+    /(\s+activiti:delegateExpression="[^"]*")/g,
+    '' // Remove existing activiti:delegateExpression attributes
+  );
+  
+  convertedXml = convertedXml.replace(
+    /(\s+activiti:expression="[^"]*")/g,
+    '' // Remove existing activiti:expression attributes
+  );
+  
+  convertedXml = convertedXml.replace(
+    /(\s+activiti:resultVariable="[^"]*")/g,
+    '' // Remove existing activiti:resultVariable attributes
   );
 
   // Replace all camunda: attributes with activiti: attributes
