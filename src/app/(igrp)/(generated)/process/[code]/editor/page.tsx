@@ -76,10 +76,10 @@ export default function PageEditorComponent({ params }: { params: Promise<{ code
 
   const { data, isLoading, error } = useDetailProcessDefinition(code);
 
-  const handleBpmnChange = (xml: string) => {
+  const handleBpmnChange = useCallback((xml: string) => {
     setBpmnXml(xml);
     setInputTextarea1Value(xml);
-  };
+  }, []);
 
   useEffect(() => {
     if (isLoading || !data) return;
@@ -143,7 +143,7 @@ export default function PageEditorComponent({ params }: { params: Promise<{ code
                   <BpmnModeler
                     processName={data.title}
                     processKey={data.processKey}
-                    xml={data.bpmFileContent}
+                    xml={bpmnXml || data.bpmFileContent}
                     onChange={handleBpmnChange}
                   ></BpmnModeler>
                 </>
