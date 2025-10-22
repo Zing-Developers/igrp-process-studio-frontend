@@ -41,6 +41,7 @@ export default function PageProcessComponent() {
 
   
   type Table1 = {
+    projectName: string;
     title: string;
     processKey: string;
     deploymentDate: string;
@@ -228,7 +229,15 @@ showIconBackground={ true }
   columns={
     [
         {
-          header: 'Process Name'
+          header: ({ column }) => (<IGRPDataTableHeaderSortToggle column={column} title={ `Project` } />)
+,accessorKey: 'projectName',
+          cell: ({ row }) => {
+          return row.getValue("projectName")
+          },
+          filterFn: IGRPDataTableFacetedFilterFn
+        },
+        {
+          header: ({ column }) => (<IGRPDataTableHeaderSortToggle column={column} title={ `Process Name` } />)
 ,accessorKey: 'title',
           cell: ({ row }) => {
           return row.getValue("title")
