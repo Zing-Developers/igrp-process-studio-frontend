@@ -2,6 +2,40 @@
 import { ProcessDefinition, VariableDefinition } from '@igrp/framework-process-studio-types';
 import { createServerClient } from '../lib/server-client';
 
+/**
+ * Converts Camunda BPMN XML to Activiti format
+ * @param xml - The BPMN XML string
+ * @returns Converted XML string with Activiti namespace and attributes
+ */
+function convertCamundaToActiviti(xml: string): string {
+  if (!xml || typeof xml !== 'string') {
+    return xml;
+  }
+
+  let convertedXml = xml;
+
+  // Replace Camunda namespace with Activiti namespace
+  convertedXml = convertedXml.replace(
+    /xmlns:camunda="http:\/\/camunda\.org\/schema\/1\.0\/bpmn"/g,
+    'xmlns:activiti="http://activiti.org/bpmn"'
+  );
+
+  // Replace all camunda: attributes with activiti: attributes
+  convertedXml = convertedXml.replace(/camunda:/g, 'activiti:');
+
+  // Replace Camunda-specific elements with Activiti equivalents
+  convertedXml = convertedXml.replace(
+    /<camunda:([^>]+)>/g,
+    '<activiti:$1>'
+  );
+  convertedXml = convertedXml.replace(
+    /<\/camunda:([^>]+)>/g,
+    '</activiti:$1>'
+  );
+
+  return convertedXml;
+}
+
 
 export const getProcessDefinitionById = async (processDefinitionId: string): Promise<ProcessDefinition> => {
   const client = await createServerClient();
@@ -25,6 +59,7 @@ export const saveDiagramProcessDefinition = async (
   const client = await createServerClient();
   const data = {
     ...processDefinition,
+    content: convertCamundaToActiviti(processDefinition.content),
   };
   console.log('data', data);
   return await client.processDefinitions.saveDiagram(processDefinitionId, data);
@@ -37,10 +72,9 @@ export const deployProcessDefinition = async (
   const client = await createServerClient();
   const data = {
     ...processDefinition,
+    content: convertCamundaToActiviti(processDefinition.content),
   };
-  return await client.processDefinitions.deploy(processDefinitionId, {
-    content: data.content.replace('camunda', 'activiti')
-  });
+  return await client.processDefinitions.deploy(processDefinitionId, data);
 };
 
 export const createOrUpdateVariable = async (
