@@ -1,3 +1,4 @@
+
 FROM node:24-alpine AS base
 RUN apk add --no-cache libc6-compat && corepack enable
 # ENV PNPM_HOME=/pnpm
@@ -39,5 +40,6 @@ USER nextjs
 EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
+
 
 CMD ["node", "server.js"]
