@@ -28,7 +28,7 @@ importers:
         version: 0.1.0-beta.26(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(next-auth@4.24.11(next@15.5.5(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(next@15.5.5(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@igrp/framework-process-studio-bpmn-editor':
         specifier: latest
-        version: 0.0.1-beta.13(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(diagram-js@15.4.0)(next-auth@4.24.11(next@15.5.5(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(next@15.5.5(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(zeebe-bpmn-moddle@1.11.0)
+        version: 0.0.1-beta.14(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(diagram-js@15.4.0)(next-auth@4.24.11(next@15.5.5(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(next@15.5.5(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(zeebe-bpmn-moddle@1.11.0)
       '@igrp/framework-process-studio-client':
         specifier: latest
         version: 0.0.1-beta.12
@@ -309,8 +309,8 @@ packages:
       react: 19.2.0
       react-dom: 19.2.0
 
-  '@igrp/framework-process-studio-bpmn-editor@0.0.1-beta.13':
-    resolution: {integrity: sha512-aQtBoFc5QSx7yaMduSBonoF74I21o2RT4h4QIr/recQrYfzsKQvy6RERFHnpuJvhUVmF9jiMBEhRuDv+JIwS9g==}
+  '@igrp/framework-process-studio-bpmn-editor@0.0.1-beta.14':
+    resolution: {integrity: sha512-u/QshL926F4DewkU7Qvy56NgJE4uwJDvoYXeObg7x4N0yl6WQweqx9AsynNCMOE9nSLc8PNO2zfmQPQuomwLrw==}
     engines: {node: '>=20.x.x'}
     peerDependencies:
       next: 15.4.6
@@ -3469,7 +3469,7 @@ snapshots:
       - '@types/react-dom'
       - next-auth
 
-  '@igrp/framework-process-studio-bpmn-editor@0.0.1-beta.13(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(diagram-js@15.4.0)(next-auth@4.24.11(next@15.5.5(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(next@15.5.5(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(zeebe-bpmn-moddle@1.11.0)':
+  '@igrp/framework-process-studio-bpmn-editor@0.0.1-beta.14(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(diagram-js@15.4.0)(next-auth@4.24.11(next@15.5.5(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(next@15.5.5(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(zeebe-bpmn-moddle@1.11.0)':
     dependencies:
       '@bpmn-io/properties-panel': 3.33.0
       '@igrp/igrp-framework-react-design-system': 0.1.0-beta.27(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(next@15.5.5(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
