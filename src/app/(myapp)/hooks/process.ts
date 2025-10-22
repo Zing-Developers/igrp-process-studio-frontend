@@ -25,6 +25,7 @@ export const useProcessDefinition = () => {
       project.processDefinitions.map((processDefinition) => ({
         ...processDefinition,
         version: processDefinition.version || 'N/D',
+        projectName: project.name,
       })),
     );
     const totalProcessDefinitions = allProcessDefinitions?.length || 0;
