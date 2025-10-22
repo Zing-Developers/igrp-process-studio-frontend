@@ -26,6 +26,7 @@ const BpmnModeler = ({
       setCurrentXml(updateXml || '');
       setIsInitialized(true);
     }
+
   }, [xml, isInitialized, processKey, processName]);
 
   const handleChange = useCallback((newXml: string) => {
