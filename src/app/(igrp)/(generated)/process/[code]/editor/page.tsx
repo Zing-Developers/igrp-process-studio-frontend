@@ -76,10 +76,10 @@ export default function PageEditorComponent({ params }: { params: Promise<{ code
 
   const { data, isLoading, error } = useDetailProcessDefinition(code);
 
-  const handleBpmnChange = useCallback((xml: string) => {
+  const handleBpmnChange = (xml: string) => {
     setBpmnXml(xml);
     setInputTextarea1Value(xml);
-  }, []);
+  };
 
   useEffect(() => {
     if (isLoading || !data) return;
