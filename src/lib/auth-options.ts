@@ -22,7 +22,21 @@ export const authOptions: AuthOptions = {
       return token;
     },
     async redirect({ url, baseUrl }) {
-      return url.startsWith(baseUrl) ? url : `${baseUrl}${url}`;
+      const basePath = process.env.IGRP_APP_BASE_PATH || '';
+      
+      // If URL is relative, make it absolute with baseUrl and basePath
+      if (url.startsWith('/')) {
+        return `${baseUrl}${basePath}${url}`;
+      }
+      
+      // If URL is absolute and starts with baseUrl, ensure it includes the basePath
+      if (url.startsWith(baseUrl)) {
+        const pathWithoutBaseUrl = url.replace(baseUrl, '');
+        return `${baseUrl}${basePath}${pathWithoutBaseUrl}`;
+      }
+      
+      // For external URLs, return as is
+      return url;
     },
   },
 };
