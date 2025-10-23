@@ -9,16 +9,25 @@ COPY package.json .npmrc ./
 COPY pnpm-lock.yaml ./
 RUN node -v && pnpm -v
 RUN if [ -f pnpm-lock.yaml ]; then \
-    echo "Using frozen lockfile" && pnpm i --frozen-lockfile; \
+  echo "Using frozen lockfile" && pnpm i --frozen-lockfile; \
   else \
-    echo "No lockfile found, installing dependencies"; \
+  echo "No lockfile found, installing dependencies"; \
   fi
+
 
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-COPY ./env/.env.production .env.production
+#COPY ./env/.env.production .env.production
+
+ARG NEXT_PUBLIC_URL
+ARG NEXT_PUBLIC_BASE_PATH
+ARG NEXT_PUBLIC_ALLOWED_DOMAINS
+
+ENV NEXT_PUBLIC_URL=${NEXT_PUBLIC_URL}
+ENV NEXT_PUBLIC_BASE_PATH=${NEXT_PUBLIC_BASE_PATH}
+ENV NEXT_PUBLIC_ALLOWED_DOMAINS=${NEXT_PUBLIC_ALLOWED_DOMAINS}
 
 RUN pnpm build
 

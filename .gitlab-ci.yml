@@ -12,6 +12,11 @@ variables:
   IMAGE_NAME_FULL: "$DOCKER_REGISTRY/$DOCKER_PROJECT/$IMAGE_NAME"
   IMAGE_TAG: latest
   
+  # Default environment variables (can be overridden per environment)
+  NEXT_PUBLIC_URL: "https://apps-stage.inss.gw/apps/igrp-process-studio"
+  NEXT_PUBLIC_BASE_PATH: "/apps/igrp-process-studio"
+  NEXT_PUBLIC_ALLOWED_DOMAINS: "*.nosi.cv"
+  
 stages:
   - build
   - manifest
@@ -32,7 +37,7 @@ build-arm64:
   script:
     - docker buildx create --use --name amd64builder
     - docker buildx inspect --bootstrap
-    - docker build --build-arg SPRING_PROFILES_ACTIVE=$SPRING_PROFILES_ACTIVE --platform linux/arm64 -t $IMAGE_NAME_FULL:arm64 --push --output=type=image,name="$IMAGE_NAME_FULL:arm64",push=true .
+    - docker build --build-arg NEXT_PUBLIC_URL=$NEXT_PUBLIC_URL --build-arg NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH --build-arg NEXT_PUBLIC_ALLOWED_DOMAINS=$NEXT_PUBLIC_ALLOWED_DOMAINS --platform linux/arm64 -t $IMAGE_NAME_FULL:arm64 --push --output=type=image,name="$IMAGE_NAME_FULL:arm64",push=true .
 
   tags:
     - arm64
@@ -45,7 +50,7 @@ build-amd64:
   script:
     - docker buildx create --use --name amd64builder
     - docker buildx inspect --bootstrap
-    - docker build --build-arg SPRING_PROFILES_ACTIVE=$SPRING_PROFILES_ACTIVE --platform linux/amd64 -t $IMAGE_NAME_FULL:amd64 --push --output=type=image,name="$IMAGE_NAME_FULL:amd64",push=true .
+    - docker build --build-arg NEXT_PUBLIC_URL=$NEXT_PUBLIC_URL --build-arg NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH --build-arg NEXT_PUBLIC_ALLOWED_DOMAINS=$NEXT_PUBLIC_ALLOWED_DOMAINS --platform linux/amd64 -t $IMAGE_NAME_FULL:amd64 --push --output=type=image,name="$IMAGE_NAME_FULL:amd64",push=true .
   
   tags:
     - nosi-runner
