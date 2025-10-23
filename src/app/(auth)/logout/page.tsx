@@ -7,7 +7,7 @@ export default function LogoutPage() {
   useEffect(() => {
     (async () => {
 
-      const baseUrl = process.env.NEXTAUTH_URL;
+      const baseUrl = process.env.NEXT_PUBLIC_URL;
 
       const endSessionUrl = baseUrl ? `${baseUrl}/login` : '/login';
 
