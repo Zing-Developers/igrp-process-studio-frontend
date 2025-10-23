@@ -13,9 +13,9 @@ variables:
   IMAGE_TAG: latest
   
   # Default environment variables (can be overridden per environment)
-  NEXT_PUBLIC_URL: "https://apps-stage.inss.gw/apps/igrp-process-studio"
-  NEXT_PUBLIC_BASE_PATH: "/apps/igrp-process-studio"
-  NEXT_PUBLIC_ALLOWED_DOMAINS: "*.nosi.cv"
+  NEXT_PUBLIC_URL: "$NEXT_PUBLIC_URL"
+  NEXT_PUBLIC_BASE_PATH: "$NEXT_PUBLIC_BASE_PATH"
+  NEXT_PUBLIC_ALLOWED_DOMAINS: "$NEXT_PUBLIC_ALLOWED_DOMAINS"
   
 stages:
   - build
