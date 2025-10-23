@@ -21,7 +21,7 @@ export const authOptions: AuthOptions = {
       }
       return token;
     },
-    async redirect({ url, baseUrl }) {
+    async redirect({ url }) {
       const nextPublicUrl = process.env.NEXT_PUBLIC_URL || '';
       if (nextPublicUrl) {
         return nextPublicUrl;
