@@ -9,7 +9,7 @@ export default function LogoutPage() {
 
       const baseUrl = process.env.NEXTAUTH_URL;
 
-      let endSessionUrl = baseUrl ? `${baseUrl}/login` : '/login';
+      const endSessionUrl = baseUrl ? `${baseUrl}/login` : '/login';
 
       await signOut({ redirect: false });
 
