@@ -4,9 +4,8 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_URL: http://localhost:3002/apps/igrp-process-studio
         NEXT_PUBLIC_BASE_PATH: /apps/igrp-process-studio
-        NEXT_PUBLIC_ALLOWED_DOMAINS: localhost,127.0.0.1,igrp.cv
+        NEXT_PUBLIC_ALLOWED_DOMAINS: '*.igrp.cv'
     image: process-studio-frontend-ui-development
     ports:
       - '3002:3000'

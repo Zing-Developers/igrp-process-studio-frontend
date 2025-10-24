@@ -29,6 +29,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 
   const isAlreadyOnLogin = currentPath.startsWith(loginPath);
 
+
   if (!previewMode && session === null && urlLogin && !isAlreadyOnLogin) {
     redirect(urlLogin);
   }

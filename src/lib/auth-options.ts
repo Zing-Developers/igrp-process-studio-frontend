@@ -21,12 +21,14 @@ export const authOptions: AuthOptions = {
       }
       return token;
     },
-    async redirect({ url }) {
+    async redirect({ url, baseUrl }) {
+      console.log('baseUrl', baseUrl);
       const nextPublicUrl = process.env.NEXT_PUBLIC_URL || '';
-      if (nextPublicUrl) {
-        return nextPublicUrl;
-      }
-      return url;
+      const igrpAppHomeSlug = process.env.IGRP_APP_HOME_SLUG || '';
+
+      const redirectTo = nextPublicUrl ? `${nextPublicUrl}${igrpAppHomeSlug}` : '';
+
+      return redirectTo ? redirectTo : url;
     },
   },
 };
