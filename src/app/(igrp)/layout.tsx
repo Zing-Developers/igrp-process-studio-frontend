@@ -21,7 +21,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     headersList.get('referer') ||
     '';
 
-  const baseUrl = process.env.NEXT_PUBLIC_URL  || process.env.NEXTAUTH_URL;
+  const baseUrl = process.env.NEXTAUTH_URL_INTERNAL  || process.env.NEXTAUTH_URL;
 
   const urlLogin = '/login';
 
