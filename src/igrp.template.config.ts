@@ -63,7 +63,7 @@ export function createConfig(config: IGRPLayoutConfigArgs): Promise<IGRPConfigAr
     sessionArgs: {
       refetchInterval: 5 * 60,
       refetchOnWindowFocus: true,
-      basePath: basePath(process.env.IGRP_APP_BASE_PATH || ''),
+      basePath: basePath(process.env.NEXT_PUBLIC_BASE_PATH || ''),
     },
   });
 }

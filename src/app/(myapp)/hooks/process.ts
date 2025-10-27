@@ -28,16 +28,27 @@ export const useProcessDefinition = () => {
         projectName: project.name,
       })),
     );
+    //i want to create  a map value and label with the status process definition
+    const statusProcessDefinition = queryResult.data?.content.map((project) => {
+      return {
+        value: project.name,
+        label: project.name,
+      };
+    });
+
     const totalProcessDefinitions = allProcessDefinitions?.length || 0;
+
     const totalRascunho =
       allProcessDefinitions?.filter((processDefinition) => processDefinition.status === 'DRAFT')
         .length || 0;
+
     const totalPublished =
       allProcessDefinitions?.filter((processDefinition) => processDefinition.status === 'PUBLISHED')
         .length || 0;
 
     return {
       processDefinitions: allProcessDefinitions,
+      statusProcessDefinition,
       totalProcessDefinitions,
       totalRascunho,
       totalPublished,

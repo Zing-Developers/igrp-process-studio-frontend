@@ -1,15 +1,12 @@
-import { getServerSession } from '@igrp/framework-next-auth';
 import { createProcessStudioClient } from '@igrp/framework-process-studio-client';
-import { authOptions } from '@/lib/auth-options';
-//import { getSession } from '@igrp/framework-next-auth/client';
+import { getAccessToken } from '@/lib/auth-helpers';
 
 // Environment configuration for server-side
 const getServerConfig = async () => {
-  const session = await getServerSession(authOptions);
+  const token = await getAccessToken();
 
-  console.log('session', session);
 
-  if (!session?.accessToken) {
+  if (!token) {
     throw new Error('Authentication required. Please log in to access this feature.');
   }
 
@@ -19,7 +16,7 @@ const getServerConfig = async () => {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      Authorization: `Bearer ${session?.accessToken}`,
+      Authorization: `Bearer ${token?.accessToken}`,
     },
   };
 
