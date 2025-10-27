@@ -87,29 +87,7 @@ const hasDataLoaded = useRef(false);
 const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 const { data, isLoading, error } = useDetailProcessDefinition(code);
 
-const handleBpmnChange = useCallback((xml: string) => {
-  setBpmnXml(xml);
-  setInputTextarea1Value(xml);
-}, []);
-
-useEffect(() => {
-  if (isLoading || !data) return
-  setPageHeader1Description(`${data.title} [${data.processKey}] - ${data.statusDesc}`)
-  setBpmnXml(data.bpmFileContent)
-  setInputTextarea1Value(data.bpmFileContent)
-  hasDataLoaded.current = true;
-  isFirstLoad.current = true;
-
-}, [isLoading])
-
-// Auto-save effect - only save when user makes changes, not on first load
-useEffect(() => {
-  // Skip if it's the first load or data hasn't loaded yet
-  if (isFirstLoad.current || !hasDataLoaded.current || !bpmnXml || !data) {
-    isFirstLoad.current = false;
-    return;
-  }
-
+const autoSave = useCallback(() => {
   // Clear existing timeout
   if (autoSaveTimeoutRef.current) {
     clearTimeout(autoSaveTimeoutRef.current);
@@ -119,14 +97,29 @@ useEffect(() => {
   autoSaveTimeoutRef.current = setTimeout(() => {
     handleSave();
   }, 2000); // Wait 2 seconds after the user stops editing
+}, [handleSave]);
 
-  // Cleanup timeout on unmount
+const handleBpmnChange = useCallback((xml: string) => {
+  setBpmnXml(xml);
+  setInputTextarea1Value(xml);
+  autoSave();
+}, [autoSave]);
+
+useEffect(() => {
+  if (isLoading || !data) return;
+  setPageHeader1Description(`${data.title} [${data.processKey}] - ${data.statusDesc}`);
+  setBpmnXml(data.bpmFileContent);
+  setInputTextarea1Value(data.bpmFileContent);
+}, [isLoading]);
+
+// Cleanup timeout on unmount
+useEffect(() => {
   return () => {
     if (autoSaveTimeoutRef.current) {
       clearTimeout(autoSaveTimeoutRef.current);
     }
   };
-}, [bpmnXml, data]);
+}, []);
 
 
   return (
