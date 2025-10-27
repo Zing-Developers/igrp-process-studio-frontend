@@ -39,11 +39,13 @@ const [inputTextarea1Value, setInputTextarea1Value] = useState<string>('');
 
 const { igrpToast } = useIGRPToast()
 
-async function handleSave (): Promise<void  | undefined> {
+async function handleSave (dataToSave: any, xmlToSave: string): Promise<void  | undefined> {
 
   try {
-   if ( !data) return
-  await saveDiagramProcessDefinition(data.processKey,{content: bpmnXml});
+  const xml = xmlToSave || bpmnXml;
+  const processKey = dataToSave?.processKey || data?.processKey;
+  if (!processKey || !xml) return;
+  await saveDiagramProcessDefinition(processKey, { content: xml });
   igrpToast({
     title: 'Success',
     description: 'Process definition saved successfully',
@@ -85,39 +87,42 @@ async function handleDeploy (): Promise<void  | undefined> {
 const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 const { data, isLoading, error } = useDetailProcessDefinition(code);
 
-const autoSave = useCallback(() => {
-  // Clear existing timeout
-  if (autoSaveTimeoutRef.current) {
-    clearTimeout(autoSaveTimeoutRef.current);
-  }
-
-  // Set a new timeout for auto-save (debounce)
-  autoSaveTimeoutRef.current = setTimeout(() => {
-    handleSave();
-  }, 2000); // Wait 2 seconds after the user stops editing
-}, [handleSave]);
-
-const handleBpmnChange = useCallback((xml: string) => {
-  setBpmnXml(xml);
-  setInputTextarea1Value(xml);
-  autoSave();
-}, [autoSave]);
-
-useEffect(() => {
-  if (isLoading || !data) return;
-  setPageHeader1Description(`${data.title} [${data.processKey}] - ${data.statusDesc}`);
-  setBpmnXml(data.bpmFileContent);
-  setInputTextarea1Value(data.bpmFileContent);
-}, [isLoading]);
-
-// Cleanup timeout on unmount
-useEffect(() => {
-  return () => {
+  const autoSave = useCallback((data: any, xml: string) => {
+    // Clear existing timeout
     if (autoSaveTimeoutRef.current) {
       clearTimeout(autoSaveTimeoutRef.current);
     }
-  };
-}, []);
+
+    // Set a new timeout for auto-save (debounce)
+    autoSaveTimeoutRef.current = setTimeout(() => {
+      handleSave(data, xml);
+    }, 2000); // Wait 2 seconds after the user stops editing
+  }, []);
+
+  const handleBpmnChange = useCallback(
+    (xml: string) => {
+      setBpmnXml(xml);
+      setInputTextarea1Value(xml);
+      autoSave(data, xml);
+    },
+    [autoSave, data],
+  );
+
+  useEffect(() => {
+    if (isLoading || !data) return;
+    setPageHeader1Description(`${data.title} [${data.processKey}] - ${data.statusDesc}`);
+    setBpmnXml(data.bpmFileContent);
+    setInputTextarea1Value(data.bpmFileContent);
+  }, [isLoading]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+    };
+  }, []);
 
 
   return (
