@@ -81,9 +81,7 @@ async function handleDeploy (): Promise<void  | undefined> {
 
 }
 
-// Refs to track if this is the first render and if data is loaded
-const isFirstLoad = useRef(true);
-const hasDataLoaded = useRef(false);
+
 const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 const { data, isLoading, error } = useDetailProcessDefinition(code);
 
