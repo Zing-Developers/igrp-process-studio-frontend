@@ -59,19 +59,3 @@ export const getVariables = async (processDefinitionId: string) => {
   return await client.processDefinitions.getVariables(processDefinitionId);
 };
 
-export const getDataTypes = async () => {
-  return [
-    {
-      label: 'String',
-      value: 'string',
-    },
-    {
-      label: 'Number',
-      value: 'number',
-    },
-    {
-      label: 'Boolean',
-      value: 'boolean',
-    },
-  ];
-};

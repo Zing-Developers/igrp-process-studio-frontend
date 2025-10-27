@@ -1,6 +1,6 @@
 import { NextConfig } from 'next';
 
-const basePath = process.env.IGRP_APP_BASE_PATH || '';
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
 // Função para parsear domains de variável de ambiente
 const getRemotePatterns = () => {
