@@ -22,6 +22,9 @@ env:
   DOCKER_REGISTRY_ENV: dev
   DOCKER_HUB_IMAGE_TAG: igrp-process-studio-frontend-with-basepath
 
+  NEXT_PUBLIC_BASE_PATH: "/apps/igrp-process-studio"
+  NEXT_PUBLIC_ALLOWED_DOMAINS: "dsv-backoffice.irn.lan,apisix.zingdevelopers.com,*.irn.lan,img.youtube.com,*.nosi.cv,*.railway.app"
+
 jobs:
   pre-deploy:
     name: Send Discord Notification
