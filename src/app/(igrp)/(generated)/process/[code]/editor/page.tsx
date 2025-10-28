@@ -167,8 +167,8 @@ showIcon={ false }
 size={ `default` }
 showIcon={ true }
 iconName={ `Save` }
-  className={ cn() }
-  onClick={ () => handleSave() }
+  className={ cn('',) }
+  onClick={ () => handleSave(null,null,false) }
   
 >
   Save
