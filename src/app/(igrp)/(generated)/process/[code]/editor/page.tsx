@@ -47,16 +47,18 @@ async function handleSave (dataToSave: any, xmlToSave: string): Promise<void  | 
   try {
   const xml = xmlToSave || bpmnXml;
   const processKey = dataToSave?.processKey || data?.processKey;
+  
   if (!processKey || !xml) return;
+  
   await saveDiagramProcessDefinition(processKey, { content: xml });
-  console.log(isAutoSave)
+
   if (!isAutoSave)
     igrpToast({
       title: 'Success',
       description: 'Process definition saved successfully',
       type: 'success',
     });
-  setIsAutoSave(false)
+    
 } catch (error: any) {
   igrpToast({
     title: 'Error',
