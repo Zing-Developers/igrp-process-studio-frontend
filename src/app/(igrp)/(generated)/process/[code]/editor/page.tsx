@@ -8,6 +8,7 @@
 
 import { use, useState, useEffect, useRef } from 'react';
 import { cn, useIGRPMenuNavigation, useIGRPToast } from '@igrp/igrp-framework-react-design-system';
+import {Spinner} from '@/app/(myapp)/components/spinner'
 import {IgrpLoading} from '@/app/(myapp)/components/igrp-loading'
 import {BpmnModeler} from '@/app/(myapp)/components/BpmnModeler'
 import { 
@@ -168,18 +169,7 @@ iconName={ `Save` }
 >
   Save
 </IGRPButton>
-    <IGRPButton
-  name={ `button3` }
-  variant={ `default` }
-size={ `icon` }
-showIcon={ false }
-iconName={ `Save` }
-  className={ cn() }
-  onClick={ () => {} }
-  
->
-  Button
-</IGRPButton>
+    <Spinner    ></Spinner>
 </div>
 </IGRPPageHeader>
 </div>
