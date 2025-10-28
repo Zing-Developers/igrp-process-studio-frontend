@@ -8,6 +8,7 @@
 
 import { use, useState, useEffect, useRef } from 'react';
 import { cn, useIGRPMenuNavigation, useIGRPToast } from '@igrp/igrp-framework-react-design-system';
+import {Spinner} from '@/app/(myapp)/components/spinner'
 import {IgrpLoading} from '@/app/(myapp)/components/igrp-loading'
 import {BpmnModeler} from '@/app/(myapp)/components/BpmnModeler'
 import { 
@@ -37,20 +38,27 @@ const [pageHeader1Description, setPageHeader1Description] = useState<any>(undefi
 
 const [inputTextarea1Value, setInputTextarea1Value] = useState<string>('');
 
+const [isAutoSave, setIsAutoSave] = useState<boolean>(false);
+
 const { igrpToast } = useIGRPToast()
 
-async function handleSave (dataToSave?: any, xmlToSave?: string): Promise<void  | undefined> {
+async function handleSave (dataToSave: any, xmlToSave: string, isAutoSave: boolean): Promise<void  | undefined> {
 
   try {
   const xml = xmlToSave || bpmnXml;
   const processKey = dataToSave?.processKey || data?.processKey;
+  
   if (!processKey || !xml) return;
+  
   await saveDiagramProcessDefinition(processKey, { content: xml });
-  igrpToast({
-    title: 'Success',
-    description: 'Process definition saved successfully',
-    type: 'success',
-  });
+
+  if (!isAutoSave)
+    igrpToast({
+      title: 'Success',
+      description: 'Process definition saved successfully',
+      type: 'success',
+    });
+    
 } catch (error: any) {
   igrpToast({
     title: 'Error',
@@ -58,6 +66,8 @@ async function handleSave (dataToSave?: any, xmlToSave?: string): Promise<void  
     type: 'error',
   });
   console.log(error);
+} finally {
+  setIsAutoSave(false)
 }
 
 }
@@ -93,9 +103,11 @@ const { data, isLoading, error } = useDetailProcessDefinition(code);
       clearTimeout(autoSaveTimeoutRef.current);
     }
 
+    setIsAutoSave(true)
+
     // Set a new timeout for auto-save (debounce)
     autoSaveTimeoutRef.current = setTimeout(() => {
-      handleSave(data, xml);
+      handleSave(data, xml,isAutoSave);
     }, 2000); // Wait 2 seconds after the user stops editing
   }, []);
 
@@ -138,6 +150,7 @@ const { data, isLoading, error } = useDetailProcessDefinition(code);
   description={ pageHeader1Description }
 >
   <div className="flex items-center gap-2">
+    <Spinner  isLoading={ isAutoSave }   ></Spinner>
     <IGRPButton
   name={ `button2` }
   variant={ `destructive` }
@@ -155,8 +168,8 @@ showIcon={ false }
 size={ `default` }
 showIcon={ true }
 iconName={ `Save` }
-  className={ cn() }
-  onClick={ () => handleSave() }
+  className={ cn('',) }
+  onClick={ () => handleSave('','',false) }
   
 >
   Save
