@@ -107,7 +107,7 @@ const { data, isLoading, error } = useDetailProcessDefinition(code);
 
     // Set a new timeout for auto-save (debounce)
     autoSaveTimeoutRef.current = setTimeout(() => {
-      handleSave(data, xml);
+      handleSave(data, xml,isAutoSave);
     }, 2000); // Wait 2 seconds after the user stops editing
   }, []);
 
