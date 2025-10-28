@@ -48,11 +48,12 @@ async function handleSave (dataToSave: any, xmlToSave: string): Promise<void  | 
   const processKey = dataToSave?.processKey || data?.processKey;
   if (!processKey || !xml) return;
   await saveDiagramProcessDefinition(processKey, { content: xml });
-  igrpToast({
+  if (!isAutoSave) igrpToast({
     title: 'Success',
     description: 'Process definition saved successfully',
     type: 'success',
   });
+  setIsAutoSave(false)
 } catch (error: any) {
   igrpToast({
     title: 'Error',
@@ -60,6 +61,8 @@ async function handleSave (dataToSave: any, xmlToSave: string): Promise<void  | 
     type: 'error',
   });
   console.log(error);
+} finally {
+  setIsAutoSave(false)
 }
 
 }
@@ -94,6 +97,8 @@ const { data, isLoading, error } = useDetailProcessDefinition(code);
     if (autoSaveTimeoutRef.current) {
       clearTimeout(autoSaveTimeoutRef.current);
     }
+
+    setIsAutoSave(true)
 
     // Set a new timeout for auto-save (debounce)
     autoSaveTimeoutRef.current = setTimeout(() => {
