@@ -169,7 +169,7 @@ iconName={ `Save` }
 >
   Save
 </IGRPButton>
-    <Spinner    ></Spinner>
+    <Spinner  isLoading={ isAutoSave }   ></Spinner>
 </div>
 </IGRPPageHeader>
 </div>
