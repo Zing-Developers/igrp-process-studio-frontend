@@ -37,9 +37,11 @@ const [pageHeader1Description, setPageHeader1Description] = useState<any>(undefi
 
 const [inputTextarea1Value, setInputTextarea1Value] = useState<string>('');
 
+const [isAutoSave, setIsAutoSave] = useState<boolean>(false);
+
 const { igrpToast } = useIGRPToast()
 
-async function handleSave (dataToSave?: any, xmlToSave?: string): Promise<void  | undefined> {
+async function handleSave (dataToSave: any, xmlToSave: string): Promise<void  | undefined> {
 
   try {
   const xml = xmlToSave || bpmnXml;
@@ -161,6 +163,18 @@ iconName={ `Save` }
 >
   Save
 </IGRPButton>
+    <IGRPButton
+  name={ `button3` }
+  variant={ `default` }
+size={ `icon` }
+showIcon={ false }
+iconName={ `Save` }
+  className={ cn() }
+  onClick={ () => {} }
+  
+>
+  Button
+</IGRPButton>
 </div>
 </IGRPPageHeader>
 </div>
@@ -189,7 +203,7 @@ content: (<>
             <IGRPTextarea
   name={ `inputTextarea1` }
   label={ `XML` }
-rows={ 20 }
+rows={ `20` }
 required={ false }
   
   value={ inputTextarea1Value }
