@@ -39,7 +39,7 @@ const [inputTextarea1Value, setInputTextarea1Value] = useState<string>('');
 
 const { igrpToast } = useIGRPToast()
 
-async function handleSave (dataToSave: any, xmlToSave: string): Promise<void  | undefined> {
+async function handleSave (dataToSave?: any, xmlToSave?: string): Promise<void  | undefined> {
 
   try {
   const xml = xmlToSave || bpmnXml;
@@ -189,7 +189,7 @@ content: (<>
             <IGRPTextarea
   name={ `inputTextarea1` }
   label={ `XML` }
-rows={ `20` }
+rows={ 20 }
 required={ false }
   
   value={ inputTextarea1Value }
