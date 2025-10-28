@@ -49,11 +49,13 @@ async function handleSave (dataToSave: any, xmlToSave: string): Promise<void  | 
   const processKey = dataToSave?.processKey || data?.processKey;
   if (!processKey || !xml) return;
   await saveDiagramProcessDefinition(processKey, { content: xml });
-  if (!isAutoSave) igrpToast({
-    title: 'Success',
-    description: 'Process definition saved successfully',
-    type: 'success',
-  });
+  console.log(isAutoSave)
+  if (!isAutoSave)
+    igrpToast({
+      title: 'Success',
+      description: 'Process definition saved successfully',
+      type: 'success',
+    });
   setIsAutoSave(false)
 } catch (error: any) {
   igrpToast({
