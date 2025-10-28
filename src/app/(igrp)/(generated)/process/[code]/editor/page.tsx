@@ -42,7 +42,7 @@ const [isAutoSave, setIsAutoSave] = useState<boolean>(false);
 
 const { igrpToast } = useIGRPToast()
 
-async function handleSave (dataToSave: any, xmlToSave: string): Promise<void  | undefined> {
+async function handleSave (dataToSave: any, xmlToSave: string, isAutoSave: object): Promise<void  | undefined> {
 
   try {
   const xml = xmlToSave || bpmnXml;
