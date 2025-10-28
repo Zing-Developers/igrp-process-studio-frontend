@@ -8,7 +8,7 @@ export interface SpinnerProps extends React.ComponentProps<'svg'> {
   className?: string;
 }
 
-function Spinner({ isLoading, size = 4, className, ...props }: SpinnerProps) {
+function Spinner({ isLoading, className, ...props }: SpinnerProps) {
   if (!isLoading) return null;
   return (
     <Loader2Icon
