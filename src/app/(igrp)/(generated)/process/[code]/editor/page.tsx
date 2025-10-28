@@ -202,7 +202,7 @@ content: (<>
             <IGRPTextarea
   name={ `inputTextarea1` }
   label={ `XML` }
-rows={ `20` }
+rows={ 20 }
 required={ false }
   
   value={ inputTextarea1Value }
