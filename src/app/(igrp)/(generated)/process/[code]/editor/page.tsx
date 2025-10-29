@@ -96,7 +96,7 @@ async function handleDeploy (): Promise<void  | undefined> {
 
 }
 
-function copyToClipboard (): void {
+function copyToClipboard (text: string): void {
 
   
 
