@@ -51,7 +51,7 @@ async function handleSave (dataToSave?: any, xmlToSave?: string, isAutoSave?: bo
   
   if (!processKey || !xml) return;
   
-  await saveDiagramProcessDefinition(processKey, { content: xml });
+  await saveDraft({ content: xml });
 
   if (!isAutoSave)
     igrpToast({
