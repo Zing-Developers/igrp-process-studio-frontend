@@ -43,6 +43,8 @@ const [inputTextarea1Value, setInputTextarea1Value] = useState<string>('');
 
 const [isAutoSave, setIsAutoSave] = useState<boolean>(false);
 
+const [copiedId, setCopiedId] = useState<string>(undefined);
+
 const { igrpToast } = useIGRPToast()
 
 async function handleSave (dataToSave?: any, xmlToSave?: string, isAutoSave?: boolean): Promise<void  | undefined> {
