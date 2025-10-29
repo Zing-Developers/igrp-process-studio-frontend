@@ -126,9 +126,10 @@ const handleBpmnChange = useCallback(
 
 useEffect(() => {
   if (isLoading || !data) return;
+  const camundaXml = convertActivitiToCamunda(data.bpmFileContent);
   setPageHeader1Description(`${data.title} [${data.processKey}] - ${data.statusDesc}`);
-  setBpmnXml(data.bpmFileContent);
-  setInputTextarea1Value(data.bpmFileContent);
+  setBpmnXml(camundaXml);
+  setInputTextarea1Value(camundaXml);
 }, [isLoading]);
 
 // Cleanup timeout on unmount
@@ -195,7 +196,7 @@ iconName={ `Save` }
           label: `Diagram Editor`,
           icon: `Workflow`,
 content: (<>
-            <BpmnModeler  processName={ data.title } processKey={ data.processKey } xml={ bpmnXml || data.bpmFileContent } isActivitiXml={ bpmnXml !== '' }  onChange={ handleBpmnChange } ></BpmnModeler>
+            <BpmnModeler  processName={ data.title } processKey={ data.processKey } isActivitiXml={ bpmnXml !== '' } xml={ bpmnXml }  onChange={ handleBpmnChange } ></BpmnModeler>
 </>),
         },
         {
