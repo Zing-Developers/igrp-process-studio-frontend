@@ -244,7 +244,7 @@ size={ `default` }
 showIcon={ true }
 iconName={ `Copy` }
   className={ cn() }
-  onClick={ () => {} }
+  onClick={ () => {copyToClipboard(bpmnXml,'bpmn-xml','bpmn-xml');} }
   
 >
   Copy XML
