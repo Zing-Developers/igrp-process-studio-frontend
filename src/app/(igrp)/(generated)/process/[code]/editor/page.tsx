@@ -96,9 +96,25 @@ async function handleDeploy (): Promise<void  | undefined> {
 
 }
 
-function copyToClipboard (text: string): void {
+function copyToClipboard (text: string, id: string, label: string): void {
 
-  
+   try {
+      await navigator.clipboard.writeText(text);
+      setCopiedId(id);
+      igrpToast({
+        type: 'success',
+        title: 'Copied!',
+        description: `${label} copied to clipboard`,
+      });
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy', err);
+      igrpToast({
+        type: 'error',
+        title: 'Failed to copy',
+        description: 'Please try again',
+      });
+    }
 
 }
 
