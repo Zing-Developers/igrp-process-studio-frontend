@@ -52,13 +52,16 @@ emailFrom: noreply@company.com`,
     description:
       'Sends a message through the configured message broker (e.g., Kafka or RabbitMQ) based on predefined integration settings.',
     syntax: '${igrpMessageBrokerSenderDelegate}',
-    parameters: [],
+    parameters: [{
+      name: 'topic',
+      description: 'The kafka topic where the message will be sent'
+    }],
     example: `<!-- Service Task Configuration -->
 Implementation Type: Delegate Expression
 Delegate Expression: \${igrpMessageBrokerSenderDelegate}
 
-<!-- No additional parameters required -->
-<!-- Uses predefined broker configuration -->`,
+<!-- Variables -->
+topic: Sends a message through the configured`,
   },
   {
     name: 'igrpWebhookDelegate',
@@ -235,24 +238,6 @@ function DelegatesHelper() {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <h4 className="text-sm font-semibold text-foreground">Example Configuration</h4>
-                  <IGRPButtonPrimitive
-                    variant="ghost"
-                    size="sm"
-                    onClick={() =>
-                      copyToClipboard(
-                        delegate.example,
-                        `example-${delegate.name}`,
-                        'Example configuration',
-                      )
-                    }
-                  >
-                    {copiedId === `example-${delegate.name}` ? (
-                      <Check className="size-4" />
-                    ) : (
-                      <Copy className="size-4" />
-                    )}
-                    Copy Example
-                  </IGRPButtonPrimitive>
                 </div>
                 <div className="bg-muted rounded-lg p-4 font-mono text-xs overflow-x-auto">
                   <pre className="whitespace-pre-wrap text-foreground">{delegate.example}</pre>
