@@ -11,6 +11,7 @@ import { cn, useIGRPMenuNavigation, useIGRPToast } from '@igrp/igrp-framework-re
 import {Spinner} from '@/app/(myapp)/components/spinner'
 import {IgrpLoading} from '@/app/(myapp)/components/igrp-loading'
 import {BpmnModeler} from '@/app/(myapp)/components/BpmnModeler'
+import {DelegatesHelper} from '@/app/(myapp)/components/delegates-helper'
 import { 
   IGRPPageHeader,
 	IGRPButton,
@@ -202,12 +203,20 @@ content: (<>
             <IGRPTextarea
   name={ `inputTextarea1` }
   label={ `XML` }
-rows={ 20 }
+rows={ `20` }
 required={ false }
   
   value={ inputTextarea1Value }
 >
 </IGRPTextarea>
+</>),
+        },
+        {
+          value: `tabsItem3-D9am`,
+          label: `Delegates &amp; Variables`,
+          icon: `BookOpen`,
+content: (<>
+            <DelegatesHelper    ></DelegatesHelper>
 </>),
         },
 ]
