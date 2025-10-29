@@ -96,6 +96,12 @@ async function handleDeploy (): Promise<void  | undefined> {
 
 }
 
+function copyToClipboard (): void {
+
+  
+
+}
+
 
 const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 const { data, isLoading, error } = useDetailProcessDefinition(code);
