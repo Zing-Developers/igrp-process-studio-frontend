@@ -1,8 +1,12 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getProject } from '../functions/project';
 import { useProject } from './project';
 import { useMemo } from 'react';
-import { getProcessDefinitionById, getVariables } from '../functions/process-definition';
+import {
+  getProcessDefinitionById,
+  getVariables,
+  saveDiagramProcessDefinition,
+} from '../functions/process-definition';
 import {
   PaginatedResponse,
   ProcessDefinition,
@@ -98,5 +102,17 @@ export const useGetVariables = (processDefinitionId: string) => {
     queryKey: ['variables'],
     queryFn: () => getVariables(processDefinitionId),
     enabled: !!processDefinitionId,
+  });
+};
+
+export const useSaveDiagramProcessDefinition = (processDefinitionId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation<void, Error, { content: string }>({
+    mutationFn: async (data) => {
+      await saveDiagramProcessDefinition(processDefinitionId, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['processDefinition', processDefinitionId] });
+    },
   });
 };
