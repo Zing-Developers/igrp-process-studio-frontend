@@ -212,7 +212,7 @@ required={ false }
             <div className={ cn('flex',)}    >
 	<IGRPButton
   name={ `button3` }
-  variant={ `default` }
+  variant={ `outline` }
 size={ `default` }
 showIcon={ false }
   onClick={ () => {} }
