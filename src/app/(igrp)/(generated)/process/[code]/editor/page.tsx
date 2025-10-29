@@ -209,7 +209,7 @@ required={ false }
   value={ inputTextarea1Value }
 >
 </IGRPTextarea>
-            <div className={ cn('flex',' mt-3',)}    >
+            <div className={ cn('flex','flex flex-row flex-wrap-reverse items-end justify-end gap-2',' mt-3',)}    >
 	<IGRPButton
   name={ `button3` }
   variant={ `outline` }
