@@ -98,44 +98,46 @@ async function handleDeploy (): Promise<void  | undefined> {
 const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 const { data, isLoading, error } = useDetailProcessDefinition(code);
 
-  const autoSave = useCallback((data: any, xml: string) => {
-    // Clear existing timeout
+const { mutateAsync: saveDraft } = saveDiagramProcessDefinition(data?.processDefinitionId)
+
+const autoSave = useCallback((data: any, xml: string) => {
+  // Clear existing timeout
+  if (autoSaveTimeoutRef.current) {
+    clearTimeout(autoSaveTimeoutRef.current);
+  }
+
+  setIsAutoSave(true)
+
+  // Set a new timeout for auto-save (debounce)
+  autoSaveTimeoutRef.current = setTimeout(() => {
+    handleSave(data, xml, true);
+  }, 2000); // Wait 2 seconds after the user stops editing
+}, []);
+
+const handleBpmnChange = useCallback(
+  (xml: string) => {
+    setBpmnXml(xml);
+    setInputTextarea1Value(xml);
+    autoSave(data, xml);
+  },
+  [autoSave, data],
+);
+
+useEffect(() => {
+  if (isLoading || !data) return;
+  setPageHeader1Description(`${data.title} [${data.processKey}] - ${data.statusDesc}`);
+  setBpmnXml(data.bpmFileContent);
+  setInputTextarea1Value(data.bpmFileContent);
+}, [isLoading]);
+
+// Cleanup timeout on unmount
+useEffect(() => {
+  return () => {
     if (autoSaveTimeoutRef.current) {
       clearTimeout(autoSaveTimeoutRef.current);
     }
-
-    setIsAutoSave(true)
-
-    // Set a new timeout for auto-save (debounce)
-    autoSaveTimeoutRef.current = setTimeout(() => {
-      handleSave(data, xml,true);
-    }, 2000); // Wait 2 seconds after the user stops editing
-  }, []);
-
-  const handleBpmnChange = useCallback(
-    (xml: string) => {
-      setBpmnXml(xml);
-      setInputTextarea1Value(xml);
-      autoSave(data, xml);
-    },
-    [autoSave, data],
-  );
-
-  useEffect(() => {
-    if (isLoading || !data) return;
-    setPageHeader1Description(`${data.title} [${data.processKey}] - ${data.statusDesc}`);
-    setBpmnXml(data.bpmFileContent);
-    setInputTextarea1Value(data.bpmFileContent);
-  }, [isLoading]);
-
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (autoSaveTimeoutRef.current) {
-        clearTimeout(autoSaveTimeoutRef.current);
-      }
-    };
-  }, []);
+  };
+}, []);
 
 
   return (
