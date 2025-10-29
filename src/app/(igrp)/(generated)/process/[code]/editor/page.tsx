@@ -43,7 +43,7 @@ const [inputTextarea1Value, setInputTextarea1Value] = useState<string>('');
 
 const [isAutoSave, setIsAutoSave] = useState<boolean>(false);
 
-const [copiedId, setCopiedId] = useState<string>(undefined);
+const [copiedId, setCopiedId] = useState<string>('');
 
 const { igrpToast } = useIGRPToast()
 
