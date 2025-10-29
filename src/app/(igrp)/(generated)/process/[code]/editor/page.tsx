@@ -209,13 +209,14 @@ required={ false }
   value={ inputTextarea1Value }
 >
 </IGRPTextarea>
-            <div className={ cn('flex',)}    >
+            <div className={ cn('flex',' mt-3',)}    >
 	<IGRPButton
   name={ `button3` }
   variant={ `outline` }
 size={ `default` }
 showIcon={ true }
 iconName={ `Copy` }
+  className={ cn() }
   onClick={ () => {} }
   
 >
