@@ -25,6 +25,7 @@ import {useCallback } from 'react';
 import {useDetailProcessDefinition} from '@/app/(myapp)/hooks/process'
 import { IGRPLoadingSpinner } from '@igrp/igrp-framework-react-design-system'
 import {useSaveDiagramProcessDefinition} from '@/app/(myapp)/hooks/process'
+import {convertActivitiToCamunda} from '@/app/(myapp)/functions/utils'
 
 
 export default function PageEditorComponent({ params } : { params: Promise<{ code: string }> } ) {
