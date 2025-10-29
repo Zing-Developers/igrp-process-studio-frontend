@@ -195,7 +195,7 @@ iconName={ `Save` }
           label: `Diagram Editor`,
           icon: `Workflow`,
 content: (<>
-            <BpmnModeler  processName={ data.title } processKey={ data.processKey } xml={ bpmnXml || data.bpmFileContent }  onChange={ handleBpmnChange } ></BpmnModeler>
+            <BpmnModeler  processName={ data.title } processKey={ data.processKey } xml={ bpmnXml || data.bpmFileContent } isActivitiXml={ bpmXml !== '' }  onChange={ handleBpmnChange } ></BpmnModeler>
 </>),
         },
         {

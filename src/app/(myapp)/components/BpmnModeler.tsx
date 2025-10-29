@@ -7,16 +7,19 @@ const BpmnModeler = ({
   onLoad,
   processKey,
   processName,
+  isActivitiXml = false,
 }: {
   xml?: string;
   onChange?: (xml: string) => void;
   onLoad?: (modeler: unknown) => void;
   processKey: string;
   processName: string;
+  isActivitiXml?: boolean;
 }) => {
+  console.log('xml', xml);
   return (
     <IGRPBpmnModeler
-      xml={convertActivitiToCamunda(xml || '')}
+      xml={isActivitiXml ? convertActivitiToCamunda(xml || '') : xml || ''}
       processKey={processKey}
       processName={processName}
       onChange={onChange}
