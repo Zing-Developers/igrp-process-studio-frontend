@@ -214,7 +214,8 @@ required={ false }
   name={ `button3` }
   variant={ `outline` }
 size={ `default` }
-showIcon={ false }
+showIcon={ true }
+iconName={ `Copy` }
   onClick={ () => {} }
   
 >
