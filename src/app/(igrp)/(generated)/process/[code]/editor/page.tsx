@@ -96,7 +96,7 @@ async function handleDeploy (): Promise<void  | undefined> {
 
 }
 
-function copyToClipboard (text: string, id: string, label: string): void {
+async function copyToClipboard (text: string, id: string, label: string): Promise<void> {
 
    try {
       await navigator.clipboard.writeText(text);
