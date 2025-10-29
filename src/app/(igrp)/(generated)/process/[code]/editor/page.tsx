@@ -209,7 +209,8 @@ required={ false }
   value={ inputTextarea1Value }
 >
 </IGRPTextarea>
-            <IGRPButton
+            <div className={ cn('flex',)}    >
+	<IGRPButton
   name={ `button3` }
   variant={ `default` }
 size={ `default` }
@@ -217,7 +218,7 @@ size={ `default` }
   
 >
   Button
-</IGRPButton>
+</IGRPButton></div>
 </>),
         },
         {
