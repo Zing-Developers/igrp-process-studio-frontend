@@ -108,7 +108,7 @@ async function copyToClipboard (text: string, id: string, label: string): Promis
         title: 'Copied!',
         description: `${label} copied to clipboard`,
       });
-      setTimeout(() => setCopiedId(null), 2000);
+      setTimeout(() => setCopiedId(''), 2000);
     } catch (err) {
       console.error('Failed to copy', err);
       igrpToast({
