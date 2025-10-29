@@ -132,6 +132,7 @@ function DelegatesHelper() {
       });
       setTimeout(() => setCopiedId(null), 2000);
     } catch (err) {
+      console.error('Failed to copy', err);
       igrpToast({
         type: 'error',
         title: 'Failed to copy',
@@ -289,7 +290,7 @@ function DelegatesHelper() {
               </div>
               <div>
                 <p className="font-medium text-foreground">
-                  Set Implementation Type to "Delegate Expression"
+                  Set Implementation Type to &quot;Delegate Expression&quot;
                 </p>
                 <p className="text-sm text-muted-foreground">
                   In the Service Task properties panel
@@ -303,7 +304,7 @@ function DelegatesHelper() {
               <div>
                 <p className="font-medium text-foreground">Copy and paste the delegate syntax</p>
                 <p className="text-sm text-muted-foreground">
-                  Use the "Copy Syntax" button above to get the correct format
+                  Use the &quot;Copy Syntax&quot; button above to get the correct format
                 </p>
               </div>
             </div>
