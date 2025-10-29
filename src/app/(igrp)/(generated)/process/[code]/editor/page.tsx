@@ -209,6 +209,15 @@ required={ false }
   value={ inputTextarea1Value }
 >
 </IGRPTextarea>
+            <IGRPButton
+  name={ `button3` }
+  variant={ `default` }
+size={ `default` }
+  onClick={ () => {} }
+  
+>
+  Button
+</IGRPButton>
 </>),
         },
         {

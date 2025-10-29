@@ -3,11 +3,8 @@
 import type React from 'react';
 
 import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Copy, Check, Mail, Webhook, MessageSquare, FileJson } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { IGRPBadgePrimitive, IGRPButtonPrimitive, IGRPCardContentPrimitive, IGRPCardDescriptionPrimitive, IGRPCardHeaderPrimitive, IGRPCardPrimitive, IGRPCardTitlePrimitive, useIGRPToast } from '@igrp/igrp-framework-react-design-system';
 
 interface DelegateParameter {
   name: string;
@@ -122,64 +119,65 @@ isBase64Encoded: true`,
 
 function DelegatesHelper() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const { toast } = useToast();
+  const { igrpToast } = useIGRPToast();
 
   const copyToClipboard = async (text: string, id: string, label: string) => {
     try {
       await navigator.clipboard.writeText(text);
       setCopiedId(id);
-      toast({
+      igrpToast({
+        type: 'success',
         title: 'Copied!',
         description: `${label} copied to clipboard`,
       });
       setTimeout(() => setCopiedId(null), 2000);
     } catch (err) {
-      toast({
+      igrpToast({
+        type: 'error',
         title: 'Failed to copy',
         description: 'Please try again',
-        variant: 'destructive',
       });
     }
   };
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Available Delegates</CardTitle>
-          <CardDescription>
+      <IGRPCardPrimitive>
+        <IGRPCardHeaderPrimitive>
+          <IGRPCardTitlePrimitive>Available Delegates</IGRPCardTitlePrimitive>
+          <IGRPCardDescriptionPrimitive>
             Delegates allow you to integrate custom logic or external services directly into BPMN
             process workflows. Use them in Service Tasks by setting the Implementation Type to{' '}
-            <Badge variant="secondary">Delegate Expression</Badge>
-          </CardDescription>
-        </CardHeader>
-      </Card>
+            <IGRPBadgePrimitive variant="secondary">Delegate Expression</IGRPBadgePrimitive>
+          </IGRPCardDescriptionPrimitive>
+        </IGRPCardHeaderPrimitive>
+      </IGRPCardPrimitive>
 
       <div className="grid gap-6">
         {delegates.map((delegate) => (
-          <Card key={delegate.name}>
-            <CardHeader>
+          <IGRPCardPrimitive key={delegate.name}>
+            <IGRPCardHeaderPrimitive>
               <div className="flex items-center gap-3">
                 <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   {delegate.icon}
                 </div>
                 <div>
-                  <CardTitle className="text-xl">{delegate.name}</CardTitle>
-                  <Badge variant="outline" className="mt-1">
+                  <IGRPCardTitlePrimitive className="text-xl">{delegate.name}</IGRPCardTitlePrimitive>
+                  <IGRPBadgePrimitive variant="outline" className="mt-1">
                     {delegate.category}
-                  </Badge>
+                  </IGRPBadgePrimitive>
                 </div>
               </div>
-              <CardDescription className="mt-3">{delegate.description}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
+              <IGRPCardDescriptionPrimitive className="mt-3">{delegate.description}</IGRPCardDescriptionPrimitive>
+            </IGRPCardHeaderPrimitive>
+            <IGRPCardContentPrimitive className="space-y-4">
               {/* Syntax */}
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <h4 className="text-sm font-semibold text-foreground">
                     Delegate Expression Syntax
                   </h4>
-                  <Button
+                  <IGRPButtonPrimitive
                     variant="ghost"
                     size="sm"
                     onClick={() =>
@@ -192,7 +190,7 @@ function DelegatesHelper() {
                       <Copy className="size-4" />
                     )}
                     Copy Syntax
-                  </Button>
+                  </IGRPButtonPrimitive>
                 </div>
                 <div className="bg-muted rounded-lg p-3 font-mono text-sm">{delegate.syntax}</div>
               </div>
@@ -204,11 +202,11 @@ function DelegatesHelper() {
                   <div className="space-y-2">
                     {delegate.parameters.map((param) => (
                       <div key={param.name} className="flex items-center gap-3 text-sm group">
-                        <Badge variant="secondary" className="font-mono shrink-0">
+                        <IGRPBadgePrimitive variant="secondary" className="font-mono shrink-0">
                           {param.name}
-                        </Badge>
+                        </IGRPBadgePrimitive>
                         <span className="text-muted-foreground flex-1">{param.description}</span>
-                        <Button
+                        <IGRPButtonPrimitive
                           variant="ghost"
                           size="sm"
                           className="size-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -225,7 +223,7 @@ function DelegatesHelper() {
                           ) : (
                             <Copy className="size-3.5" />
                           )}
-                        </Button>
+                        </IGRPButtonPrimitive>
                       </div>
                     ))}
                   </div>
@@ -236,7 +234,7 @@ function DelegatesHelper() {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <h4 className="text-sm font-semibold text-foreground">Example Configuration</h4>
-                  <Button
+                  <IGRPButtonPrimitive
                     variant="ghost"
                     size="sm"
                     onClick={() =>
@@ -253,24 +251,24 @@ function DelegatesHelper() {
                       <Copy className="size-4" />
                     )}
                     Copy Example
-                  </Button>
+                  </IGRPButtonPrimitive>
                 </div>
                 <div className="bg-muted rounded-lg p-4 font-mono text-xs overflow-x-auto">
                   <pre className="whitespace-pre-wrap text-foreground">{delegate.example}</pre>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </IGRPCardContentPrimitive>
+          </IGRPCardPrimitive>
         ))}
       </div>
 
       {/* Quick Reference */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Quick Reference</CardTitle>
-          <CardDescription>How to use delegates in your BPMN process</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <IGRPCardPrimitive>
+        <IGRPCardHeaderPrimitive>
+          <IGRPCardTitlePrimitive>Quick Reference</IGRPCardTitlePrimitive>
+          <IGRPCardDescriptionPrimitive>How to use delegates in your BPMN process</IGRPCardDescriptionPrimitive>
+        </IGRPCardHeaderPrimitive>
+        <IGRPCardContentPrimitive className="space-y-4">
           <div className="space-y-3">
             <div className="flex gap-3">
               <div className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold">
@@ -322,8 +320,8 @@ function DelegatesHelper() {
               </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </IGRPCardContentPrimitive>
+      </IGRPCardPrimitive>
     </div>
   );
 }
