@@ -24,6 +24,7 @@ import {deployProcessDefinition} from '@/app/(myapp)/functions/process-definitio
 import {useCallback } from 'react';
 import {useDetailProcessDefinition} from '@/app/(myapp)/hooks/process'
 import { IGRPLoadingSpinner } from '@igrp/igrp-framework-react-design-system'
+import {useSaveDiagramProcessDefinition} from '@/app/(myapp)/hooks/process'
 
 
 export default function PageEditorComponent({ params } : { params: Promise<{ code: string }> } ) {
@@ -98,7 +99,7 @@ async function handleDeploy (): Promise<void  | undefined> {
 const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 const { data, isLoading, error } = useDetailProcessDefinition(code);
 
-const { mutateAsync: saveDraft } = saveDiagramProcessDefinition(code)
+const { mutateAsync: saveDraft } = useSaveDiagramProcessDefinition(code)
 
 const autoSave = useCallback((data: any, xml: string) => {
   // Clear existing timeout

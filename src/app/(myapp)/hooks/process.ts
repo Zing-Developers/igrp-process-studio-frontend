@@ -105,14 +105,14 @@ export const useGetVariables = (processDefinitionId: string) => {
   });
 };
 
-export const useSaveDiagramProcessDefinition = (processDefinitionId: string) => {
+export const useSaveDiagramProcessDefinition = (processKey: string) => {
   const queryClient = useQueryClient();
   return useMutation<void, Error, { content: string }>({
     mutationFn: async (data) => {
-      await saveDiagramProcessDefinition(processDefinitionId, data);
+      await saveDiagramProcessDefinition(processKey, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['processDefinition', processDefinitionId] });
+      queryClient.invalidateQueries({ queryKey: ['processDefinition', processKey] });
     },
   });
 };
