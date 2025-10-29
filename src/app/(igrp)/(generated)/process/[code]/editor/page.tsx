@@ -214,10 +214,11 @@ required={ false }
   name={ `button3` }
   variant={ `default` }
 size={ `default` }
+showIcon={ false }
   onClick={ () => {} }
   
 >
-  Button
+  Copy XML
 </IGRPButton></div>
 </>),
         },
