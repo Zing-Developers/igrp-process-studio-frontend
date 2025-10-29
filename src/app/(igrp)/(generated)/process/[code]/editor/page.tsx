@@ -99,7 +99,7 @@ async function handleDeploy (): Promise<void  | undefined> {
 const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 const { data, isLoading, error } = useDetailProcessDefinition(code);
 
-const { mutateAsync: saveDraft } = useSaveDiagramProcessDefinition(code)
+const { mutateAsync: saveDraft } = useSaveDiagramProcessDefinition(data?.processKey)
 
 const autoSave = useCallback((data: any, xml: string) => {
   // Clear existing timeout
