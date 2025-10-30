@@ -1,5 +1,5 @@
 import { NextApiRequest } from 'next';
-import { getToken } from 'next-auth/jwt';
+import { getToken, JWT } from 'next-auth/jwt';
 import { cookies } from 'next/headers';
 
 export async function getAccessToken() {
@@ -15,17 +15,12 @@ export async function getAccessToken() {
   return token;
 }
 
-
 /**
  * Refreshes the access token using the refresh token from Keycloak
- * @param refreshToken The refresh token to use
- * @returns Promise with refreshed token data or null if refresh fails
+ * @param token The JWT token to refresh
+ * @returns Promise with refreshed token data
  */
-export async function refreshAccessToken(refreshToken: string): Promise<{
-  accessToken: string;
-  refreshToken: string;
-  expiresAt: number;
-} | null> {
+export async function refreshAccessToken(token: JWT): Promise<JWT> {
   try {
     const issuer = process.env.KEYCLOAK_ISSUER;
     const clientId = process.env.KEYCLOAK_CLIENT_ID;
@@ -33,41 +28,38 @@ export async function refreshAccessToken(refreshToken: string): Promise<{
 
     if (!issuer || !clientId || !clientSecret) {
       console.error('[Auth] Missing Keycloak configuration for token refresh');
-      return null;
+      return { ...token, error: 'RefreshAccessTokenError' };
     }
 
-    const refreshResponse = await fetch(
-      `${issuer}/protocol/openid-connect/token`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          client_id: clientId,
-          client_secret: clientSecret,
-          grant_type: 'refresh_token',
-          refresh_token: refreshToken,
-        }),
-      }
-    );
+    const refreshResponse = await fetch(`${issuer}/protocol/openid-connect/token`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        client_id: clientId,
+        client_secret: clientSecret,
+        grant_type: 'refresh_token',
+        refresh_token: token.refreshToken || '',
+      }),
+    });
 
     if (!refreshResponse.ok) {
       const errorText = await refreshResponse.text();
       console.error('[Auth] Failed to refresh token:', refreshResponse.status, errorText);
-      return null;
+      return { ...token, error: 'RefreshAccessTokenError' };
     }
 
     const refreshed = await refreshResponse.json();
-    const expiresAt = Math.floor(Date.now() / 1000) + (refreshed.expires_in || 3600);
 
     return {
+      ...token,
       accessToken: refreshed.access_token,
-      refreshToken: refreshed.refresh_token || refreshToken,
-      expiresAt,
+      expiresAt: Date.now() + (refreshed.expires_in || 3600) * 1000,
+      refreshToken: refreshed.refresh_token ?? token.refreshToken, // Fall back to old refresh token
     };
   } catch (error) {
     console.error('[Auth] Error refreshing token:', error);
-    return null;
+    return { ...token, error: 'RefreshAccessTokenError' };
   }
 }
