@@ -11,6 +11,7 @@ import { cn, useIGRPMenuNavigation, useIGRPToast } from '@igrp/igrp-framework-re
 import {Spinner} from '@/app/(myapp)/components/spinner'
 import {IgrpLoading} from '@/app/(myapp)/components/igrp-loading'
 import {BpmnModeler} from '@/app/(myapp)/components/BpmnModeler'
+import {DelegatesHelper} from '@/app/(myapp)/components/delegates-helper'
 import { 
   IGRPPageHeader,
 	IGRPButton,
@@ -23,6 +24,8 @@ import {deployProcessDefinition} from '@/app/(myapp)/functions/process-definitio
 import {useCallback } from 'react';
 import {useDetailProcessDefinition} from '@/app/(myapp)/hooks/process'
 import { IGRPLoadingSpinner } from '@igrp/igrp-framework-react-design-system'
+import {useSaveDiagramProcessDefinition} from '@/app/(myapp)/hooks/process'
+import {convertActivitiToCamunda} from '@/app/(myapp)/functions/utils'
 
 
 export default function PageEditorComponent({ params } : { params: Promise<{ code: string }> } ) {
@@ -40,9 +43,11 @@ const [inputTextarea1Value, setInputTextarea1Value] = useState<string>('');
 
 const [isAutoSave, setIsAutoSave] = useState<boolean>(false);
 
+const [copiedId, setCopiedId] = useState<string>('');
+
 const { igrpToast } = useIGRPToast()
 
-async function handleSave (dataToSave: any, xmlToSave: string, isAutoSave: boolean): Promise<void  | undefined> {
+async function handleSave (dataToSave?: any, xmlToSave?: string, isAutoSave?: boolean): Promise<void  | undefined> {
 
   try {
   const xml = xmlToSave || bpmnXml;
@@ -50,7 +55,7 @@ async function handleSave (dataToSave: any, xmlToSave: string, isAutoSave: boole
   
   if (!processKey || !xml) return;
   
-  await saveDiagramProcessDefinition(processKey, { content: xml });
+  await saveDraft({ content: xml, processKey });
 
   if (!isAutoSave)
     igrpToast({
@@ -93,48 +98,73 @@ async function handleDeploy (): Promise<void  | undefined> {
 
 }
 
+async function copyToClipboard (text: string, id: string, label: string): Promise<void> {
+
+   try {
+      await navigator.clipboard.writeText(text);
+      setCopiedId(id);
+      igrpToast({
+        type: 'success',
+        title: 'Copied!',
+        description: `${label} copied to clipboard`,
+      });
+      setTimeout(() => setCopiedId(''), 2000);
+    } catch (err) {
+      console.error('Failed to copy', err);
+      igrpToast({
+        type: 'error',
+        title: 'Failed to copy',
+        description: 'Please try again',
+      });
+    }
+
+}
+
 
 const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 const { data, isLoading, error } = useDetailProcessDefinition(code);
 
-  const autoSave = useCallback((data: any, xml: string) => {
-    // Clear existing timeout
+const { mutateAsync: saveDraft } = useSaveDiagramProcessDefinition(code)
+
+const autoSave = useCallback((data: any, xml: string) => {
+  // Clear existing timeout
+  if (autoSaveTimeoutRef.current) {
+    clearTimeout(autoSaveTimeoutRef.current);
+  }
+
+  setIsAutoSave(true)
+
+  // Set a new timeout for auto-save (debounce)
+  autoSaveTimeoutRef.current = setTimeout(() => {
+    handleSave(data, xml, true);
+  }, 2000); // Wait 2 seconds after the user stops editing
+}, []);
+
+const handleBpmnChange = useCallback(
+  (xml: string) => {
+    setBpmnXml(xml);
+    setInputTextarea1Value(xml);
+    autoSave(data, xml);
+  },
+  [autoSave, data],
+);
+
+useEffect(() => {
+  if (isLoading || !data) return;
+  const camundaXml = convertActivitiToCamunda(data.bpmFileContent);
+  setPageHeader1Description(`${data.title} [${data.processKey}] - ${data.statusDesc}`);
+  setBpmnXml(camundaXml);
+  setInputTextarea1Value(camundaXml);
+}, [isLoading]);
+
+// Cleanup timeout on unmount
+useEffect(() => {
+  return () => {
     if (autoSaveTimeoutRef.current) {
       clearTimeout(autoSaveTimeoutRef.current);
     }
-
-    setIsAutoSave(true)
-
-    // Set a new timeout for auto-save (debounce)
-    autoSaveTimeoutRef.current = setTimeout(() => {
-      handleSave(data, xml,true);
-    }, 2000); // Wait 2 seconds after the user stops editing
-  }, []);
-
-  const handleBpmnChange = useCallback(
-    (xml: string) => {
-      setBpmnXml(xml);
-      setInputTextarea1Value(xml);
-      autoSave(data, xml);
-    },
-    [autoSave, data],
-  );
-
-  useEffect(() => {
-    if (isLoading || !data) return;
-    setPageHeader1Description(`${data.title} [${data.processKey}] - ${data.statusDesc}`);
-    setBpmnXml(data.bpmFileContent);
-    setInputTextarea1Value(data.bpmFileContent);
-  }, [isLoading]);
-
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (autoSaveTimeoutRef.current) {
-        clearTimeout(autoSaveTimeoutRef.current);
-      }
-    };
-  }, []);
+  };
+}, []);
 
 
   return (
@@ -191,7 +221,7 @@ iconName={ `Save` }
           label: `Diagram Editor`,
           icon: `Workflow`,
 content: (<>
-            <BpmnModeler  processName={ data.title } processKey={ data.processKey } xml={ bpmnXml || data.bpmFileContent }  onChange={ handleBpmnChange } ></BpmnModeler>
+            <BpmnModeler  processName={ data.title } processKey={ data.processKey } xml={ bpmnXml }  onChange={ handleBpmnChange } ></BpmnModeler>
 </>),
         },
         {
@@ -202,12 +232,33 @@ content: (<>
             <IGRPTextarea
   name={ `inputTextarea1` }
   label={ `XML` }
-rows={ 20 }
+rows={ 20}
 required={ false }
   
   value={ inputTextarea1Value }
 >
 </IGRPTextarea>
+            <div className={ cn('flex','flex flex-row flex-wrap-reverse items-end justify-end gap-2',' mt-3',)}    >
+	<IGRPButton
+  name={ `button3` }
+  variant={ `outline` }
+size={ `default` }
+showIcon={ true }
+iconName={ `Copy` }
+  className={ cn() }
+  onClick={ () => {copyToClipboard(bpmnXml,'bpmn-xml','bpmn-xml');} }
+  
+>
+  Copy XML
+</IGRPButton></div>
+</>),
+        },
+        {
+          value: `tabsItem3-D9am`,
+          label: `Delegates & Variables`,
+          icon: `BookOpen`,
+content: (<>
+            <DelegatesHelper    ></DelegatesHelper>
 </>),
         },
 ]

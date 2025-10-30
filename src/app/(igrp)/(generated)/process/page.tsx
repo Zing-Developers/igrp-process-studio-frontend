@@ -349,7 +349,11 @@ return (
         {
           columnId: `title`,
           component: (column) => (
-          <IGRPDataTableFilterInput column={column} />
+          <IGRPDataTableFilterInput
+  column={column}
+  
+  
+/>
           )
         },
         {

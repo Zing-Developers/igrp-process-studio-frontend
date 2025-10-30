@@ -1,5 +1,4 @@
 import { IGRPBpmnModeler } from '@igrp/framework-process-studio-bpmn-editor';
-import { convertActivitiToCamunda } from '../functions/utils';
 
 const BpmnModeler = ({
   xml,
@@ -16,7 +15,7 @@ const BpmnModeler = ({
 }) => {
   return (
     <IGRPBpmnModeler
-      xml={convertActivitiToCamunda(xml || '')}
+      xml={xml || ''}
       processKey={processKey}
       processName={processName}
       onChange={onChange}
