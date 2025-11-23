@@ -97,7 +97,7 @@ const router = useRouter();
   
 >
   <IGRPModalDialogTitle
-  name={ `modalDialogTitle1` }
+  id={ `modalDialogTitle1` }
   
   
   
@@ -115,7 +115,7 @@ formRef={ formform1Ref }
 >
   <>
   <IGRPInputText
-  name={ `code` }
+  id={ `code` }
   label={ `Code` }
 showIcon={ false }
 required={ true }
@@ -126,7 +126,7 @@ placeholder={ `Enter process code` }
 >
 </IGRPInputText>
   <IGRPInputText
-  name={ `name` }
+  id={ `name` }
   label={ `Name` }
 showIcon={ false }
 required={ true }
@@ -137,7 +137,7 @@ placeholder={ `Enter process name` }
 >
 </IGRPInputText>
   <IGRPTextarea
-  name={ `description` }
+  id={ `description` }
   label={ `Description` }
 rows={ 3 }
 required={ false }
@@ -156,7 +156,7 @@ placeholder={ `Enter process description` }
 >
   <div className={ cn('flex','flex flex-row flex-wrap items-center justify-end gap-2',)}    >
 	<IGRPButton
-  name={ `button1` }
+  id={ `button1` }
   variant={ `default` }
 size={ `default` }
 showIcon={ true }
