@@ -121,7 +121,7 @@ useEffect(() => {
   
 >
   <IGRPModalDialogTitle
-  name={ `modalDialogTitle1` }
+  id={ `modalDialogTitle1` }
   
   
   
@@ -139,7 +139,7 @@ formRef={ formform1Ref }
 >
   <>
   <IGRPInputText
-  name={ `title` }
+  id={ `title` }
   label={ `Title` }
 showIcon={ false }
 required={ true }
@@ -150,7 +150,7 @@ placeholder={ `Enter process title` }
 >
 </IGRPInputText>
   <IGRPInputText
-  name={ `processKey` }
+  id={ `processKey` }
   label={ `Process Key` }
 showIcon={ false }
 required={ true }
@@ -161,7 +161,7 @@ placeholder={ `Enter process key` }
 >
 </IGRPInputText>
   <IGRPTextarea
-  name={ `description` }
+  id={ `description` }
   label={ `Description` }
 rows={ 3 }
 required={ false }
@@ -172,7 +172,7 @@ placeholder={ `Enter process description` }
 >
 </IGRPTextarea>
   <IGRPCombobox
-  name={ `projectId` }
+  id={ `projectId` }
   label={ `Project` }
 variant={ `single` }
 placeholder={ `Select an option...` }
@@ -195,7 +195,7 @@ iconName={ `CornerDownRight` }
 >
   <div className={ cn('flex','flex flex-row flex-wrap items-center justify-end gap-2',)}    >
 	<IGRPButton
-  name={ `button1` }
+  id={ `button1` }
   variant={ `default` }
 size={ `default` }
 showIcon={ true }
