@@ -40,10 +40,10 @@ export default function New({ open, setOpen, initialData, setNewProcess, invalid
 type Form1ZodType = typeof form1;
 
 const initForm1: z.infer<Form1ZodType> = {
-    title: undefined,
-    processKey: undefined,
-    description: undefined,
-    projectId: undefined
+    title: ``,
+    processKey: ``,
+    description: ``,
+    projectId: ``
 }
 
 
