@@ -31,10 +31,10 @@ export default function New({ open, setOpen, initialData, setNewProcess, invalid
 
   
   const form1 = z.object({
-    title: z.string().optional(),
-    processKey: z.string().optional(),
+    title: z.string().nonempty(),
+    processKey: z.string().nonempty(),
     description: z.string().optional(),
-    projectId: z.string().optional()
+    projectId: z.string().nonempty()
 })
 
 type Form1ZodType = typeof form1;
