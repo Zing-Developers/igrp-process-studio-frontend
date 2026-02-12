@@ -29,8 +29,11 @@ import { useRouter } from 'next/navigation';
 
 export default function New({ open, setOpen, initialData, setNewProcess, invalidateQueries } : { open: boolean, setOpen: (prompt: boolean) => void, initialData?: any, setNewProcess: (prompt: boolean) => void, invalidateQueries: () => void }) {
 
+
   
-  const form1 = z.object({
+  z.config(z.locales.en());
+
+const form1 = z.object({
     title: z.string().nonempty(),
     processKey: z.string().nonempty(),
     description: z.string().optional(),
@@ -193,7 +196,7 @@ iconName={ `CornerDownRight` }
   
   
 >
-  <div className={ cn('flex','flex flex-row flex-wrap items-center justify-end gap-2',)}    >
+  <div className={ cn('flex',' flex-1 justify-end',)}    >
 	<IGRPButton
   id={ `button1` }
   variant={ `default` }

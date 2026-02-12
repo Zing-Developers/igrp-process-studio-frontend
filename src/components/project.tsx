@@ -26,8 +26,11 @@ import { useRouter } from 'next/navigation';
 
 export default function Project({ open, setOpen, initialData, invalidateQueries } : { open: boolean, setOpen: (prompt: boolean) => void, initialData?: any, invalidateQueries: () => void }) {
 
+
   
-  const form1 = z.object({
+  z.config(z.locales.en());
+
+const form1 = z.object({
     code: z.string().nonempty(),
     name: z.string().nonempty(),
     description: z.string().optional()
@@ -38,7 +41,7 @@ type Form1ZodType = typeof form1;
 const initForm1: z.infer<Form1ZodType> = {
     code: ``,
     name: ``,
-    description: undefined
+    description: ``
 }
 
 
@@ -154,7 +157,7 @@ placeholder={ `Enter process description` }
   
   
 >
-  <div className={ cn('flex','flex flex-row flex-wrap items-center justify-end gap-2',)}    >
+  <div className={ cn('flex',' flex-1 justify-end',)}    >
 	<IGRPButton
   id={ `button1` }
   variant={ `default` }
