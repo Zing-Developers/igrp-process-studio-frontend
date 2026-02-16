@@ -1,12 +1,6 @@
-import '@/styles/globals.css';
-/* start area to add custom styles */
+import "@/styles/globals.css";
 
-/* end area to add custom styles */
 import '@igrp/framework-process-studio-bpmn-editor/dist/src/styles.css';
-
-import '@igrp/framework-next-ui/dist/styles.css';
-import '@igrp/igrp-framework-react-design-system/dist/styles.css';
-
 import type { Metadata, Viewport } from 'next';
 import { IGRPRootLayout } from '@igrp/framework-next';
 import { IGRP_META_THEME_COLORS } from '@igrp/igrp-framework-react-design-system';
