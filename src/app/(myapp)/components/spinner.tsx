@@ -1,5 +1,4 @@
-import { Loader2Icon } from 'lucide-react';
-
+import { IGRPIcon } from '@igrp/igrp-framework-react-design-system';
 import { cn } from '@/lib/utils';
 
 export interface SpinnerProps extends React.ComponentProps<'svg'> {
@@ -8,10 +7,10 @@ export interface SpinnerProps extends React.ComponentProps<'svg'> {
   className?: string;
 }
 
-function Spinner({ isLoading, className, ...props }: SpinnerProps) {
+export function Spinner({ isLoading, className, ...props }: SpinnerProps) {
   if (!isLoading) return null;
   return (
-    <Loader2Icon
+    <IGRPIcon iconName="LoaderCircle"
       role="status"
       aria-label="Loading"
       className={cn('size-4 animate-spin', className)}
@@ -19,5 +18,3 @@ function Spinner({ isLoading, className, ...props }: SpinnerProps) {
     />
   );
 }
-
-export { Spinner };
