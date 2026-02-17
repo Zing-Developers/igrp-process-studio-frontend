@@ -49,18 +49,18 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
       },
     );
 
-    const refreshedTokens = await refreshResponse.json();
+    const bodyText = await refreshResponse.text();
 
     if (!refreshResponse.ok) {
-      const errorText = await refreshResponse.text();
       console.error(
         "[Auth] Failed to refresh token:",
         refreshResponse.status,
-        errorText,
+        bodyText,
       );
-      throw refreshedTokens;
+      throw new Error(bodyText || `Refresh failed: ${refreshResponse.status}`);
     }
 
+    const refreshedTokens = JSON.parse(bodyText);
     return {
       ...token,
       accessToken: refreshedTokens.access_token,
@@ -72,6 +72,7 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
     return { ...token, error: "RefreshAccessTokenError" };
   }
 }
+
 
 export async function signOut(token: JWT) {
   if (token.refreshToken) {
