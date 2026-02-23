@@ -5,8 +5,10 @@ on:
     branches:
       - 'irn-releases'    # or restrict to a specific branch
     paths-ignore: 
+      - '.github/**'
       - 'k8s/**' 
       - '.gitattributes'
+      - 'docs/**'
 
 jobs:
   sync:
@@ -36,4 +38,9 @@ jobs:
         run: |
           git remote add external https://oauth2:${{ secrets.EXT_REPO_PAT }}@code.irn.justica.gov.pt/plataforma-de-registos/backoffice-componentes-transversais/igrp-process-studio-frontend.git
           
-          git push external HEAD:feature/zing-commits --force
+          git push external HEAD:feature/zing-commits --force \
+            -o merge_request.create \
+            -o merge_request.target=main \
+            -o merge_request.assign="carlos.marques" \
+            -o merge_request.reviewer="379" \
+            -o merge_request.title="Feature/zing-commits"
