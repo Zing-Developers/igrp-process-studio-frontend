@@ -1,6 +1,7 @@
 {
   "name": "igrp-process-studio-frontend",
   "version": "0.1.0-beta.1",
+  "displayName": "iGRP Process Studio",
   "description": "Process Studio Frontend for IGRP",
   "scripts": {
     "dev": "next dev",
