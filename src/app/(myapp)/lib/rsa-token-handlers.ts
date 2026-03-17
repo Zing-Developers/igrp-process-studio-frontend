@@ -56,7 +56,7 @@ export async function generateRS256Token({ ...payload }: JwtPayload): Promise<st
     });
 }
 
-export async function verifyRS256Token(token: string, filePath: string): Promise<JwtPayload> {
+export async function verifyRS256Token(token: string): Promise<JwtPayload> {
     return new Promise((resolve, reject) => {
         const publicKey = process.env.JWT_KEY ?? '';
 
