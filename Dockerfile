@@ -9,12 +9,15 @@ WORKDIR /app
 
 FROM base AS deps
 
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* *.npmrc ./
-RUN npm install -g pnpm@9.15.9 && \
-    pnpm install \
-      --registry=https://nexus.tools.irn.internal/repository/npm-group/ \
-      --no-frozen-lockfile \
-      --strict-peer-dependencies=false
+COPY package.json .npmrc ./
+COPY pnpm-lock.yaml ./
+RUN node -v && pnpm -v
+RUN if [ -f pnpm-lock.yaml ]; then \
+  echo "Using frozen lockfile" && pnpm i --frozen-lockfile; \
+  else \
+  echo "No lockfile found, installing dependencies"; \
+  fi
+
 
 # Update Corepack to the version with the fix and enable PNPM
 # RUN npm install -g corepack@0.31.0 && \
