@@ -5,20 +5,8 @@ FROM base AS deps
 
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
-WORKDIR /app
-
-FROM base AS deps
-
-COPY package.json ./
-COPY pnpm-lock.yaml ./
-RUN node -v && pnpm -v
-RUN if [ -f pnpm-lock.yaml ]; then \
-  echo "Using frozen lockfile" && pnpm i --frozen-lockfile; \
-  else \
-  echo "No lockfile found, installing dependencies"; \
-  fi
-
-
+WORKDIR /app 
+ 
 # Update Corepack to the version with the fix and enable PNPM
 # RUN npm install -g corepack@0.31.0 && \
 #     corepack enable && \
