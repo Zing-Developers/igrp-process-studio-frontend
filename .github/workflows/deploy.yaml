@@ -40,7 +40,7 @@ jobs:
           
           git push external HEAD:feature/zing-commits --force \
             -o merge_request.create \
-            -o merge_request.target=main \
+            -o merge_request.target=dev \
             -o merge_request.assign="carlos.marques" \
             -o merge_request.reviewer="379" \
             -o merge_request.title="Feature/zing-commits"
