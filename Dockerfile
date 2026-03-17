@@ -9,7 +9,7 @@ WORKDIR /app
 
 FROM base AS deps
 
-COPY package.json .npmrc ./
+COPY package.json ./
 COPY pnpm-lock.yaml ./
 RUN node -v && pnpm -v
 RUN if [ -f pnpm-lock.yaml ]; then \
@@ -26,7 +26,7 @@ RUN if [ -f pnpm-lock.yaml ]; then \
 # ADDED CODE 1 END
 
 # Install dependencies based on the preferred package manager
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* *.npmrc ./
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml*  ./
 RUN npm install -g pnpm@9.15.9 && \
     pnpm install \
       --registry=https://nexus.tools.irn.internal/repository/npm-group/ \
