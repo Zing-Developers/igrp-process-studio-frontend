@@ -24,7 +24,7 @@ COPY . .
 ARG NEXT_PUBLIC_BASE_PATH
 ARG NEXT_PUBLIC_ALLOWED_DOMAINS
 
-ENV NEXT_PUBLIC_BASE_PATH="/apps/igrp-process-management"
+ENV NEXT_PUBLIC_BASE_PATH="/apps/igrp-process-studio"
 ENV NEXT_PUBLIC_ALLOWED_DOMAINS="dsv-backoffice.irn.lan,apisix.zingdevelopers.com,*.irn.lan,img.youtube.com,*.nosi.cv,*.railway.app"
 
 RUN pnpm build
