@@ -72,18 +72,19 @@ jobs:
           sudo cp /etc/ssl/certs/repo-ca.crt /etc/docker/certs.d/docker-repo.zingaistudio.com/ca.crt
           sudo systemctl restart docker
 
-      - name: Login to Docker Hub
+      - name: Login to Nexus Sonatype
         uses: docker/login-action@v3
         with:
-          username: irnzing
-          password: 'IRNZ2025##'
+          username: admin
+          password: nexusadmin 
+          registry: docker-repo.zingaistudio.com
 
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
           push: true
-          tags: |
-            irnzing/irn:${{ env.DOCKER_HUB_IMAGE_TAG }} 
+          tags: | 
+            docker-repo.zingaistudio.com/irn/igrp-process-studio-frontend:latest
 
   deploy:
     name: Deploy to Kubernetes
