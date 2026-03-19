@@ -40,4 +40,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
  - create code, commits
  - run ```docker build -t igrp-process-studio-frontend .```
  - check if success if, ir not fix
- - create a MR to irn-release and notify to Tiago (devops)
+ - create a MR to cloud-dev
