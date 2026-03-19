@@ -33,7 +33,8 @@ const getServerConfig = async () => {
         Cookie: `session_id=${token?.session_id}`,
       } : {
         Authorization: `Bearer ${token.accessToken}`,
-        Cookie: `session_id=${token?.session_id}`,
+        ...(!process.env.IRN_SYSTEM_ADMINISTRATION_DISABLED ? { Cookie: `session_id=${token?.session_id}` } : {})
+        ,
       })
     },
   };
