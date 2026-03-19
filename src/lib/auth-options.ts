@@ -20,17 +20,25 @@ export const authOptions: AuthOptions = {
       if (account && user) {
 
         try {
-          const sessionData = await expSystemAdminAPIClient.auth.login({
-            accessToken: account.access_token,
-            refreshToken: account.refresh_token,
-            expiresIn: account.expires_in,
-          });
 
-          if (!sessionData.sessionId) {
-            throw new Error('Null session data');
+          if (!process.env.IRN_SYSTEM_ADMINISTRATION_DISABLED) {
+
+            console.log("🔴 token_exchanged")
+
+            const sessionData = await expSystemAdminAPIClient.auth.login({
+              accessToken: account.access_token,
+              refreshToken: account.refresh_token,
+              expiresIn: account.expires_at,
+            });
+
+            if (!sessionData.sessionId) {
+              throw new Error('Null session data');
+            }
+
+            token.session_id = sessionData.sessionId;
+
           }
 
-          token.session_id = sessionData.sessionId;
 
           token.accessToken = account.access_token;
           token.expiresAt = account.expires_at ? account.expires_at * 1000 : Date.now() + 3600 * 1000;
