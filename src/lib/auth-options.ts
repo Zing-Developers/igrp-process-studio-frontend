@@ -21,12 +21,14 @@ export const authOptions: AuthOptions = {
 
         try {
 
-          if (process.env.IRN_API_BACKOFFICE_BASE_URL) {
+          if (!process.env.IRN_SYSTEM_ADMINISTRATION_DISABLED) {
+
+            console.log("🔴 token_exchanged")
 
             const sessionData = await expSystemAdminAPIClient.auth.login({
               accessToken: account.access_token,
               refreshToken: account.refresh_token,
-              expiresIn: account.expires_in,
+              expiresIn: account.expires_at,
             });
 
             if (!sessionData.sessionId) {
@@ -34,7 +36,7 @@ export const authOptions: AuthOptions = {
             }
 
             token.session_id = sessionData.sessionId;
-            
+
           }
 
 
