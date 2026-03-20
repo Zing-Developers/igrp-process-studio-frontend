@@ -19,7 +19,10 @@ const getServerConfig = async () => {
 
   const IRN_APISIX_TOKEN_ENABLED = process.env.IRN_APISIX_TOKEN_ENABLED ?? false
 
-  const ROTATED_TOKEN = await getOrFetchToken("apisix-token-v.0", cache);
+  let ROTATED_TOKEN = "";
+
+  if (IRN_APISIX_TOKEN_ENABLED)
+    ROTATED_TOKEN = await getOrFetchToken("api-six-token-v.0", cache);
 
   const config = {
     baseUrl: process.env.API_GATEWAY ?? '',
