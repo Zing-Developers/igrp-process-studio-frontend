@@ -5,6 +5,7 @@ import { headers } from 'next/headers';
 import { configLayout } from '@/actions/igrp/layout';
 import { createConfig } from '@igrp/template-config';
 import { IGRPLayoutConfigArgs } from '@igrp/framework-next-types';
+import IRNLayout from '../(myapp)/components/irn-ui-commons/irn-layout';
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const layoutConfig = await configLayout();
@@ -21,7 +22,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     headersList.get('referer') ||
     '';
 
-  const baseUrl = process.env.NEXTAUTH_URL_INTERNAL  || process.env.NEXTAUTH_URL;
+  const baseUrl = process.env.NEXTAUTH_URL_INTERNAL || process.env.NEXTAUTH_URL;
 
   const urlLogin = '/login';
 
@@ -34,5 +35,11 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     redirect(urlLogin);
   }
 
-  return <IGRPLayout config={config}>{children}</IGRPLayout>;
+  return (
+    <IRNLayout>
+      <main className="px-4">
+        {children}
+      </main>
+    </IRNLayout>
+  );
 }
