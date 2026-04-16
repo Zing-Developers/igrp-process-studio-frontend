@@ -3,10 +3,10 @@ name: Push to External Repo
 on:
   push:
     branches:
-      - 'irn-releases'    # or restrict to a specific branch
+      - 'irn-releases'
     paths-ignore: 
-      - '.github/**'
-      - 'k8s/**' 
+      #- '.github/**'
+      - 'k8s/**'
       - '.gitattributes'
       - 'docs/**'
 
@@ -15,29 +15,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source repo
+      - name: Checkout source repo (full history)
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: Remove .github directory
+      - name: Install git-filter-repo
         run: |
-          rm -rf .github
+          pip install git-filter-repo
+
+      - name: Rewrite history (remove .github/workflows)
+        run: |
+          git filter-repo \
+            --path .github/workflows \
+            --invert-paths
 
       - name: Configure Git
         run: |
-          git config --global user.email "actions@github.com"
-          git config --global user.name "GitHub Actions"
-
-      - name: Commit removal of .github (temporary commit)
-        run: |
-          git add -A
-          git commit -m "Prepare repo for sync (exclude .github)" || echo "No changes"
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
 
       - name: Add external repo and push
         run: |
           git remote add external https://oauth2:${{ secrets.EXT_REPO_PAT }}@code.irn.justica.gov.pt/plataforma-de-registos/backoffice-componentes-transversais/igrp-process-studio-frontend.git
-          
+
           git push external HEAD:feature/zing-commits --force \
             -o merge_request.create \
             -o merge_request.target=dev \
