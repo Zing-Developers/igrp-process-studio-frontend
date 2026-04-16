@@ -29,21 +29,24 @@ import { useRouter } from 'next/navigation';
 
 export default function New({ open, setOpen, initialData, setNewProcess, invalidateQueries } : { open: boolean, setOpen: (prompt: boolean) => void, initialData?: any, setNewProcess: (prompt: boolean) => void, invalidateQueries: () => void }) {
 
+
   
-  const form1 = z.object({
-    title: z.string().optional(),
-    processKey: z.string().optional(),
+  z.config(z.locales.en());
+
+const form1 = z.object({
+    title: z.string().nonempty(),
+    processKey: z.string().nonempty(),
     description: z.string().optional(),
-    projectId: z.string().optional()
+    projectId: z.string().nonempty()
 })
 
 type Form1ZodType = typeof form1;
 
 const initForm1: z.infer<Form1ZodType> = {
-    title: undefined,
-    processKey: undefined,
-    description: undefined,
-    projectId: undefined
+    title: ``,
+    processKey: ``,
+    description: ``,
+    projectId: ``
 }
 
 
@@ -121,7 +124,7 @@ useEffect(() => {
   
 >
   <IGRPModalDialogTitle
-  name={ `modalDialogTitle1` }
+  id={ `modalDialogTitle1` }
   
   
   
@@ -139,7 +142,7 @@ formRef={ formform1Ref }
 >
   <>
   <IGRPInputText
-  name={ `title` }
+  id={ `title` }
   label={ `Title` }
 showIcon={ false }
 required={ true }
@@ -150,7 +153,7 @@ placeholder={ `Enter process title` }
 >
 </IGRPInputText>
   <IGRPInputText
-  name={ `processKey` }
+  id={ `processKey` }
   label={ `Process Key` }
 showIcon={ false }
 required={ true }
@@ -161,7 +164,7 @@ placeholder={ `Enter process key` }
 >
 </IGRPInputText>
   <IGRPTextarea
-  name={ `description` }
+  id={ `description` }
   label={ `Description` }
 rows={ 3 }
 required={ false }
@@ -172,7 +175,7 @@ placeholder={ `Enter process description` }
 >
 </IGRPTextarea>
   <IGRPCombobox
-  name={ `projectId` }
+  id={ `projectId` }
   label={ `Project` }
 variant={ `single` }
 placeholder={ `Select an option...` }
@@ -193,9 +196,9 @@ iconName={ `CornerDownRight` }
   
   
 >
-  <div className={ cn('flex','flex flex-row flex-wrap items-center justify-end gap-2',)}    >
+  <div className={ cn('flex',' flex-1 justify-end',)}    >
 	<IGRPButton
-  name={ `button1` }
+  id={ `button1` }
   variant={ `default` }
 size={ `default` }
 showIcon={ true }

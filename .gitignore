@@ -47,3 +47,5 @@ igrp-next-template.zip
 
 
 config
+.idea/
+.vscode/
