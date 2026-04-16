@@ -20,6 +20,8 @@
     "@igrp/framework-process-studio-client": "latest",
     "@igrp/framework-process-studio-types": "latest",
     "@igrp/igrp-framework-react-design-system": "0.1.0-beta.26",
+    "@irn/irn-backoffice-design-system": "^1.4.5",
+    "@irn/irn-backoffice-integration": "^1.0.13",
     "@irn/irn-experience-sdk": "^2.1.1",
     "@tanstack/react-query": "^5.80.7",
     "class-variance-authority": "^0.7.1",
