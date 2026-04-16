@@ -1,0 +1,47 @@
+name: Push to External Repo
+
+on:
+  push:
+    branches:
+      - 'irn-releases'
+    paths-ignore: 
+      - '.github/**'
+      - 'k8s/**'
+      - '.gitattributes'
+      - 'docs/**'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source repo (full history)
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install git-filter-repo
+        run: |
+          pip install git-filter-repo
+
+      - name: Rewrite history (remove .github/workflows)
+        run: |
+          git filter-repo \
+            --path .github/workflows \
+            --invert-paths
+
+      - name: Configure Git
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+
+      - name: Add external repo and push
+        run: |
+          git remote add external https://oauth2:${{ secrets.EXT_REPO_PAT }}@code.irn.justica.gov.pt/plataforma-de-registos/backoffice-componentes-transversais/igrp-process-studio-frontend.git
+
+          git push external HEAD:feature/zing-commits --force \
+            -o merge_request.create \
+            -o merge_request.target=dev \
+            -o merge_request.assign="carlos.marques" \
+            -o merge_request.reviewer="379" \
+            -o merge_request.title="Feature/zing-commits"
