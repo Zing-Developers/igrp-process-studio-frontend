@@ -3,6 +3,10 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* important */
+@source "../../node_modules/@irn/irn-backoffice-design-system/dist/styles.css";
+@import '@irn/irn-backoffice-design-system/styles';
+
 @import './themes.css';
 
 @theme inline {
