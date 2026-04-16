@@ -5,7 +5,7 @@ on:
     branches:
       - 'irn-releases'
     paths-ignore: 
-      #- '.github/**'
+      - '.github/**'
       - 'k8s/**'
       - '.gitattributes'
       - 'docs/**'
