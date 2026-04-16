@@ -1,6 +1,6 @@
 {
   "name": "igrp-process-studio-frontend",
-  "version": "0.1.0-beta.1",
+  "version": "1.0.0-dev.2",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
