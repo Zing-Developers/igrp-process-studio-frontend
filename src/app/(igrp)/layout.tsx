@@ -1,4 +1,3 @@
-import { IGRPLayout } from '@igrp/framework-next';
 import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
 
