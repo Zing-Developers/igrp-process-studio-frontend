@@ -1,4 +1,4 @@
-FROM docker.tools.irn.internal/base/node-builder-22-14:1.0.0 AS base
+FROM docker.tools.irn.internal/base/node-builder-22-14:1.1.0 AS base
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -17,7 +17,6 @@ WORKDIR /app
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml*  ./
 RUN npm install -g pnpm@9.15.9 && \
     pnpm install \
-      --registry=https://nexus.tools.irn.internal/repository/npm-group/ \
       --no-frozen-lockfile \
       --strict-peer-dependencies=false
 
@@ -56,7 +55,7 @@ RUN \
     fi
 
 # Production image, copy all the files and run next
-FROM docker.tools.irn.internal/base/node-22-14:1.0.0 AS runner
+FROM docker.tools.irn.internal/base/node-22-14:1.1.0 AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
