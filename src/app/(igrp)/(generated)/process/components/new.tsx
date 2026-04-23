@@ -51,7 +51,7 @@ const initForm1: z.infer<Form1ZodType> = {
   const [form1Data, setForm1Data] = useState<any>(initForm1);
   const [selectprojectIdOptions, setSelectprojectIdOptions] = useState<IGRPOptionsProps[]>([]);
   
-const [modalDialogTitle1Content, setModalDialogTitle1Content] = useState<string>('Create a new Process');
+const [modalDialogTitle1Content, setModalDialogTitle1Content] = useState<string>('Criar novo processo');
 
 const { igrpToast } = useIGRPToast()
 
@@ -64,18 +64,18 @@ async function handleSubmit (values: z.infer<any>): Promise<void  | undefined> {
   };
   await createOrUpdateProcessDefinition(data);
   igrpToast({
-    title: 'Success',
+    title: 'Sucesso',
     description: data?.uuid
-      ? 'Process updated successfully'
-      : 'Process saved successfully',
+      ? 'Processo atualizado com sucesso.'
+      : 'Processo guardado com sucesso.',
     type: 'success',
   });
   invalidateQueries();
   setOpen(false)
 } catch (error: any) {
   igrpToast({
-    title: 'Error',
-    description: `An error occurred while processing the form. [${error.message}]`,
+    title: 'Erro',
+    description: `Ocorreu um erro ao processar o formulário. [${error.message}]`,
     type: 'error',
   });
   console.log(error);
@@ -91,13 +91,13 @@ useEffect(() => {
 }, [isLoading,open])
 
 useEffect(() => {
-  setModalDialogTitle1Content('Create a new Process')
+  setModalDialogTitle1Content('Criar novo processo')
   setForm1Data(undefined)
 
 
   if (initialData) {
     setForm1Data({ ...initialData })
-    setModalDialogTitle1Content('Edit Process')
+    setModalDialogTitle1Content('Editar processo')
 
   }
 }, [initialData])
@@ -140,10 +140,10 @@ formRef={ formform1Ref }
   <>
   <IGRPInputText
   name={ `title` }
-  label={ `Title` }
+  label={ `Título` }
 showIcon={ false }
 required={ true }
-placeholder={ `Enter process title` }
+placeholder={ `Introduza o título do processo` }
   className={ cn() }
   
   
@@ -151,10 +151,10 @@ placeholder={ `Enter process title` }
 </IGRPInputText>
   <IGRPInputText
   name={ `processKey` }
-  label={ `Process Key` }
+  label={ `Chave do processo` }
 showIcon={ false }
 required={ true }
-placeholder={ `Enter process key` }
+placeholder={ `Introduza a chave do processo` }
   className={ cn() }
   
   
@@ -162,10 +162,10 @@ placeholder={ `Enter process key` }
 </IGRPInputText>
   <IGRPTextarea
   name={ `description` }
-  label={ `Description` }
+  label={ `Descrição` }
 rows={ 3 }
 required={ false }
-placeholder={ `Enter process description` }
+placeholder={ `Introduza a descrição do processo` }
   className={ cn() }
   
   
@@ -173,11 +173,11 @@ placeholder={ `Enter process description` }
 </IGRPTextarea>
   <IGRPCombobox
   name={ `projectId` }
-  label={ `Project` }
+  label={ `Projeto` }
 variant={ `single` }
-placeholder={ `Select an option...` }
+placeholder={ `Selecione uma opção...` }
 required={ true }
-selectLabel={ `No option found` }
+selectLabel={ `Nenhuma opção encontrada` }
 showSearch={ true }
 showIcon={ false }
 iconName={ `CornerDownRight` }
@@ -204,7 +204,7 @@ iconName={ `Save` }
   onClick={ () => formform1Ref.current?.submit() }
   
 >
-  Save
+  Guardar
 </IGRPButton></div>
 </IGRPModalDialogFooter>
 </IGRPModalDialogContent>
