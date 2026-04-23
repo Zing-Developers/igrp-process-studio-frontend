@@ -18,7 +18,7 @@ import { withBasePath } from './(myapp)/lib/url';
 
 export const metadata: Metadata = {
   title: {
-    default: "Home - PIR | Centro de Aplicações'",
+    default: "Home - PIR | Centro de Aplicações",
     template: '%s - PIR | Centro de Aplicações'
   },
   description: "PIR | Centro de Aplicações",
