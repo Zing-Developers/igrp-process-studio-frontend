@@ -79,7 +79,7 @@ function handleDelete (rowData: z.infer<any>): void  | undefined {
 
   igrpToast({
     title: 'Sucesso',
-    description: 'Process definition has deleted sucessfully',
+    description: 'A definição do processo foi eliminada com sucesso.',
     type: 'success',
   });
 
@@ -127,8 +127,8 @@ useEffect(() => {
 	<div className={ cn('section',' space-x-6 space-y-6',)}    >
 	<IGRPPageHeader
   name={ `pageHeader1` }
-  title={ `Dashboard process` }
-  description={ `Create and deploy your process bpmn` }
+  title={ `Painel de processos` }
+  description={ `Crie e publique os seus processos BPMN` }
   iconBackButton={ `Search` }
   variant={ `h3` }
   
@@ -145,7 +145,7 @@ iconName={ `Plus` }
 } }
   
 >
-  New Project
+  Novo projeto
 </IGRPButton>
     <IGRPButton
   name={ `button1` }
@@ -157,7 +157,7 @@ iconName={ `Plus` }
   onClick={ () => {setOpenProcess(!openProcess); setEditingProcess(undefined);setHasNewProcess(false)} }
   
 >
-  New Process Definition
+  Nova definição de processo
 </IGRPButton>
 </div>
 </IGRPPageHeader>
@@ -169,7 +169,7 @@ iconName={ `Plus` }
 cardBorder={ `rounded-xl` }
 cardVariant={ `info` }
 iconBackground={ `square` }
-title={ `Total Processes` }
+title={ `Total de processos` }
 titleSize={ `sm` }
 valueSize={ `2xl` }
 showIcon={ true }
@@ -190,7 +190,7 @@ showIconBackground={ true }
 cardBorder={ `rounded-xl` }
 cardVariant={ `primary` }
 iconBackground={ `square` }
-title={ `Total Published` }
+title={ `Total publicados` }
 titleSize={ `sm` }
 valueSize={ `2xl` }
 showIcon={ true }
@@ -211,7 +211,7 @@ showIconBackground={ true }
 cardBorder={ `rounded-xl` }
 cardVariant={ `success` }
 iconBackground={ `square` }
-title={ `Total Draft` }
+title={ `Total em rascunho` }
 titleSize={ `sm` }
 valueSize={ `2xl` }
 showIcon={ true }
@@ -235,7 +235,7 @@ showIconBackground={ true }
   columns={
     [
         {
-          header: ({ column }) => (<IGRPDataTableHeaderSortToggle column={column} title={ `Project` } />)
+          header: ({ column }) => (<IGRPDataTableHeaderSortToggle column={column} title={ `Projeto` } />)
 ,accessorKey: 'projectName',
           cell: ({ row }) => {
           return row.getValue("projectName")
@@ -243,7 +243,7 @@ showIconBackground={ true }
           filterFn: IGRPDataTableFacetedFilterFn
         },
         {
-          header: ({ column }) => (<IGRPDataTableHeaderSortToggle column={column} title={ `Process Name` } />)
+          header: ({ column }) => (<IGRPDataTableHeaderSortToggle column={column} title={ `Nome do processo` } />)
 ,accessorKey: 'title',
           cell: ({ row }) => {
           return row.getValue("title")
@@ -251,7 +251,7 @@ showIconBackground={ true }
           filterFn: IGRPDataTableFacetedFilterFn
         },
         {
-          header: 'Process Key'
+          header: 'Chave do processo'
 ,accessorKey: 'processKey',
           cell: ({ row }) => {
           return row.getValue("processKey")
@@ -259,7 +259,7 @@ showIconBackground={ true }
           filterFn: IGRPDataTableFacetedFilterFn
         },
         {
-          header: 'Deployment Date'
+          header: 'Data de publicação'
 ,accessorKey: 'deploymentDate',
           cell: ({ row }) => {
           return row.getValue("deploymentDate")
@@ -267,7 +267,7 @@ showIconBackground={ true }
           filterFn: IGRPDataTableFacetedFilterFn
         },
         {
-          header: 'Version'
+          header: 'Versão'
 ,accessorKey: 'version',
           cell: ({ row }) => {
           const rowData = row.original;
@@ -284,7 +284,7 @@ badgeClassName={ `` }
           filterFn: IGRPDataTableFacetedFilterFn
         },
         {
-          header: 'Status'
+          header: 'Estado'
 ,accessorKey: 'statusDesc',
           cell: ({ row }) => {
           const rowData = row.original;
@@ -308,7 +308,7 @@ badgeClassName={ `` }
 return (
 <IGRPDataTableRowAction>
   <IGRPDataTableButtonLink
-  labelTrigger={ `Process Editor` }
+  labelTrigger={ `Editor do processo` }
   href={ `/process/${row.original.processDefinitionId}/editor` }
   variant={ `ghost` }
   icon={ `Workflow` }
@@ -322,15 +322,15 @@ return (
       {
         component: IGRPDataTableDropdownMenuCustom,
         props: {
-          labelTrigger: `Edit Process`,icon: `SquarePen`,          showIcon: true,          action: () => {setOpenProcess(!openProcess);setEditingProcess(rowData)},
+          labelTrigger: `Editar processo`,icon: `SquarePen`,          showIcon: true,          action: () => {setOpenProcess(!openProcess);setEditingProcess(rowData)},
 }
       },
       {
         component: IGRPDataTableDropdownMenuAlert,
         props: {
-          modalTitle: `Delete Process Definition`,labelTrigger: `Delete`,icon: `Trash`,          showIcon: true,showCancel: true,labelCancel: `Cancel`,variantCancel: `outline`,showConfirm: true,labelConfirm: `Confirm`,variantConfirm: `destructive`,          onClickConfirm: ()=>{handleDelete(rowData);
+          modalTitle: `Eliminar definição do processo`,labelTrigger: `Eliminar`,icon: `Trash`,          showIcon: true,showCancel: true,labelCancel: `Cancelar`,variantCancel: `outline`,showConfirm: true,labelConfirm: `Confirmar`,variantConfirm: `destructive`,          onClickConfirm: ()=>{handleDelete(rowData);
 },
-          children: <>Do you want delete this process definition?</>
+          children: <>Pretende eliminar esta definição de processo?</>
 }
       },
 ]
@@ -361,7 +361,7 @@ return (
           component: (column) => (
           <IGRPDataTableFilterDropdown
   column={column}
-  placeholder={ `Filter by project...` }
+  placeholder={ `Filtrar por projeto...` }
   
   options={ dropdownFiltertableDropdownFilter2Options }
 />
@@ -372,7 +372,7 @@ return (
           component: (column) => (
           <IGRPDataTableFilterDropdown
   column={column}
-  placeholder={ `Filter by status...` }
+  placeholder={ `Filtrar por estado...` }
   
   options={ dropdownFiltertableDropdownFilter1Options }
 />
