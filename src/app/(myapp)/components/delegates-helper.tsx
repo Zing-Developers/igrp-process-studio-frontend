@@ -27,22 +27,22 @@ const delegates: Delegate[] = [
     category: 'Mail',
     icon: <Mail className="size-4" />,
     description:
-      'Sends an email message to the specified recipient with the provided subject and body.',
+      'Envia uma mensagem de correio eletrónico para o destinatário indicado com o assunto e o conteúdo fornecidos.',
     syntax: '${igrpSendEmailDelegate}',
     parameters: [
-      { name: 'emailTo', description: 'Destination email address' },
-      { name: 'emailSubject', description: 'Subject of the email' },
-      { name: 'emailBody', description: 'Content/body of the email' },
-      { name: 'emailFrom', description: 'Sender email address' },
+      { name: 'emailTo', description: 'Endereço de email de destino' },
+      { name: 'emailSubject', description: 'Assunto do email' },
+      { name: 'emailBody', description: 'Conteúdo/corpo do email' },
+      { name: 'emailFrom', description: 'Endereço de email do remetente' },
     ],
-    example: `<!-- Service Task Configuration -->
-Implementation Type: Delegate Expression
-Delegate Expression: \${igrpSendEmailDelegate}
+    example: `<!-- Configuração da tarefa de serviço -->
+Tipo de implementação: Delegate Expression
+Expressão do delegado: \${igrpSendEmailDelegate}
 
-<!-- Variables -->
+<!-- Variáveis -->
 emailTo: user@example.com
-emailSubject: Process Notification
-emailBody: Your process has been completed successfully
+emailSubject: Notificação do processo
+emailBody: O seu processo foi concluído com sucesso
 emailFrom: noreply@company.com`,
   },
   {
@@ -50,71 +50,71 @@ emailFrom: noreply@company.com`,
     category: 'Message',
     icon: <MessageSquare className="size-4" />,
     description:
-      'Sends a message through the configured message broker (e.g., Kafka or RabbitMQ) based on predefined integration settings.',
+      'Envia uma mensagem através do message broker configurado (por exemplo, Kafka ou RabbitMQ) com base nas definições de integração existentes.',
     syntax: '${igrpMessageBrokerSenderDelegate}',
     parameters: [{
       name: 'topic',
-      description: 'The kafka topic where the message will be sent'
+      description: 'Tópico Kafka para onde a mensagem será enviada'
     }],
-    example: `<!-- Service Task Configuration -->
-Implementation Type: Delegate Expression
-Delegate Expression: \${igrpMessageBrokerSenderDelegate}
+    example: `<!-- Configuração da tarefa de serviço -->
+Tipo de implementação: Delegate Expression
+Expressão do delegado: \${igrpMessageBrokerSenderDelegate}
 
-<!-- Variables -->
-topic: Sends a message through the configured`,
+<!-- Variáveis -->
+topic: Envia uma mensagem através da configuração definida`,
   },
   {
     name: 'igrpWebhookDelegate',
     category: 'Webhook',
     icon: <Webhook className="size-4" />,
     description:
-      'Executes an HTTP request to an external webhook endpoint with customizable method, parameters, and payload.',
+      'Executa um pedido HTTP para um endpoint webhook externo com método, parâmetros e payload configuráveis.',
     syntax: '${igrpWebhookDelegate}',
     parameters: [
-      { name: 'webhookUrl', description: 'Base URL for the webhook endpoint' },
-      { name: 'webhookMethod', description: 'HTTP method to use (GET, POST, PUT, etc.)' },
+      { name: 'webhookUrl', description: 'URL base do endpoint webhook' },
+      { name: 'webhookMethod', description: 'Método HTTP a utilizar (GET, POST, PUT, etc.)' },
       {
         name: 'webhookUrlPath',
-        description: 'Path appended to the base URL for the specific resource',
+        description: 'Caminho anexado à URL base para o recurso específico',
       },
-      { name: 'webhookQueryParams', description: 'Query parameters for the request' },
-      { name: 'webhookPayload', description: 'Request body (payload) sent to the webhook' },
-      { name: 'webhookPayloadHeader', description: 'HTTP headers included in the request' },
+      { name: 'webhookQueryParams', description: 'Parâmetros de query do pedido' },
+      { name: 'webhookPayload', description: 'Corpo do pedido (payload) enviado ao webhook' },
+      { name: 'webhookPayloadHeader', description: 'Cabeçalhos HTTP incluídos no pedido' },
     ],
-    example: `<!-- Service Task Configuration -->
-Implementation Type: Delegate Expression
-Delegate Expression: \${igrpWebhookDelegate}
+    example: `<!-- Configuração da tarefa de serviço -->
+Tipo de implementação: Delegate Expression
+Expressão do delegado: \${igrpWebhookDelegate}
 
-<!-- Variables -->
+<!-- Variáveis -->
 webhookUrl: https://api.example.com
 webhookMethod: POST
 webhookUrlPath: /api/v1/notifications
 webhookQueryParams: {"userId": "12345"}
-webhookPayload: {"message": "Process completed", "status": "success"}
+webhookPayload: {"message": "Processo concluído", "status": "sucesso"}
 webhookPayloadHeader: {"Content-Type": "application/json", "Authorization": "Bearer token123"}`,
   },
   {
     name: 'igrpJsonParseDelegate',
     category: 'Parse',
     icon: <FileJson className="size-4" />,
-    description: 'Extracts a payload into a data variable in the process.',
+    description: 'Extrai um payload para uma variável de dados no processo.',
     syntax: '${igrpJsonParseDelegate}',
     parameters: [
-      { name: 'json', description: 'A JSON structured data (encoded in base64 or not)' },
+      { name: 'json', description: 'Dados JSON estruturados (codificados em base64 ou não)' },
       {
         name: 'isBase64Encoded',
-        description: 'A boolean value to set if the json is encoded or not',
+        description: 'Valor booleano que indica se o JSON está codificado ou não',
       },
     ],
-    example: `<!-- Service Task Configuration -->
-Implementation Type: Delegate Expression
-Delegate Expression: \${igrpJsonParseDelegate}
+    example: `<!-- Configuração da tarefa de serviço -->
+Tipo de implementação: Delegate Expression
+Expressão do delegado: \${igrpJsonParseDelegate}
 
-<!-- Variables -->
-json: {"name": "John Doe", "age": 30, "email": "john@example.com"}
+<!-- Variáveis -->
+json: {"name": "João Silva", "age": 30, "email": "joao@example.com"}
 isBase64Encoded: false
 
-<!-- Or with base64 encoding -->
+<!-- Ou com codificação base64 -->
 json: eyJuYW1lIjoiSm9obiBEb2UiLCJhZ2UiOjMwfQ==
 isBase64Encoded: true`,
   },
@@ -130,16 +130,16 @@ function DelegatesHelper() {
       setCopiedId(id);
       igrpToast({
         type: 'success',
-        title: 'Copied!',
-        description: `${label} copied to clipboard`,
+        title: 'Copiado',
+        description: `${label} copiado para a área de transferência`,
       });
       setTimeout(() => setCopiedId(null), 2000);
     } catch (err) {
       console.error('Failed to copy', err);
       igrpToast({
         type: 'error',
-        title: 'Failed to copy',
-        description: 'Please try again',
+        title: 'Falha ao copiar',
+        description: 'Tente novamente.',
       });
     }
   };
@@ -148,11 +148,11 @@ function DelegatesHelper() {
     <div className="space-y-6">
       <IGRPCardPrimitive>
         <IGRPCardHeaderPrimitive>
-          <IGRPCardTitlePrimitive>Available Delegates</IGRPCardTitlePrimitive>
+          <IGRPCardTitlePrimitive>Delegados disponíveis</IGRPCardTitlePrimitive>
           <IGRPCardDescriptionPrimitive>
-            Delegates allow you to integrate custom logic or external services directly into BPMN
-            process workflows. Use them in Service Tasks by setting the Implementation Type to{' '}
-            <IGRPBadgePrimitive variant="secondary">Delegate Expression</IGRPBadgePrimitive>
+            Os delegados permitem integrar lógica personalizada ou serviços externos diretamente
+            nos fluxos de processo BPMN. Utilize-os nas tarefas de serviço definindo o tipo de
+            implementação como <IGRPBadgePrimitive variant="secondary">Delegate Expression</IGRPBadgePrimitive>
           </IGRPCardDescriptionPrimitive>
         </IGRPCardHeaderPrimitive>
       </IGRPCardPrimitive>
@@ -179,13 +179,13 @@ function DelegatesHelper() {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <h4 className="text-sm font-semibold text-foreground">
-                    Delegate Expression Syntax
+                    Sintaxe da expressão do delegado
                   </h4>
                   <IGRPButtonPrimitive
                     variant="ghost"
                     size="sm"
                     onClick={() =>
-                      copyToClipboard(delegate.syntax, `syntax-${delegate.name}`, 'Delegate syntax')
+                      copyToClipboard(delegate.syntax, `syntax-${delegate.name}`, 'Sintaxe do delegado')
                     }
                   >
                     {copiedId === `syntax-${delegate.name}` ? (
@@ -193,7 +193,7 @@ function DelegatesHelper() {
                     ) : (
                       <Copy className="size-4" />
                     )}
-                    Copy Syntax
+                    Copiar sintaxe
                   </IGRPButtonPrimitive>
                 </div>
                 <div className="bg-muted rounded-lg p-3 font-mono text-sm">{delegate.syntax}</div>
@@ -202,7 +202,7 @@ function DelegatesHelper() {
               {/* Parameters */}
               {delegate.parameters.length > 0 && (
                 <div>
-                  <h4 className="text-sm font-semibold mb-2 text-foreground">Parameters</h4>
+                  <h4 className="text-sm font-semibold mb-2 text-foreground">Parâmetros</h4>
                   <div className="space-y-2">
                     {delegate.parameters.map((param) => (
                       <div key={param.name} className="flex items-center gap-3 text-sm group">
@@ -218,7 +218,7 @@ function DelegatesHelper() {
                             copyToClipboard(
                               param.name,
                               `param-${delegate.name}-${param.name}`,
-                              `Parameter "${param.name}"`,
+                              `Parâmetro "${param.name}"`,
                             )
                           }
                         >
@@ -237,7 +237,7 @@ function DelegatesHelper() {
               {/* Example */}
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <h4 className="text-sm font-semibold text-foreground">Example Configuration</h4>
+                  <h4 className="text-sm font-semibold text-foreground">Configuração de exemplo</h4>
                 </div>
                 <div className="bg-muted rounded-lg p-4 font-mono text-xs overflow-x-auto">
                   <pre className="whitespace-pre-wrap text-foreground">{delegate.example}</pre>
@@ -251,8 +251,8 @@ function DelegatesHelper() {
       {/* Quick Reference */}
       <IGRPCardPrimitive>
         <IGRPCardHeaderPrimitive>
-          <IGRPCardTitlePrimitive>Quick Reference</IGRPCardTitlePrimitive>
-          <IGRPCardDescriptionPrimitive>How to use delegates in your BPMN process</IGRPCardDescriptionPrimitive>
+          <IGRPCardTitlePrimitive>Referência rápida</IGRPCardTitlePrimitive>
+          <IGRPCardDescriptionPrimitive>Como utilizar delegados no seu processo BPMN</IGRPCardDescriptionPrimitive>
         </IGRPCardHeaderPrimitive>
         <IGRPCardContentPrimitive className="space-y-4">
           <div className="space-y-3">
@@ -262,10 +262,10 @@ function DelegatesHelper() {
               </div>
               <div>
                 <p className="font-medium text-foreground">
-                  Add a Service Task to your BPMN diagram
+                  Adicione uma tarefa de serviço ao seu diagrama BPMN
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  Create or select a Service Task in your process flow
+                  Crie ou selecione uma tarefa de serviço no fluxo do processo
                 </p>
               </div>
             </div>
@@ -275,10 +275,10 @@ function DelegatesHelper() {
               </div>
               <div>
                 <p className="font-medium text-foreground">
-                  Set Implementation Type to &quot;Delegate Expression&quot;
+                  Defina o tipo de implementação como &quot;Delegate Expression&quot;
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  In the Service Task properties panel
+                  No painel de propriedades da tarefa de serviço
                 </p>
               </div>
             </div>
@@ -287,9 +287,9 @@ function DelegatesHelper() {
                 3
               </div>
               <div>
-                <p className="font-medium text-foreground">Copy and paste the delegate syntax</p>
+                <p className="font-medium text-foreground">Copie e cole a sintaxe do delegado</p>
                 <p className="text-sm text-muted-foreground">
-                  Use the &quot;Copy Syntax&quot; button above to get the correct format
+                  Utilize o botão &quot;Copiar sintaxe&quot; acima para obter o formato correto
                 </p>
               </div>
             </div>
@@ -298,10 +298,10 @@ function DelegatesHelper() {
                 4
               </div>
               <div>
-                <p className="font-medium text-foreground">Configure the required parameters</p>
+                <p className="font-medium text-foreground">Configure os parâmetros obrigatórios</p>
                 <p className="text-sm text-muted-foreground">
-                  Add process variables matching the parameter names listed above. Hover over each
-                  parameter to copy its name individually.
+                  Adicione variáveis de processo com os nomes dos parâmetros listados acima. Passe
+                  o cursor sobre cada parâmetro para copiar o respetivo nome individualmente.
                 </p>
               </div>
             </div>
