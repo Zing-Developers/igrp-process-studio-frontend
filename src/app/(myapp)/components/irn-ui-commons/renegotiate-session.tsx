@@ -20,7 +20,7 @@ function RenegotiateSession() {
       <div className="flex flex-col items-center justify-center">
         <IGRPLoadingSpinner />
         <p className="text-slate-600 font-medium -mt-20">
-          Checking session, ...
+          A verificar a sessão...
         </p>
       </div>
     </div>
