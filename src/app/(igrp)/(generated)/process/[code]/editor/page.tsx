@@ -59,15 +59,15 @@ async function handleSave (dataToSave?: any, xmlToSave?: string, isAutoSave?: bo
 
   if (!isAutoSave)
     igrpToast({
-      title: 'Success',
-      description: 'Process definition saved successfully',
+      title: 'Sucesso',
+      description: 'A definição do processo foi guardada com sucesso.',
       type: 'success',
     });
     
 } catch (error: any) {
   igrpToast({
-    title: 'Error',
-    description: `An error occurred while processing the data. [${error.message}]`,
+    title: 'Erro',
+    description: `Ocorreu um erro ao processar os dados. [${error.message}]`,
     type: 'error',
   });
   console.log(error);
@@ -83,14 +83,14 @@ async function handleDeploy (): Promise<void  | undefined> {
    if (!data) return
   await deployProcessDefinition(data.processKey,{content: bpmnXml});
   igrpToast({
-    title: 'Success',
-    description: 'Process definition published successfully',
+    title: 'Sucesso',
+    description: 'A definição do processo foi publicada com sucesso.',
     type: 'success',
   });
 } catch (error: any) {
   igrpToast({
-    title: 'Error',
-    description: `An error occurred while processing the data. [${error.message}]`,
+    title: 'Erro',
+    description: `Ocorreu um erro ao processar os dados. [${error.message}]`,
     type: 'error',
   });
   console.log(error);
@@ -105,16 +105,16 @@ async function copyToClipboard (text: string, id: string, label: string): Promis
       setCopiedId(id);
       igrpToast({
         type: 'success',
-        title: 'Copied!',
-        description: `${label} copied to clipboard`,
+        title: 'Copiado',
+        description: `${label} copiado para a área de transferência`,
       });
       setTimeout(() => setCopiedId(''), 2000);
     } catch (err) {
       console.error('Failed to copy', err);
       igrpToast({
         type: 'error',
-        title: 'Failed to copy',
-        description: 'Please try again',
+        title: 'Falha ao copiar',
+        description: 'Tente novamente.',
       });
     }
 
@@ -172,7 +172,7 @@ useEffect(() => {
 	<div className={ cn('section',' space-x-6 space-y-6',)}    >
 	<IGRPPageHeader
   name={ `pageHeader1` }
-  title={ `Process Editor` }
+  title={ `Editor do processo` }
   iconBackButton={ `ArrowLeft` }
   showBackButton={ true }
   urlBackButton={ `/process` }
@@ -190,7 +190,7 @@ showIcon={ false }
   onClick={ handleDeploy }
   
 >
-  Deploy
+  Publicar
 </IGRPButton>
     <IGRPButton
   name={ `button1` }
@@ -202,7 +202,7 @@ iconName={ `Save` }
   onClick={ () => handleSave('','',false) }
   
 >
-  Save
+  Guardar
 </IGRPButton>
 </div>
 </IGRPPageHeader>
@@ -218,7 +218,7 @@ iconName={ `Save` }
     [
         {
           value: `tabsItem1-eM2k`,
-          label: `Diagram Editor`,
+          label: `Editor do diagrama`,
           icon: `Workflow`,
 content: (<>
             <BpmnModeler  processName={ data.title } processKey={ data.processKey } xml={ bpmnXml }  onChange={ handleBpmnChange } ></BpmnModeler>
@@ -249,13 +249,13 @@ iconName={ `Copy` }
   onClick={ () => {copyToClipboard(bpmnXml,'bpmn-xml','bpmn-xml');} }
   
 >
-  Copy XML
+  Copiar XML
 </IGRPButton></div>
 </>),
         },
         {
           value: `tabsItem3-D9am`,
-          label: `Delegates & Variables`,
+          label: `Delegados e variáveis`,
           icon: `BookOpen`,
 content: (<>
             <DelegatesHelper    ></DelegatesHelper>

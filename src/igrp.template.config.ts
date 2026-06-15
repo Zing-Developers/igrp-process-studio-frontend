@@ -24,6 +24,12 @@ export function createConfig(config: IGRPLayoutConfigArgs): Promise<IGRPConfigAr
   return igrpBuildConfig({
     appCode: process.env.IGRP_APP_CODE || '',
     previewMode: process.env.IGRP_PREVIEW_MODE === 'true',
+    syncAccess: process.env.IGRP_SYNC_ACCESS === 'true',
+    appInformation: {
+      name: process.env.npm_package_name || 'igrp-process-studio-frontend',
+      version: process.env.npm_package_version || '1.0.0-dev.2',
+      displayName: process.env.IGRP_APP_NAME || 'IGRP Process Studio Frontend',
+    },
     layoutMockData: {
       getHeaderData: async () => ({
         user: user,
@@ -32,6 +38,9 @@ export function createConfig(config: IGRPLayoutConfigArgs): Promise<IGRPConfigAr
         showNotifications: true,
         showUser: true,
         showThemeSwitcher: true,
+        showIGRPSidebarTrigger: true,
+        showIGRPHeaderTitle: true,
+        showIGRPHeaderLogo: true,
       }),
       getSidebarData: async () => ({
         menuItems: menu,
@@ -52,6 +61,9 @@ export function createConfig(config: IGRPLayoutConfigArgs): Promise<IGRPConfigAr
     },
     apiManagementConfig: {
       baseUrl: process.env.IGRP_APP_MANAGER_API || '',
+      m2mServiceId: process.env.IGRP_M2M_SERVICE_ID || '',
+      m2mToken: process.env.IGRP_M2M_TOKEN || '',
+      syncOnCodeMenus: process.env.IGRP_SYNC_ON_CODE_MENUS === 'true',
     },
     toasterConfig: {
       showToaster: true,
