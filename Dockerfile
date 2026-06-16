@@ -8,6 +8,7 @@ FROM base AS deps
 COPY package.json .npmrc ./
 COPY pnpm-lock.yaml ./
 RUN node -v && pnpm -v
+RUN printf "\nonlyBuiltDependencies[]=sharp\nonlyBuiltDependencies[]=unrs-resolver\n" >> .npmrc
 RUN if [ -f pnpm-lock.yaml ]; then \
   echo "Using frozen lockfile" && pnpm i --frozen-lockfile; \
   else \
