@@ -9,9 +9,9 @@ COPY package.json .npmrc ./
 COPY pnpm-lock.yaml ./
 RUN node -v && pnpm -v
 RUN if [ -f pnpm-lock.yaml ]; then \
-  echo "Using frozen lockfile" && pnpm i --frozen-lockfile; \
+  echo "Using frozen lockfile" && pnpm i --frozen-lockfile --ignore-scripts; \
   else \
-  echo "No lockfile found, installing dependencies"; \
+  echo "No lockfile found, installing dependencies" && pnpm i --ignore-scripts; \
   fi
 
 
