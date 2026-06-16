@@ -11,5 +11,5 @@ export default function LogoutPage() {
   }, []);
 
   // TODO: apply design
-  return <div>Logout in progress</div>;
+  return <div>A terminar a sessão...</div>;
 }
