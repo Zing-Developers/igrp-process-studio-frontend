@@ -8,7 +8,6 @@ FROM base AS deps
 COPY package.json .npmrc ./
 COPY pnpm-lock.yaml ./
 RUN node -v && pnpm -v
-RUN node -e "const fs=require('fs'),p=JSON.parse(fs.readFileSync('package.json'));p.pnpm={onlyBuiltDependencies:['sharp','unrs-resolver']};fs.writeFileSync('package.json',JSON.stringify(p));"
 RUN if [ -f pnpm-lock.yaml ]; then \
   echo "Using frozen lockfile" && pnpm i --frozen-lockfile; \
   else \
