@@ -28,6 +28,9 @@ export const useProcessDefinition = () => {
     const allProcessDefinitions = queryResult.data?.content.flatMap((project) =>
       project.processDefinitions.map((processDefinition) => ({
         ...processDefinition,
+        deploymentDate: Array.isArray(processDefinition.deploymentDate)
+          ? processDefinition.deploymentDate.join('-')
+          : processDefinition.deploymentDate || '',
         version: processDefinition.version || 'N/D',
         projectName: project.name,
       })),
