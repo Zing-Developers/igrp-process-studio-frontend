@@ -1,4 +1,4 @@
-FROM docker.tools.irn.internal/base/node-builder-22-22:1.1.0 AS base
+FROM docker.tools.irn.internal/base/node-builder-22-22:latest AS base
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -55,7 +55,7 @@ RUN \
     fi
 
 # Production image, copy all the files and run next
-FROM docker.tools.irn.internal/base/node-22-22:1.1.0 AS runner
+FROM docker.tools.irn.internal/base/node-22-22:latest AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
