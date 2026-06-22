@@ -1,10 +1,19 @@
 'use client';
 
 import type React from 'react';
-
 import { useState } from 'react';
-import { Copy, Check, Mail, Webhook, MessageSquare, FileJson } from 'lucide-react';
-import { IGRPBadgePrimitive, IGRPButtonPrimitive, IGRPCardContentPrimitive, IGRPCardDescriptionPrimitive, IGRPCardHeaderPrimitive, IGRPCardPrimitive, IGRPCardTitlePrimitive, useIGRPToast } from '@igrp/igrp-framework-react-design-system';
+import { 
+  IGRPBadgePrimitive, 
+  IGRPButtonPrimitive, 
+  IGRPCardContentPrimitive, 
+  IGRPCardDescriptionPrimitive, 
+  IGRPCardHeaderPrimitive, 
+  IGRPCardPrimitive, 
+  IGRPCardTitlePrimitive, 
+  IGRPIcon,
+  IGRPIconName,
+  useIGRPToast 
+} from '@igrp/igrp-framework-react-design-system';
 
 interface DelegateParameter {
   name: string;
@@ -14,7 +23,7 @@ interface DelegateParameter {
 interface Delegate {
   name: string;
   category: string;
-  icon: React.ReactNode;
+  icon: IGRPIconName | string ;
   description: string;
   syntax: string;
   parameters: DelegateParameter[];
@@ -25,7 +34,7 @@ const delegates: Delegate[] = [
   {
     name: 'igrpSendEmailDelegate',
     category: 'Mail',
-    icon: <Mail className="size-4" />,
+    icon: "Mail",
     description:
       'Envia uma mensagem de correio eletrónico para o destinatário indicado com o assunto e o conteúdo fornecidos.',
     syntax: '${igrpSendEmailDelegate}',
@@ -48,7 +57,7 @@ emailFrom: noreply@company.com`,
   {
     name: 'igrpMessageBrokerSenderDelegate',
     category: 'Message',
-    icon: <MessageSquare className="size-4" />,
+    icon: "MessageSquare",
     description:
       'Envia uma mensagem através do message broker configurado (por exemplo, Kafka ou RabbitMQ) com base nas definições de integração existentes.',
     syntax: '${igrpMessageBrokerSenderDelegate}',
@@ -66,7 +75,7 @@ topic: Envia uma mensagem através da configuração definida`,
   {
     name: 'igrpWebhookDelegate',
     category: 'Webhook',
-    icon: <Webhook className="size-4" />,
+    icon: "Webhook",
     description:
       'Executa um pedido HTTP para um endpoint webhook externo com método, parâmetros e payload configuráveis.',
     syntax: '${igrpWebhookDelegate}',
@@ -96,8 +105,8 @@ webhookPayloadHeader: {"Content-Type": "application/json", "Authorization": "Bea
   {
     name: 'igrpJsonParseDelegate',
     category: 'Parse',
-    icon: <FileJson className="size-4" />,
-    description: 'Extrai um payload para uma variável de dados no processo.',
+    icon: "FileBraces",
+    description: 'Extracts a payload into a data variable in the process.',
     syntax: '${igrpJsonParseDelegate}',
     parameters: [
       { name: 'json', description: 'Dados JSON estruturados (codificados em base64 ou não)' },
@@ -120,7 +129,7 @@ isBase64Encoded: true`,
   },
 ];
 
-function DelegatesHelper() {
+export function DelegatesHelper() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const { igrpToast } = useIGRPToast();
 
@@ -163,7 +172,7 @@ function DelegatesHelper() {
             <IGRPCardHeaderPrimitive>
               <div className="flex items-center gap-3">
                 <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  {delegate.icon}
+                  <IGRPIcon iconName={delegate.icon} />
                 </div>
                 <div>
                   <IGRPCardTitlePrimitive className="text-xl">{delegate.name}</IGRPCardTitlePrimitive>
@@ -189,9 +198,9 @@ function DelegatesHelper() {
                     }
                   >
                     {copiedId === `syntax-${delegate.name}` ? (
-                      <Check className="size-4" />
+                      <IGRPIcon iconName="Check" />
                     ) : (
-                      <Copy className="size-4" />
+                      <IGRPIcon iconName="Copy" />
                     )}
                     Copiar sintaxe
                   </IGRPButtonPrimitive>
@@ -223,9 +232,9 @@ function DelegatesHelper() {
                           }
                         >
                           {copiedId === `param-${delegate.name}-${param.name}` ? (
-                            <Check className="size-3.5" />
+                            <IGRPIcon iconName="Check" className="size-3.5" />
                           ) : (
-                            <Copy className="size-3.5" />
+                            <IGRPIcon iconName="Copy" className="size-3.5" />
                           )}
                         </IGRPButtonPrimitive>
                       </div>
@@ -311,5 +320,3 @@ function DelegatesHelper() {
     </div>
   );
 }
-
-export { DelegatesHelper };

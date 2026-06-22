@@ -45,5 +45,5 @@ next-env.d.ts
 create-template/nexus-auth.txt
 igrp-next-template.zip
 
-
-config
+.idea/
+.vscode/

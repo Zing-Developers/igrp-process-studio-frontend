@@ -1,14 +1,13 @@
-import { AuthOptions } from 'next-auth';
-import KeycloakProvider from 'next-auth/providers/keycloak';
-import { refreshAccessToken } from './auth-helpers';
-import { expSystemAdminAPIClient } from '@/app/(myapp)/lib/irn-sdk-clients';
+import type { AuthOptions } from "next-auth";
+import KeycloakProvider from "next-auth/providers/keycloak";
+import { refreshAccessToken, signOut } from "./auth-helpers";
 
 export const authOptions: AuthOptions = {
   providers: [
     KeycloakProvider({
-      clientId: process.env.KEYCLOAK_CLIENT_ID || '',
-      clientSecret: process.env.KEYCLOAK_CLIENT_SECRET || '',
-      issuer: process.env.KEYCLOAK_ISSUER || '',
+      clientId: process.env.KEYCLOAK_CLIENT_ID || "",
+      clientSecret: process.env.KEYCLOAK_CLIENT_SECRET || "",
+      issuer: process.env.KEYCLOAK_ISSUER || "",
     }),
   ],
 
@@ -16,39 +15,15 @@ export const authOptions: AuthOptions = {
 
   callbacks: {
     async jwt({ token, account, user }) {
-
+      // Initial sign in
       if (account && user) {
-
-        try {
-
-          if (!process.env.IRN_SYSTEM_ADMINISTRATION_DISABLED) {
-
-            const sessionData = await expSystemAdminAPIClient.auth.login({
-              accessToken: account.access_token,
-              refreshToken: account.refresh_token,
-              expiresIn: account.expires_at,
-            });
-
-            if (!sessionData.sessionId) {
-              throw new Error('Null session data');
-            }
-
-            token.session_id = sessionData.sessionId;
-
-          }
-
-
-          token.accessToken = account.access_token;
-          token.expiresAt = account.expires_at ? account.expires_at * 1000 : Date.now() + 3600 * 1000;
-          token.refreshToken = account.refresh_token;
-        } catch (error) {
-          console.error('[Auth] Backend login failed:', error);
-          throw new Error('Error creating BFF Session ID');
-        }
+        token.accessToken = account.access_token;
+        token.expiresAt = account.expires_at! * 1000;
+        token.refreshToken = account.refresh_token;
       }
 
       // Return previous token if the access token has not expired yet
-      if (token.expiresAt && Date.now() < token.expiresAt) {
+      if (Date.now() < (token.expiresAt as number)) {
         return token;
       }
 
@@ -63,11 +38,16 @@ export const authOptions: AuthOptions = {
       return session;
     },
     async redirect({ url }) {
-      const nextInternalUrl = process.env.NEXTAUTH_URL_INTERNAL || '';
-      const igrpAppHomeSlug = process.env.IGRP_APP_HOME_SLUG || '';
+      const nextInternalUrl = process.env.NEXTAUTH_URL_INTERNAL || "";
+      const igrpAppHomeSlug = process.env.NEXT_PUBLIC_IGRP_APP_HOME_SLUG || "";
       const redirectTo = `${nextInternalUrl}${igrpAppHomeSlug}`;
 
       return nextInternalUrl ? redirectTo : url;
+    },
+  },
+  events: {
+    async signOut({ token }) {
+      await signOut(token);
     },
   },
 };

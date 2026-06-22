@@ -32,7 +32,7 @@ export default function PageEditorComponent({ params } : { params: Promise<{ cod
 
   const { code } = use(params);
 
-  const [tabstabs1Items, setTabstabs1Items] = useState<IGRPTabItem[]>([]);
+  
   
   
 const [bpmnXml, setBpmnXml] = useState<any>(undefined);
@@ -152,7 +152,8 @@ const handleBpmnChange = useCallback(
 useEffect(() => {
   if (isLoading || !data) return;
   const camundaXml = convertActivitiToCamunda(data.bpmFileContent);
-  setPageHeader1Description(`${data.title} [${data.processKey}] - ${data.statusDesc}`);
+      setPageHeader1Description(`${data.title} [${data.processKey} - v${data.version}] - ${data.statusDesc}`);
+
   setBpmnXml(camundaXml);
   setInputTextarea1Value(camundaXml);
 }, [isLoading]);
@@ -171,8 +172,8 @@ useEffect(() => {
 <div className={ cn('page','space-y-6',)}    >
 	<div className={ cn('section',' space-x-6 space-y-6',)}    >
 	<IGRPPageHeader
-  name={ `pageHeader1` }
-  title={ `Editor do processo` }
+  id={ `pageHeader1` }
+  title={ `Process Editor` }
   iconBackButton={ `ArrowLeft` }
   showBackButton={ true }
   urlBackButton={ `/process` }
@@ -182,7 +183,7 @@ useEffect(() => {
   <div className="flex items-center gap-2">
     <Spinner  isLoading={ isAutoSave }   ></Spinner>
     <IGRPButton
-  name={ `button2` }
+  id={ `button2` }
   variant={ `destructive` }
 size={ `default` }
 showIcon={ false }
@@ -190,10 +191,10 @@ showIcon={ false }
   onClick={ handleDeploy }
   
 >
-  Publicar
+  Deploy
 </IGRPButton>
     <IGRPButton
-  name={ `button1` }
+  id={ `button1` }
   variant={ `default` }
 size={ `default` }
 showIcon={ true }
@@ -202,7 +203,7 @@ iconName={ `Save` }
   onClick={ () => handleSave('','',false) }
   
 >
-  Guardar
+  Save
 </IGRPButton>
 </div>
 </IGRPPageHeader>
@@ -213,34 +214,41 @@ iconName={ `Save` }
   tabContentClassName={ `border rounded-lg border-transparent-none` }
   showIcon={ true }
   iconPlacement={ `start` }
+  badgePlacement={ `end` }
+  orientation={ `horizontal` }
+  
+  
   tabListClassName={ cn() }
   items={
-    [
+      [
+        
         {
           value: `tabsItem1-eM2k`,
-          label: `Editor do diagrama`,
+          label: `Diagram Editor`,
           icon: `Workflow`,
 content: (<>
             <BpmnModeler  processName={ data.title } processKey={ data.processKey } xml={ bpmnXml }  onChange={ handleBpmnChange } ></BpmnModeler>
 </>),
         },
+        
         {
           value: `tabsItem2-sYqo`,
           label: `XML`,
           icon: `CodeXml`,
 content: (<>
             <IGRPTextarea
-  name={ `inputTextarea1` }
+  id={ `inputTextarea1` }
   label={ `XML` }
-rows={ 20}
+rows={ 20 }
 required={ false }
+  className={ cn() }
   
   value={ inputTextarea1Value }
 >
 </IGRPTextarea>
             <div className={ cn('flex','flex flex-row flex-wrap-reverse items-end justify-end gap-2',' mt-3',)}    >
 	<IGRPButton
-  name={ `button3` }
+  id={ `button3` }
   variant={ `outline` }
 size={ `default` }
 showIcon={ true }
@@ -249,19 +257,20 @@ iconName={ `Copy` }
   onClick={ () => {copyToClipboard(bpmnXml,'bpmn-xml','bpmn-xml');} }
   
 >
-  Copiar XML
+  Copy XML
 </IGRPButton></div>
 </>),
         },
+        
         {
           value: `tabsItem3-D9am`,
-          label: `Delegados e variáveis`,
+          label: `Delegates & Variables`,
           icon: `BookOpen`,
 content: (<>
             <DelegatesHelper    ></DelegatesHelper>
 </>),
         },
-]
+      ]
   }
 />)}</div>
   );

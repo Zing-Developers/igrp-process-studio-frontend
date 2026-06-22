@@ -1,15 +1,16 @@
-import { getToken } from 'next-auth/jwt';
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
+import { isPreviewMode } from "@/lib/utils";
 
-const PUBLIC_PATHS = ['/login', '/logout', '/api/auth'];
+const PUBLIC_PATHS = ["/login", "/logout", "/api/auth"];
 
 function isPublicPath(pathname: string) {
   return (
-    PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(p + '/')) ||
-    pathname.startsWith('/api/auth/') ||
-    pathname.startsWith('/_next/') ||
-    pathname.startsWith('/static/') ||
-    pathname.includes('.')
+    PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`)) ||
+    pathname.startsWith("/api/auth/") ||
+    pathname.startsWith("/_next/") ||
+    pathname.startsWith("/static/") ||
+    pathname.includes(".")
   );
 }
 
@@ -27,18 +28,25 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginRedirectUrl);
   }
 
-  if (isPublicPath(pathname)) return NextResponse.next();
+  // Skip authentication checks if preview mode is enabled
+  if (!isPreviewMode()) {
+    // IF YOU USE AN AUTHENTICATION STRATEGY, UNCOMMENT THIS BLOCK
 
-  const token = await getToken({ req: request });
+    if (isPublicPath(pathname)) return NextResponse.next();
 
-  if (token?.error === 'RefreshAccessTokenError') {
-    return NextResponse.redirect(new URL('/login', process.env.NEXTAUTH_URL_INTERNAL ?? request.url));
+    const token = await getToken({ req: request });
+
+    if (token?.error === "RefreshAccessTokenError") {
+      return NextResponse.redirect(
+        new URL("/login", process.env.NEXTAUTH_URL_INTERNAL ?? request.url),
+      );
+    }
   }
 
   return NextResponse.next();
 }
 
-// adictional paths for apps, is used as subdomains
+// additional paths for apps, is used as subdomains
 export const config = {
-  matcher: ['/', '/((?!api|apps|health|_next|favicon.ico|.*\\..*).*)'],
+  matcher: ["/", "/((?!api|apps|health|_next|favicon.ico|.*\\..*).*)"],
 };

@@ -1,6 +1,8 @@
 {
   "name": "igrp-process-studio-frontend",
-  "version": "1.0.0-dev.2",
+  "version": "0.1.0-beta.1",
+  "displayName": "iGRP Process Studio",
+  "description": "Process Studio Frontend for IGRP",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -10,33 +12,24 @@
     "publish:template": "powershell -ExecutionPolicy Bypass -File ./create-template/create-zip-template.ps1"
   },
   "dependencies": {
-    "@bpmn-io/properties-panel": "^3.30.2",
-    "@bprogress/next": "^3.2.12",
+    "@bpmn-io/properties-panel": "^3.30.2",    
+    "@igrp/framework-process-studio-bpmn-editor": "latest",
+    "@igrp/framework-process-studio-client": "latest",
+    "@igrp/framework-process-studio-types": "latest",
     "@igrp/framework-next": "0.1.0-beta.91",
     "@igrp/framework-next-auth": "0.1.0-beta.91",
     "@igrp/framework-next-types": "0.1.0-beta.91",
     "@igrp/framework-next-ui": "0.1.0-beta.91",
-    "@igrp/framework-process-studio-bpmn-editor": "latest",
-    "@igrp/framework-process-studio-client": "latest",
-    "@igrp/framework-process-studio-types": "latest",
     "@igrp/igrp-framework-react-design-system": "0.1.0-beta.91",
-    "@irn/irn-backoffice-design-system": "^1.4.5",
-    "@irn/irn-backoffice-integration": "^1.0.13",
-    "@irn/irn-experience-sdk": "^2.1.1",
     "@tanstack/react-query": "^5.80.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "js-cookie": "^3.0.5",
-    "jsonwebtoken": "^9.0.3",
-    "lru-cache": "^11.2.7",
-    "lucide-react": "^0.518.0",
     "next": "15.5.9",
-    "next-auth": "^4.24.11",
-    "next-themes": "^0.4.6",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
+    "next-auth": "4.24.13",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
     "tailwind-merge": "^3.3.1",
-    "zod": "^4.1.12"
+    "zod": "^4.3.6"
   },
   "pnpm": {
     "onlyBuiltDependencies": ["sharp", "unrs-resolver"]
@@ -44,8 +37,6 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@tailwindcss/postcss": "^4.1.10",
-    "@types/js-cookie": "^3.0.6",
-    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.2.0",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
