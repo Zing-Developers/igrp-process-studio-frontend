@@ -10,13 +10,15 @@
     "publish:template": "powershell -ExecutionPolicy Bypass -File ./create-template/create-zip-template.ps1"
   },
   "dependencies": {
+    "@bpmn-io/cm-theme": "0.2.0",
+    "@bpmn-io/properties-panel": "^3.30.2",
     "@bpmn-io/properties-panel": "^3.30.2",
     "@bprogress/next": "^3.2.12",
     "@igrp/framework-next": "0.1.0-beta.91",
     "@igrp/framework-next-auth": "0.1.0-beta.91",
     "@igrp/framework-next-types": "0.1.0-beta.91",
     "@igrp/framework-next-ui": "0.1.0-beta.91",
-    "@igrp/framework-process-studio-bpmn-editor": "0.0.1-beta.15",
+    "@igrp/framework-process-studio-bpmn-editor": "0.0.1-beta.16",
     "@igrp/framework-process-studio-client": "0.0.1-beta.15",
     "@igrp/framework-process-studio-types": "0.0.1-beta.15",
     "@igrp/igrp-framework-react-design-system": "0.1.0-beta.91",
@@ -54,5 +56,13 @@
     "tailwindcss": "^4.1.10",
     "tw-animate-css": "^1.3.4",
     "typescript": "^5.8.3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "sharp"
+    ],
+    "overrides": {
+      "feelers>@bpmn-io/cm-theme": "0.1.0-alpha.2"
+    }
   }
 }
