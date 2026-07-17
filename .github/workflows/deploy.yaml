@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - 'irn-releases'
-    paths-ignore: 
+    paths-ignore:
       - '.github/**'
       - 'k8s/**'
       - '.gitattributes'
