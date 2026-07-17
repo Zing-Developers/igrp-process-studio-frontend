@@ -20,7 +20,7 @@ function CloseSession() {
       <div className="flex flex-col items-center justify-center">
         <IGRPLoadingSpinner />
         <p className="text-slate-600 font-medium -mt-20">
-          Revalidating session...
+          A revalidar a sessão...
         </p>
       </div>
     </div>

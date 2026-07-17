@@ -5,7 +5,7 @@ function IgrpLoading({ loading }: { loading: boolean }) {
   return (
     <div className="flex items-center gap2 flex-col">
       <IGRPLoadingSpinner />
-      <span>loading process definitions...</span>
+      <span>A carregar definições de processo...</span>
     </div>
   );
 }
