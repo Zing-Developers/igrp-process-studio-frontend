@@ -18,6 +18,10 @@ export const getDataTypes = async () => {
 export const getStatusProcessDefinition = () => {
   return [
     {
+      label: 'Todos',
+      value: 'ALL',
+    },
+    {
       label: 'Publicado',
       value: 'PUBLISHED',
     },
