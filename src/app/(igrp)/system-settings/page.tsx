@@ -10,11 +10,11 @@ export default function SettingsPage() {
     console.log("Clicked...");
     igrpToast({
       type: 'info',
-      title: 'Info!',
-      description: <span className='text-foreground'>This is a info message.</span>,
+      title: 'Informação',
+      description: <span className='text-foreground'>Esta é uma mensagem informativa.</span>,
       action: {
-        label: 'Undo',
-        onClick: () => console.log('Undo'),
+        label: 'Desfazer',
+        onClick: () => console.log('Desfazer'),
       },
     })
   }
@@ -22,10 +22,10 @@ export default function SettingsPage() {
 
   return (
     <div className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">System Settings</h1>
+      <h1 className="text-2xl font-bold mb-6">Configurações do sistema</h1>
       <IGRPTemplateThemeSelector />
       <IGRPButton onClick={() => handlerButton()}>
-        Info
+        Informação
       </IGRPButton>
     </div >
   );
