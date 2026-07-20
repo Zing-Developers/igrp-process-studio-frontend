@@ -35,8 +35,7 @@ export const useProcessDefinition = () => {
         projectName: project.name,
       })),
     );
-    //i want to create  a map value and label with the status process definition
-    const statusProcessDefinition = queryResult.data?.content.map((project) => {
+    const projectOptions = queryResult.data?.content.map((project) => {
       return {
         value: project.name,
         label: project.name,
@@ -55,7 +54,7 @@ export const useProcessDefinition = () => {
 
     return {
       processDefinitions: allProcessDefinitions,
-      statusProcessDefinition,
+      projectOptions,
       totalProcessDefinitions,
       totalRascunho,
       totalPublished,
