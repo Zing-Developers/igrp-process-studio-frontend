@@ -13,7 +13,10 @@ import {
   Project,
   VariableDefinition,
 } from '@igrp/framework-process-studio-types';
-import { convertToMapOptions } from '@igrp/framework-process-studio-client';
+import {
+  convertToMapOptions,
+  decorateProcessDefinitionRow,
+} from '@igrp/framework-process-studio-client';
 
 export const useProcessDefinition = () => {
   const queryResult = useQuery<PaginatedResponse<Project>>({
@@ -27,11 +30,7 @@ export const useProcessDefinition = () => {
     // Calculate total of processDefinitions and processes
     const allProcessDefinitions = queryResult.data?.content.flatMap((project) =>
       project.processDefinitions.map((processDefinition) => ({
-        ...processDefinition,
-        deploymentDate: Array.isArray(processDefinition.deploymentDate)
-          ? processDefinition.deploymentDate.join('-')
-          : processDefinition.deploymentDate || '',
-        version: processDefinition.version || 'N/D',
+        ...decorateProcessDefinitionRow(processDefinition),
         projectName: project.name,
       })),
     );
@@ -78,27 +77,17 @@ export const useDetailProcessDefinition = (processDefinitionId: string) => {
 };
 
 export function useProjectConfiguration() {
-  try {
-    const process = useProject();
+  const process = useProject();
+  const processOptions = useMemo(
+    () => convertToMapOptions(process.data?.content || [], 'name', 'projectId'),
+    [process.data?.content],
+  );
 
-    const processOptions = convertToMapOptions(process.data?.content || [], 'name', 'projectId');
-
-    const isLoading = process.isLoading;
-    const isError = process.isError;
-
-    return {
-      isLoading,
-      isError,
-      processOptions,
-    };
-  } catch (error: unknown) {
-    console.error(error);
-    return {
-      isLoading: false,
-      isError: true,
-      processOptions: [],
-    };
-  }
+  return {
+    isLoading: process.isLoading,
+    isError: process.isError,
+    processOptions,
+  };
 }
 
 export const useGetVariables = (processDefinitionId: string) => {

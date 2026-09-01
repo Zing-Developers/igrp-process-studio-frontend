@@ -47,7 +47,12 @@ const [copiedId, setCopiedId] = useState<string>('');
 
 const { igrpToast } = useIGRPToast()
 
-async function handleSave (dataToSave?: any, xmlToSave?: string, isAutoSave?: boolean): Promise<void  | undefined> {
+const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+const { data, isLoading, error } = useDetailProcessDefinition(code);
+
+const { mutateAsync: saveDraft } = useSaveDiagramProcessDefinition(code)
+
+const handleSave = useCallback(async (dataToSave?: any, xmlToSave?: string, isAutoSave?: boolean): Promise<void  | undefined> => {
 
   try {
   const xml = xmlToSave || bpmnXml;
@@ -75,7 +80,7 @@ async function handleSave (dataToSave?: any, xmlToSave?: string, isAutoSave?: bo
   setIsAutoSave(false)
 }
 
-}
+}, [bpmnXml, data?.processKey, igrpToast, saveDraft])
 
 async function handleDeploy (): Promise<void  | undefined> {
 
@@ -120,12 +125,6 @@ async function copyToClipboard (text: string, id: string, label: string): Promis
 
 }
 
-
-const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-const { data, isLoading, error } = useDetailProcessDefinition(code);
-
-const { mutateAsync: saveDraft } = useSaveDiagramProcessDefinition(code)
-
 const autoSave = useCallback((data: any, xml: string) => {
   // Clear existing timeout
   if (autoSaveTimeoutRef.current) {
@@ -138,7 +137,7 @@ const autoSave = useCallback((data: any, xml: string) => {
   autoSaveTimeoutRef.current = setTimeout(() => {
     handleSave(data, xml, true);
   }, 2000); // Wait 2 seconds after the user stops editing
-}, []);
+}, [handleSave]);
 
 const handleBpmnChange = useCallback(
   (xml: string) => {
@@ -151,11 +150,11 @@ const handleBpmnChange = useCallback(
 
 useEffect(() => {
   if (isLoading || !data) return;
-  const camundaXml = convertActivitiToCamunda(data.bpmFileContent);
+  const camundaXml = convertActivitiToCamunda(data.bpmFileContent ?? '');
   setPageHeader1Description(`${data.title} [${data.processKey}] - ${data.statusDesc}`);
   setBpmnXml(camundaXml);
   setInputTextarea1Value(camundaXml);
-}, [isLoading]);
+}, [data, isLoading]);
 
 // Cleanup timeout on unmount
 useEffect(() => {

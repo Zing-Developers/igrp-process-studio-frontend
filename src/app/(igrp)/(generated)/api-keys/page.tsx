@@ -13,7 +13,6 @@ import {
   IGRPModalDialogFooter,
   IGRPModalDialogHeader,
   IGRPModalDialogTitle,
-  IGRPTextarea,
   useIGRPToast,
 } from '@igrp/igrp-framework-react-design-system';
 import {
@@ -42,7 +41,7 @@ const formatDate = (value: string | null) => value
   ? new Intl.DateTimeFormat('pt-PT', { day: '2-digit', month: '2-digit' }).format(new Date(value))
   : 'Nunca usada';
 
-const errorMessage = (_error: unknown) => 'Não foi possível concluir o pedido. Tente novamente.';
+const errorMessage = () => 'Não foi possível concluir o pedido. Tente novamente.';
 
 export default function ApiKeysPage() {
   const queryClient = useQueryClient();
@@ -62,7 +61,7 @@ export default function ApiKeysPage() {
 
   const keysQuery = useQuery({ queryKey: ['m2m-keys'], queryFn: getM2mKeys });
   const keysResult = keysQuery.data;
-  const keys = keysResult?.success ? keysResult.data : [];
+  const keys = useMemo(() => (keysResult?.success ? keysResult.data : []), [keysResult]);
 
   const resetCreateForm = () => {
     setClientName('');
@@ -117,8 +116,8 @@ export default function ApiKeysPage() {
       resetCreateForm();
       setCreateOpen(false);
       setSecret({ value: result.data.key });
-    } catch (error) {
-      igrpToast({ title: 'Erro', description: errorMessage(error), type: 'error' });
+    } catch {
+      igrpToast({ title: 'Erro', description: errorMessage(), type: 'error' });
     } finally {
       setIsCreating(false);
     }
@@ -137,8 +136,8 @@ export default function ApiKeysPage() {
       setConfirmAction(null);
       setSelectedKey(null);
       igrpToast({ title: 'Chave revogada', description: 'A revogação tem efeito imediato.', type: 'success' });
-    } catch (error) {
-      igrpToast({ title: 'Erro', description: errorMessage(error), type: 'error' });
+    } catch {
+      igrpToast({ title: 'Erro', description: errorMessage(), type: 'error' });
     } finally {
       setIsRevoking(false);
     }
@@ -158,8 +157,8 @@ export default function ApiKeysPage() {
       setSelectedKey(null);
       const oldKey = refreshed.success ? refreshed.data.find((key) => key.id === selectedKey.id) : undefined;
       setSecret({ value: result.data.key, oldKeyExpiresAt: oldKey?.expiresAt });
-    } catch (error) {
-      igrpToast({ title: 'Erro', description: errorMessage(error), type: 'error' });
+    } catch {
+      igrpToast({ title: 'Erro', description: errorMessage(), type: 'error' });
     } finally {
       setIsRotating(false);
     }
@@ -176,7 +175,6 @@ export default function ApiKeysPage() {
   };
 
   const closeSecret = () => setSecret(null);
-  const selectedStatus = selectedKey ? appliedKeyStatuses.get(selectedKey.id) : undefined;
   const isMutating = isRevoking || isRotating;
 
   if (keysResult && !keysResult.success && keysResult.status === 403) {
@@ -207,7 +205,7 @@ export default function ApiKeysPage() {
         </div>
 
         {keysQuery.isLoading && <p className="text-sm text-muted-foreground">A carregar chaves…</p>}
-        {keysQuery.isError && <p className="text-sm text-destructive">{errorMessage(keysQuery.error)}</p>}
+        {keysQuery.isError && <p className="text-sm text-destructive">{errorMessage()}</p>}
         {keysResult && !keysResult.success && (
           <p className="text-sm text-destructive">
             {keysResult.status === 404
