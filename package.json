@@ -17,9 +17,9 @@
     "@igrp/framework-next-auth": "0.1.0-beta.91",
     "@igrp/framework-next-types": "0.1.0-beta.91",
     "@igrp/framework-next-ui": "0.1.0-beta.91",
-    "@igrp/framework-process-studio-bpmn-editor": "0.1.0-beta.13",
-    "@igrp/framework-process-studio-client": "0.0.1-beta.16",
-    "@igrp/framework-process-studio-types": "0.0.1-beta.16",
+    "@igrp/framework-process-studio-bpmn-editor": "0.0.1-beta.16",
+    "@igrp/framework-process-studio-client": "0.0.1-beta.15",
+    "@igrp/framework-process-studio-types": "0.0.1-beta.15",
     "@igrp/igrp-framework-react-design-system": "0.1.0-beta.91",
     "@irn/irn-backoffice-design-system": "^1.4.5",
     "@irn/irn-backoffice-integration": "^1.0.13",
@@ -37,7 +37,8 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "tailwind-merge": "^3.3.1",
-    "zod": "^4.1.12"
+    "zod": "^4.1.12",
+    "@irn/irn-auth-sdk": "^1.0.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
