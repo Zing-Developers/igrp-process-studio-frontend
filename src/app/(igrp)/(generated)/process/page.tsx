@@ -6,19 +6,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { use, useState, useEffect, useRef } from 'react';
+import { use, useState, useEffect, useRef, useMemo } from 'react';
 import { cn, useIGRPMenuNavigation, useIGRPToast } from '@igrp/igrp-framework-react-design-system';
 import { IGRPDataTableFacetedFilterFn, IGRPDataTableDateRangeFilterFn } from "@igrp/igrp-framework-react-design-system";
 import { IGRPDataTableHeaderSortToggle, IGRPDataTableHeaderSortDropdown, IGRPDataTableHeaderRowsSelect } from "@igrp/igrp-framework-react-design-system";
 import { IGRPOptionsProps } from "@igrp/igrp-framework-react-design-system";
-import type { Column } from "@igrp/igrp-framework-react-design-system";
 import { IgrpLoading } from '@/app/(myapp)/components/igrp-loading'
 import New from '@/app/(igrp)/(generated)/process/components/new'
 import Project from '@/components/project'
 import {
-  IGRPPageHeader,
   IGRPButton,
-  IGRPStatsCard,
   IGRPDataTable,
   IGRPDataTableCellBadge,
   IGRPDataTableRowAction,
@@ -26,8 +23,12 @@ import {
   IGRPDataTableDropdownMenu,
   IGRPDataTableDropdownMenuCustom,
   IGRPDataTableDropdownMenuAlert,
-  IGRPDataTableFilterInput,
-  IGRPDataTableFilterDropdown
+  IGRPDropdownMenu,
+  IGRPDropdownMenuTrigger,
+  IGRPDropdownMenuContent,
+  IGRPDropdownMenuItem,
+  IGRPCombobox,
+  IGRPInputText
 } from "@igrp/igrp-framework-react-design-system";
 import { deleteProcessDefinition } from '@/app/(myapp)/functions/process-definition'
 import z from 'zod';
@@ -36,50 +37,8 @@ import { IGRPLoadingSpinner } from '@igrp/igrp-framework-react-design-system'
 import { useRouter } from "next/navigation";
 import { useQueryClient } from '@tanstack/react-query';
 import { getStatusProcessDefinition } from '@/app/(myapp)/functions/domains'
-
-function StatusFilter<TData>({
-  column,
-  options,
-}: {
-  column: Column<TData, unknown>;
-  options: IGRPOptionsProps[];
-}) {
-  useEffect(() => {
-    if (column.getFilterValue() === undefined) {
-      column.setFilterValue('ALL');
-    }
-  }, [column]);
-
-  return (
-    <IGRPDataTableFilterDropdown
-      column={column}
-      placeholder={`Filtrar por estado...`}
-      options={options}
-    />
-  );
-}
-
-function ProjectFilter<TData>({
-  column,
-  options,
-}: {
-  column: Column<TData, unknown>;
-  options: IGRPOptionsProps[];
-}) {
-  useEffect(() => {
-    if (column.getFilterValue() === undefined) {
-      column.setFilterValue('ALL');
-    }
-  }, [column]);
-
-  return (
-    <IGRPDataTableFilterDropdown
-      column={column}
-      placeholder={`Filtrar por projeto...`}
-      options={options}
-    />
-  );
-}
+import { PageHeader } from '@/app/(myapp)/components/PageHeader';
+import { FiltersSection } from '@/app/(myapp)/components/filter-section';
 
 
 export default function PageProcessComponent() {
@@ -96,11 +55,16 @@ export default function PageProcessComponent() {
     statusDesc: string;
     description: string;
     status: string;
+    createdBy?: {
+      fullName?: string;
+      id?: string;
+    };
+    lastModifiedBy?: {
+      fullName?: string;
+      id?: string;
+    };
   }
 
-  const [statstatsCard2Value, setStatstatsCard2Value] = useState<string | number>(0);
-  const [statstatsCard3Value, setStatstatsCard3Value] = useState<string | number>(0);
-  const [statstatsCard1Value, setStatstatsCard1Value] = useState<string | number>(0);
   const [contentTabletable1, setContentTabletable1] = useState<Table1[]>([]);
   const [dropdownFiltertableDropdownFilter2Options, setDropdownFiltertableDropdownFilter2Options] = useState<IGRPOptionsProps[]>([]);
   const [dropdownFiltertableDropdownFilter1Options, setDropdownFiltertableDropdownFilter1Options] = useState<IGRPOptionsProps[]>([]);
@@ -113,6 +77,10 @@ export default function PageProcessComponent() {
   const [editingProcess, setEditingProcess] = useState<any>(undefined);
 
   const [hasNewProcess, setHasNewProcess] = useState<boolean>(false);
+
+  const initialFilters = { title: '', projectName: 'ALL', status: 'ALL' };
+  const [processFilters, setProcessFilters] = useState(initialFilters);
+  const [draftProcessFilters, setDraftProcessFilters] = useState(initialFilters);
 
   const { igrpToast } = useIGRPToast()
 
@@ -150,14 +118,11 @@ export default function PageProcessComponent() {
 
   const queryClient = useQueryClient();
 
-  const { processDefinitions, projectOptions, totalPublished, totalProcessDefinitions, totalRascunho, isLoading } = useProcessDefinition();
+  const { processDefinitions, projectOptions, isLoading } = useProcessDefinition();
 
   useEffect(() => {
     if (isLoading || !processDefinitions) return
     setContentTabletable1(processDefinitions || [])
-    setStatstatsCard1Value(totalRascunho || 0)
-    setStatstatsCard2Value(totalProcessDefinitions || 0)
-    setStatstatsCard3Value(totalPublished || 0)
 
     setDropdownFiltertableDropdownFilter1Options(getStatusProcessDefinition() || [])
     setDropdownFiltertableDropdownFilter2Options([
@@ -167,23 +132,44 @@ export default function PageProcessComponent() {
 
 
 
-  }, [isLoading, processDefinitions, projectOptions, totalProcessDefinitions, totalPublished, totalRascunho])
+  }, [isLoading, processDefinitions, projectOptions])
+
+  const filteredProcessDefinitions = useMemo(() => {
+    const searchTerm = processFilters.title
+      .toLocaleLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+
+    return contentTabletable1.filter((processDefinition) => {
+      const matchesSearch = !searchTerm || Object.values(processDefinition).some((value) =>
+        String(value ?? '')
+          .toLocaleLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .includes(searchTerm),
+      );
+      const matchesProject = processFilters.projectName === 'ALL'
+        || processDefinition.projectName === processFilters.projectName;
+      const matchesStatus = processFilters.status === 'ALL'
+        || processDefinition.status === processFilters.status;
+
+      return matchesSearch && matchesProject && matchesStatus;
+    });
+  }, [contentTabletable1, processFilters]);
 
 
 
   return (
     <div className={cn('page', 'space-y-6',)}    >
       <div className={cn('section', ' space-x-6 space-y-6',)}    >
-        <IGRPPageHeader
-          name={`pageHeader1`}
-          title={`Painel de processos`}
+        <PageHeader
+          name={`Painel de processos`}
           description={`Crie e publique os seus processos BPMN`}
-          iconBackButton={`Search`}
-          variant={`h3`}
+          badgeCount={contentTabletable1.length}
+        />
 
-        >
-          <div className="flex items-center gap-2">
-            <IGRPButton
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          <IGRPButton
               name={`button2`}
               variant={`outline`}
               size={`default`}
@@ -197,7 +183,7 @@ export default function PageProcessComponent() {
             >
               Novo projeto
             </IGRPButton>
-            <IGRPButton
+          <IGRPButton
               name={`button1`}
               variant={`default`}
               size={`default`}
@@ -209,76 +195,77 @@ export default function PageProcessComponent() {
             >
               Nova definição de processo
             </IGRPButton>
-          </div>
-        </IGRPPageHeader>
-
-        <div className={cn('grid', 'grid-cols-1 ', 'md:grid-cols-2 ', 'lg:grid-cols-3 ', ' gap-4',)}    >
-          <IGRPStatsCard
-            name={`statsCard2`}
-            cardBorderPosition={`top`}
-            cardBorder={`rounded-xl`}
-            cardVariant={`info`}
-            iconBackground={`square`}
-            title={`Total de processos`}
-            titleSize={`sm`}
-            valueSize={`2xl`}
-            showIcon={true}
-            iconName={`Workflow`}
-            iconSize={`md`}
-            iconVariant={`info`}
-            iconPlacement={`end`}
-            itemPlacement={`start`}
-            showIconBackground={true}
-            className={cn('col-span-1',)}
-            onClick={() => { }}
-            value={statstatsCard2Value}
+          <FiltersSection
+            hasAppliedFilters={processFilters.title !== '' || processFilters.projectName !== 'ALL' || processFilters.status !== 'ALL'}
+            onApply={() => setProcessFilters(draftProcessFilters)}
+            onClear={() => {
+              setProcessFilters(initialFilters);
+              setDraftProcessFilters(initialFilters);
+            }}
           >
-          </IGRPStatsCard>
-          <IGRPStatsCard
-            name={`statsCard3`}
-            cardBorderPosition={`top`}
-            cardBorder={`rounded-xl`}
-            cardVariant={`primary`}
-            iconBackground={`square`}
-            title={`Total publicados`}
-            titleSize={`sm`}
-            valueSize={`2xl`}
-            showIcon={true}
-            iconName={`ArrowBigUp`}
-            iconSize={`md`}
-            iconVariant={`primary`}
-            iconPlacement={`end`}
-            itemPlacement={`start`}
-            showIconBackground={true}
-            className={cn('col-span-1',)}
-            onClick={() => { }}
-            value={statstatsCard3Value}
-          >
-          </IGRPStatsCard>
-          <IGRPStatsCard
-            name={`statsCard1`}
-            cardBorderPosition={`top`}
-            cardBorder={`rounded-xl`}
-            cardVariant={`success`}
-            iconBackground={`square`}
-            title={`Total em rascunho`}
-            titleSize={`sm`}
-            valueSize={`2xl`}
-            showIcon={true}
-            iconName={`Network`}
-            iconSize={`md`}
-            iconVariant={`success`}
-            iconPlacement={`end`}
-            itemPlacement={`start`}
-            showIconBackground={true}
-            className={cn('col-span-1',)}
-            onClick={() => { }}
-            value={statstatsCard1Value}
-          >
-          </IGRPStatsCard></div>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <IGRPInputText
+                id="title"
+                label="Nome do processo"
+                placeholder="Pesquisar processo..."
+                value={draftProcessFilters.title}
+                onChange={(event) => setDraftProcessFilters((filters) => ({ ...filters, title: event.target.value }))}
+              />
+              <IGRPCombobox
+                id="projectName"
+                label="Projeto"
+                variant="single"
+                placeholder="Selecione um projeto..."
+                selectLabel="Nenhuma opção encontrada"
+                showSearch={true}
+                showIcon={false}
+                options={dropdownFiltertableDropdownFilter2Options}
+                value={draftProcessFilters.projectName}
+                onChange={(value) => setDraftProcessFilters((filters) => ({
+                  ...filters,
+                  projectName: Array.isArray(value) ? value[0] || 'ALL' : value || 'ALL',
+                }))}
+              />
+              <IGRPCombobox
+                id="status"
+                label="Estado"
+                variant="single"
+                placeholder="Selecione um estado..."
+                selectLabel="Nenhuma opção encontrada"
+                showSearch={true}
+                showIcon={false}
+                options={dropdownFiltertableDropdownFilter1Options}
+                value={draftProcessFilters.status}
+                onChange={(value) => setDraftProcessFilters((filters) => ({
+                  ...filters,
+                  status: Array.isArray(value) ? value[0] || 'ALL' : value || 'ALL',
+                }))}
+              />
+            </div>
+          </FiltersSection>
+          <IGRPDropdownMenu>
+            <IGRPDropdownMenuTrigger asChild>
+              <IGRPButton
+                name={`m2mKeysMenu`}
+                variant={`outline`}
+                size={`default`}
+                showIcon={true}
+                iconName={`ChevronDown`}
+                className={cn()}
+              >
+                Segurança
+              </IGRPButton>
+            </IGRPDropdownMenuTrigger>
+            <IGRPDropdownMenuContent align="end">
+              <IGRPDropdownMenuItem asChild>
+                <a href="/api-keys">Chaves M2M</a>
+              </IGRPDropdownMenuItem>
+            </IGRPDropdownMenuContent>
+          </IGRPDropdownMenu>
+        </div>
         {!isLoading && (<div className={cn(' border rounded-lg p-3',)}    >
           <IGRPDataTable<Table1, Table1>
-            showFilter={true}
+            showFilter={false}
             showPagination={true}
             showToggleColumn={true}
             className={cn()}
@@ -372,6 +359,16 @@ export default function PageProcessComponent() {
                   }
                 },
                 {
+                  header: 'Modificado por',
+                  accessorKey: 'lastModifiedBy',
+                  cell: ({ row }) => row.original.lastModifiedBy?.fullName
+                    || row.original.lastModifiedBy?.id
+                    || row.original.createdBy?.fullName
+                    || row.original.createdBy?.id
+                    || '',
+                  filterFn: IGRPDataTableFacetedFilterFn
+                },
+                {
                   id: 'tableActionListCell1',
                   enableHiding: false, cell: ({ row }) => {
                     const rowData = row.original;
@@ -416,40 +413,7 @@ export default function PageProcessComponent() {
                 },
               ]
             }
-            clientFilters={
-              [
-                {
-                  columnId: `title`,
-                  component: (column) => (
-                    <IGRPDataTableFilterInput
-                      column={column}
-
-
-                    />
-                  )
-                },
-                {
-                  columnId: `projectName`,
-                  component: (column) => (
-                    <ProjectFilter
-                      column={column}
-                      options={dropdownFiltertableDropdownFilter2Options}
-                    />
-                  )
-                },
-                {
-                  columnId: `status`,
-                  component: (column) => (
-                    <StatusFilter
-                      column={column}
-                      options={dropdownFiltertableDropdownFilter1Options}
-                    />
-                  )
-                },
-              ]
-            }
-
-            data={contentTabletable1}
+            data={filteredProcessDefinitions}
           /></div>)}
         <IgrpLoading loading={isLoading}   ></IgrpLoading></div>
       <New open={openProcess} initialData={editingProcess} setOpen={setOpenProcess
