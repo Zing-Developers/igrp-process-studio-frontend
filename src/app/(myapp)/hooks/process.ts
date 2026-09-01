@@ -35,6 +35,8 @@ export const useProcessDefinition = () => {
         projectName: project.name,
       })),
     );
+
+    console.info("allProcessDefinitions", allProcessDefinitions)
     const projectOptions = queryResult.data?.content.map((project) => {
       return {
         value: project.name,
