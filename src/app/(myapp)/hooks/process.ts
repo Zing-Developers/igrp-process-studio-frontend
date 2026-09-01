@@ -78,27 +78,17 @@ export const useDetailProcessDefinition = (processDefinitionId: string) => {
 };
 
 export function useProjectConfiguration() {
-  try {
-    const process = useProject();
+  const process = useProject();
+  const processOptions = useMemo(
+    () => convertToMapOptions(process.data?.content || [], 'name', 'projectId'),
+    [process.data?.content],
+  );
 
-    const processOptions = convertToMapOptions(process.data?.content || [], 'name', 'projectId');
-
-    const isLoading = process.isLoading;
-    const isError = process.isError;
-
-    return {
-      isLoading,
-      isError,
-      processOptions,
-    };
-  } catch (error: unknown) {
-    console.error(error);
-    return {
-      isLoading: false,
-      isError: true,
-      processOptions: [],
-    };
-  }
+  return {
+    isLoading: process.isLoading,
+    isError: process.isError,
+    processOptions,
+  };
 }
 
 export const useGetVariables = (processDefinitionId: string) => {

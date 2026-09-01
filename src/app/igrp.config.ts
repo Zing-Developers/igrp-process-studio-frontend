@@ -41,9 +41,11 @@
  *
  */
 
-export default {
+const igrpConfig = {
   types: [],
   actions: [],
   functions: ['hooks/process', 'functions/project', 'functions/process-definition', 'functions/domains', 'functions/utils'],
   components: ['components/BpmnModeler', 'components/igrp-loading', 'components/spinner', 'components/delegates-helper']
 };
+
+export default igrpConfig;

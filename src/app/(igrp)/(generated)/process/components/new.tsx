@@ -88,7 +88,7 @@ const { processOptions, isLoading } = useProjectConfiguration();
 useEffect(() => {
   if (isLoading) return
   setSelectprojectIdOptions(processOptions || [])
-}, [isLoading,open])
+}, [isLoading, open, processOptions])
 
 useEffect(() => {
   setModalDialogTitle1Content('Criar novo processo')
