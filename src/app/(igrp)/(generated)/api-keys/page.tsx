@@ -29,6 +29,10 @@ const clientNamePattern = /^[a-z0-9._-]+$/;
 const permissionPattern = /^[A-Z0-9_.]+:[a-z_]+$/;
 
 type KeyStatus = 'ativa' | 'revogada' | 'expirada' | 'a expirar';
+type AccessErrorStatus = 401 | 403;
+
+const isAccessErrorStatus = (status?: number): status is AccessErrorStatus =>
+  status === 401 || status === 403;
 
 const keyStatus = (key: M2mKey): KeyStatus => {
   if (!key.active) return 'revogada';
@@ -58,6 +62,7 @@ export default function ApiKeysPage() {
   const [isCreating, setIsCreating] = useState(false);
   const [isRevoking, setIsRevoking] = useState(false);
   const [isRotating, setIsRotating] = useState(false);
+  const [accessErrorStatus, setAccessErrorStatus] = useState<AccessErrorStatus | null>(null);
 
   const keysQuery = useQuery({ queryKey: ['m2m-keys'], queryFn: getM2mKeys });
   const keysResult = keysQuery.data;
@@ -109,6 +114,10 @@ export default function ApiKeysPage() {
     try {
       const result = await createM2mKey(request);
       if (!result.success) {
+        if (isAccessErrorStatus(result.status)) {
+          setAccessErrorStatus(result.status);
+          return;
+        }
         igrpToast({ title: 'Erro', description: result.error, type: 'error' });
         return;
       }
@@ -129,6 +138,10 @@ export default function ApiKeysPage() {
     try {
       const result = await revokeM2mKey(selectedKey.id);
       if (!result.success) {
+        if (isAccessErrorStatus(result.status)) {
+          setAccessErrorStatus(result.status);
+          return;
+        }
         igrpToast({ title: 'Erro', description: result.error, type: 'error' });
         return;
       }
@@ -149,6 +162,10 @@ export default function ApiKeysPage() {
     try {
       const result = await rotateM2mKey(selectedKey.id);
       if (!result.success) {
+        if (isAccessErrorStatus(result.status)) {
+          setAccessErrorStatus(result.status);
+          return;
+        }
         igrpToast({ title: 'Erro', description: result.error, type: 'error' });
         return;
       }
@@ -176,10 +193,19 @@ export default function ApiKeysPage() {
 
   const closeSecret = () => setSecret(null);
   const isMutating = isRevoking || isRotating;
+  const queryAccessErrorStatus = keysResult && !keysResult.success && isAccessErrorStatus(keysResult.status)
+    ? keysResult.status
+    : null;
+  const deniedStatus = accessErrorStatus ?? queryAccessErrorStatus;
 
-  if (keysResult && !keysResult.success && keysResult.status === 403) {
+  if (deniedStatus) {
     return (
-      <AccessDeniedPage description="A gestão de chaves M2M está disponível apenas para super-administradores." />
+      <AccessDeniedPage
+        status={deniedStatus}
+        description={deniedStatus === 401
+          ? 'A sua sessão não é válida ou expirou. Inicie sessão novamente para continuar.'
+          : 'A gestão de chaves M2M está disponível apenas para super-administradores.'}
+      />
     );
   }
 

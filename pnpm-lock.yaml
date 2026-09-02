@@ -35,18 +35,18 @@ importers:
       '@igrp/framework-process-studio-bpmn-editor':
         specifier: 0.0.1-beta.16
         version: 0.0.1-beta.16(@bpmn-io/cm-theme@0.2.0(@codemirror/state@6.7.2)(@codemirror/view@6.43.10))(@tanstack/react-table@8.21.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(date-fns@4.4.0)(diagram-js@15.26.0(preact-render-to-string@5.2.6(preact@10.29.8)))(next-auth@4.24.15(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(preact-render-to-string@5.2.6(preact@10.29.8))(react-dom@19.2.8(react@19.2.8))(react-hook-form@7.87.0(react@19.2.8))(react@19.2.8)(zeebe-bpmn-moddle@2.0.0(moddle@8.2.1))
-      '@igrp/framework-process-studio-client':
-        specifier: 0.0.1-beta.15
-        version: 0.0.1-beta.15
-      '@igrp/framework-process-studio-types':
-        specifier: 0.0.1-beta.15
-        version: 0.0.1-beta.15
       '@igrp/igrp-framework-react-design-system':
         specifier: 0.1.0-beta.91
         version: 0.1.0-beta.91(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@irn/framework-process-studio-client':
+        specifier: 0.0.1-beta.15
+        version: 0.0.1-beta.15
+      '@irn/framework-process-studio-types':
+        specifier: 0.0.1-beta.15
+        version: 0.0.1-beta.15
       '@irn/irn-auth-sdk':
-        specifier: ^1.0.3
-        version: 1.0.3(next-auth@4.24.15(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: 2.2.3
+        version: 2.2.3(next-auth@4.24.15(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@irn/irn-backoffice-design-system':
         specifier: ^1.4.5
         version: 1.9.0(@igrp/framework-next-types@0.1.0-beta.91(next-auth@4.24.15(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@igrp/igrp-framework-react-design-system@0.1.0-beta.91(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(lucide-react@0.518.0(react@19.2.8))(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -463,10 +463,6 @@ packages:
       react: 19.1.1
       react-dom: 19.1.1
 
-  '@igrp/framework-process-studio-client@0.0.1-beta.15':
-    resolution: {integrity: sha512-uqY/9D4D6jWfJrGUzwIn5auIaEU5VabvBwjsIyB6Gh0TABsz7A1jerJmHwRADB2sEG0WF5Q7G1ugikUYn3wInA==}
-    engines: {node: '>=20.x.x'}
-
   '@igrp/framework-process-studio-types@0.0.1-beta.15':
     resolution: {integrity: sha512-XS92buTqCmTgvMueT/F2SK0oKskZY3qU5ROz86mnBw1q5hBub8WPAjIt8h9GNFLqUVfYwOaac4/polP9jayeCg==}
     engines: {node: '>=20.x.x'}
@@ -633,14 +629,26 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@irn/irn-auth-sdk@1.0.3':
-    resolution: {integrity: sha512-1QKqyEFYE+1ll1LbOaVX9OVm38CPy9uyCveEcPZE7GIqPJx8IZG/QNt1lWM8iP3cAgVapXrzPZemp0ovQZIbvA==}
+  '@irn/framework-process-studio-client@0.0.1-beta.15':
+    resolution: {integrity: sha512-1I6HLQ1eZ807vpRNYi/MKCwYQG2NKeD0fv/V6vz6IRsc/0u0sqxfHfUW67wKKXOj8RJXOM12cKTjjfHinYwyqg==}
+    engines: {node: '>=20.x.x'}
+
+  '@irn/framework-process-studio-types@0.0.1-beta.15':
+    resolution: {integrity: sha512-YBqZz1/GpMQiAoA0FM81Twc29E52Rgn8L5mq1Lf0+3Nkc8HdRI40jmLJoUqJcZCuS9zYpFTXLC5vXle4HaJkSQ==}
+    engines: {node: '>=20.x.x'}
+
+  '@irn/irn-auth-sdk@2.2.3':
+    resolution: {integrity: sha512-fn69KEhVdoXKruvukTPQ5x2D+fAiGHocjj3u8U5cLm88j0nOjOsvz28eeMWbl9IM1AWv/q+djdeHmO9qnN6fDQ==}
     engines: {node: '>=18'}
     peerDependencies:
+      '@opentelemetry/api': '>=1.7.0'
       next: '>=15.0.0'
       next-auth: '>=4.24.0'
       react: '>=18.0.0'
       react-dom: '>=18.0.0'
+    peerDependenciesMeta:
+      '@opentelemetry/api':
+        optional: true
 
   '@irn/irn-backoffice-design-system@1.9.0':
     resolution: {integrity: sha512-Hv6ONjHjPSBtfssV3rvI0pcs/k6WbQfzOiZHq2vLVV3r+zvo9d1dVnIe1E4xSGx7gxXpMWgjNeJOsURLaee5Ag==}
@@ -4031,10 +4039,6 @@ snapshots:
       - yup
       - zeebe-bpmn-moddle
 
-  '@igrp/framework-process-studio-client@0.0.1-beta.15':
-    dependencies:
-      '@igrp/framework-process-studio-types': 0.0.1-beta.15
-
   '@igrp/framework-process-studio-types@0.0.1-beta.15': {}
 
   '@igrp/igrp-framework-react-design-system@0.1.0-beta.143(@tanstack/react-table@8.21.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(date-fns@4.4.0)(lucide-react@0.518.0(react@19.2.8))(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react-hook-form@7.87.0(react@19.2.8))(react@19.2.8)(zod@3.25.76)':
@@ -4293,7 +4297,13 @@ snapshots:
   '@img/sharp-win32-x64@0.34.5':
     optional: true
 
-  '@irn/irn-auth-sdk@1.0.3(next-auth@4.24.15(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@irn/framework-process-studio-client@0.0.1-beta.15':
+    dependencies:
+      '@igrp/framework-process-studio-types': 0.0.1-beta.15
+
+  '@irn/framework-process-studio-types@0.0.1-beta.15': {}
+
+  '@irn/irn-auth-sdk@2.2.3(next-auth@4.24.15(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       jose: 5.10.0
       next: 15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
