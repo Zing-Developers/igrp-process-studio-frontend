@@ -39,6 +39,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import { getStatusProcessDefinition } from '@/app/(myapp)/functions/domains'
 import { PageHeader } from '@/app/(myapp)/components/PageHeader';
 import { FiltersSection } from '@/app/(myapp)/components/filter-section';
+import { UserCell } from '@/app/(myapp)/components/user-cell';
+import type { UserProfileDTO } from '@irn/framework-process-studio-types';
 
 
 export default function PageProcessComponent() {
@@ -55,14 +57,8 @@ export default function PageProcessComponent() {
     statusDesc: string;
     description: string;
     status: string;
-    createdBy?: {
-      fullName?: string;
-      id?: string;
-    };
-    lastModifiedBy?: {
-      fullName?: string;
-      id?: string;
-    };
+    userProfileCreatedBy?: UserProfileDTO;
+    userProfileLastModifiedBy?: UserProfileDTO;
   }
 
   const [contentTabletable1, setContentTabletable1] = useState<Table1[]>([]);
@@ -360,12 +356,10 @@ export default function PageProcessComponent() {
                 },
                 {
                   header: 'Modificado por',
-                  accessorKey: 'lastModifiedBy',
-                  cell: ({ row }) => row.original.lastModifiedBy?.fullName
-                    || row.original.lastModifiedBy?.id
-                    || row.original.createdBy?.fullName
-                    || row.original.createdBy?.id
-                    || '',
+                  accessorKey: 'userProfileLastModifiedBy',
+                  cell: ({ row }) => (
+                    <UserCell user={row.original.userProfileLastModifiedBy ?? row.original.userProfileCreatedBy} />
+                  ),
                   filterFn: IGRPDataTableFacetedFilterFn
                 },
                 {

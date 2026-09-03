@@ -21,9 +21,11 @@ import {
   revokeM2mKey,
   rotateM2mKey,
 } from '@/app/(myapp)/functions/m2m-keys';
-import type { CreateM2mKeyRequest, M2mKey } from '@/app/(myapp)/client/m2m-keys';
+import type { CreateRequest, KeySummary, UserProfileDTO } from '@irn/framework-process-studio-types';
 import { PageHeader } from '@/app/(myapp)/components/PageHeader';
 import { AccessDeniedPage } from '@/app/(myapp)/components/access-denied-page';
+import { UserCell } from '@/app/(myapp)/components/user-cell';
+import { IgrpLoading } from '@/app/(myapp)/components/igrp-loading';
 
 const clientNamePattern = /^[a-z0-9._-]+$/;
 const permissionPattern = /^[A-Z0-9_.]+:[a-z_]+$/;
@@ -34,25 +36,63 @@ type AccessErrorStatus = 401 | 403;
 const isAccessErrorStatus = (status?: number): status is AccessErrorStatus =>
   status === 401 || status === 403;
 
-const keyStatus = (key: M2mKey): KeyStatus => {
-  if (!key.active) return 'revogada';
-  if (key.expiresAt && new Date(key.expiresAt).getTime() <= Date.now()) return 'expirada';
+const parseApiDate = (value?: string | number): Date | undefined => {
+  if (value === undefined || value === null || value === '') return undefined;
+
+  const numericValue = typeof value === 'number' ? value : Number(value);
+  if (Number.isFinite(numericValue) && String(value).trim() !== '') {
+    // The M2M API returns Unix timestamps in seconds, possibly with milliseconds as a fraction.
+    return new Date(Math.abs(numericValue) < 100_000_000_000 ? numericValue * 1000 : numericValue);
+  }
+
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? undefined : date;
+};
+
+const keyStatus = (key: KeySummary): KeyStatus => {
+  if (key.active === false) return 'revogada';
+  const expiryDate = parseApiDate(key.expiresAt);
+  if (expiryDate && expiryDate.getTime() <= Date.now()) return 'expirada';
   if (key.expiresAt) return 'a expirar';
   return 'ativa';
 };
 
-const formatDate = (value: string | null) => value
-  ? new Intl.DateTimeFormat('pt-PT', { day: '2-digit', month: '2-digit' }).format(new Date(value))
-  : 'Nunca usada';
+const formatDate = (value?: string | number) => {
+  if (value === undefined || value === null || value === '') return 'Nunca usada';
+
+  const isoDate = typeof value === 'string'
+    ? /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/.exec(value)
+    : null;
+  if (isoDate) {
+    const [, year, month, day, hour, minute, second] = isoDate;
+    return `${day}/${month}/${year}, ${hour}:${minute}:${second}`;
+  }
+
+  const date = parseApiDate(value);
+  if (!date) return 'Data indisponível';
+
+  return new Intl.DateTimeFormat('pt-PT', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23',
+  }).format(date);
+};
 
 const errorMessage = () => 'Não foi possível concluir o pedido. Tente novamente.';
+
+const getAuditProfile = (key: KeySummary): UserProfileDTO | undefined =>
+  key.revokedAt ? key.userProfileRevokedBy ?? key.userProfileCreatedBy : key.userProfileCreatedBy;
 
 export default function ApiKeysPage() {
   const queryClient = useQueryClient();
   const { igrpToast } = useIGRPToast();
   const [createOpen, setCreateOpen] = useState(false);
   const [secret, setSecret] = useState<{ value: string; oldKeyExpiresAt?: string | null } | null>(null);
-  const [selectedKey, setSelectedKey] = useState<M2mKey | null>(null);
+  const [selectedKey, setSelectedKey] = useState<KeySummary | null>(null);
   const [confirmAction, setConfirmAction] = useState<'revoke' | 'rotate' | null>(null);
   const [clientName, setClientName] = useState('');
   const [email, setEmail] = useState('');
@@ -104,7 +144,7 @@ export default function ApiKeysPage() {
       return;
     }
 
-    const request: CreateM2mKeyRequest = {
+    const request: CreateRequest = {
       clientName,
       permissions,
       ...(email.trim() ? { email: email.trim() } : {}),
@@ -124,6 +164,10 @@ export default function ApiKeysPage() {
       await invalidateKeys();
       resetCreateForm();
       setCreateOpen(false);
+      if (!result.data.key) {
+        igrpToast({ title: 'Erro', description: 'A API não devolveu a nova chave.', type: 'error' });
+        return;
+      }
       setSecret({ value: result.data.key });
     } catch {
       igrpToast({ title: 'Erro', description: errorMessage(), type: 'error' });
@@ -133,10 +177,11 @@ export default function ApiKeysPage() {
   };
 
   const handleRevoke = async () => {
-    if (!selectedKey) return;
+    const keyId = selectedKey?.id;
+    if (!keyId) return;
     setIsRevoking(true);
     try {
-      const result = await revokeM2mKey(selectedKey.id);
+      const result = await revokeM2mKey(keyId);
       if (!result.success) {
         if (isAccessErrorStatus(result.status)) {
           setAccessErrorStatus(result.status);
@@ -157,10 +202,11 @@ export default function ApiKeysPage() {
   };
 
   const handleRotate = async () => {
-    if (!selectedKey) return;
+    const keyId = selectedKey?.id;
+    if (!keyId) return;
     setIsRotating(true);
     try {
-      const result = await rotateM2mKey(selectedKey.id);
+      const result = await rotateM2mKey(keyId);
       if (!result.success) {
         if (isAccessErrorStatus(result.status)) {
           setAccessErrorStatus(result.status);
@@ -172,7 +218,11 @@ export default function ApiKeysPage() {
       const refreshed = await queryClient.fetchQuery({ queryKey: ['m2m-keys'], queryFn: getM2mKeys });
       setConfirmAction(null);
       setSelectedKey(null);
-      const oldKey = refreshed.success ? refreshed.data.find((key) => key.id === selectedKey.id) : undefined;
+      const oldKey = refreshed.success ? refreshed.data.find((key) => key.id === keyId) : undefined;
+      if (!result.data.key) {
+        igrpToast({ title: 'Erro', description: 'A API não devolveu a nova chave.', type: 'error' });
+        return;
+      }
       setSecret({ value: result.data.key, oldKeyExpiresAt: oldKey?.expiresAt });
     } catch {
       igrpToast({ title: 'Erro', description: errorMessage(), type: 'error' });
@@ -204,7 +254,7 @@ export default function ApiKeysPage() {
         status={deniedStatus}
         description={deniedStatus === 401
           ? 'A sua sessão não é válida ou expirou. Inicie sessão novamente para continuar.'
-          : 'A gestão de chaves M2M está disponível apenas para super-administradores.'}
+          : 'A gestão de chaves M2M está disponível apenas para superadministradores.'}
       />
     );
   }
@@ -230,12 +280,12 @@ export default function ApiKeysPage() {
           </IGRPButton>
         </div>
 
-        {keysQuery.isLoading && <p className="text-sm text-muted-foreground">A carregar chaves…</p>}
+        <IgrpLoading loading={keysQuery.isLoading} message="A carregar chaves…" />
         {keysQuery.isError && <p className="text-sm text-destructive">{errorMessage()}</p>}
         {keysResult && !keysResult.success && (
           <p className="text-sm text-destructive">
             {keysResult.status === 404
-              ? 'A API de Chaves M2M ainda não está disponível no API gateway configurado.'
+              ? 'A API de chaves M2M ainda não está disponível no gateway de API configurado.'
               : keysResult.error}
           </p>
         )}
@@ -251,6 +301,7 @@ export default function ApiKeysPage() {
                   <th className="p-3 font-medium">Estado</th>
                   <th className="p-3 font-medium">Criada</th>
                   <th className="p-3 font-medium">Último uso</th>
+                  <th className="p-3 font-medium">Criado/Editado por</th>
                   <th className="p-3 font-medium text-right">Ações</th>
                 </tr>
               </thead>
@@ -258,16 +309,17 @@ export default function ApiKeysPage() {
                 {keys.map((key) => {
                   const status = appliedKeyStatuses.get(key.id) ?? keyStatus(key);
                   const inactive = status === 'revogada' || status === 'expirada';
+                  const auditProfile = getAuditProfile(key);
                   return (
-                    <tr key={key.id} className="border-t align-top">
+                    <tr key={key.id ?? key.clientName} className="border-t align-top">
                       <td className="p-3">
-                        <div className="font-medium">{key.clientName}</div>
+                        <div className="font-medium">{key.clientName ?? ''}</div>
                         {key.email && <div className="text-muted-foreground">{key.email}</div>}
                       </td>
-                      <td className="p-3 font-mono">{key.keyPrefix}…</td>
+                      <td className="p-3 font-mono">{key.keyPrefix ?? ''}…</td>
                       <td className="p-3">
                         <div className="flex max-w-sm flex-wrap gap-1">
-                          {key.permissions.split(',').filter(Boolean).map((permission) => (
+                          {(key.permissions ?? '').split(',').filter(Boolean).map((permission) => (
                             <span key={permission} className="rounded-full bg-muted px-2 py-1 text-xs">{permission}</span>
                           ))}
                         </div>
@@ -276,16 +328,19 @@ export default function ApiKeysPage() {
                       <td className="p-3 whitespace-nowrap">{formatDate(key.createdAt)}</td>
                       <td className="p-3 whitespace-nowrap">{formatDate(key.lastUsedAt)}</td>
                       <td className="p-3">
+                        <UserCell user={auditProfile} />
+                      </td>
+                      <td className="p-3">
                         <div className="flex justify-end gap-2">
-                          <IGRPButton name={`rotate-${key.id}`} variant="outline" size="sm" disabled={inactive} onClick={() => { setSelectedKey(key); setConfirmAction('rotate'); }}>Rodar</IGRPButton>
-                          <IGRPButton name={`revoke-${key.id}`} variant="destructive" size="sm" disabled={inactive} onClick={() => { setSelectedKey(key); setConfirmAction('revoke'); }}>Revogar</IGRPButton>
+                          <IGRPButton name={`rotate-${key.id ?? ''}`} variant="outline" size="sm" disabled={inactive || !key.id} onClick={() => { setSelectedKey(key); setConfirmAction('rotate'); }}>Rodar</IGRPButton>
+                          <IGRPButton name={`revoke-${key.id ?? ''}`} variant="destructive" size="sm" disabled={inactive || !key.id} onClick={() => { setSelectedKey(key); setConfirmAction('revoke'); }}>Revogar</IGRPButton>
                         </div>
                       </td>
                     </tr>
                   );
                 })}
                 {keys.length === 0 && (
-                  <tr><td colSpan={7} className="p-8 text-center text-muted-foreground">Ainda não existem chaves M2M.</td></tr>
+                  <tr><td colSpan={8} className="p-8 text-center text-muted-foreground">Ainda não existem chaves M2M.</td></tr>
                 )}
               </tbody>
             </table>
@@ -320,7 +375,7 @@ export default function ApiKeysPage() {
                 ))}
               </div>
             </div>
-            <IGRPInputText id="email" type="email" label="Email de contacto" value={email} onChange={(event) => setEmail(event.target.value)} />
+            <IGRPInputText id="email" type="email" label="E-mail de contacto" value={email} onChange={(event) => setEmail(event.target.value)} />
             <IGRPInputText id="expiresAt" label="Expiração" placeholder="2027-01-01T00:00:00Z" value={expiresAt} onChange={(event) => setExpiresAt(event.target.value)} helperText="Opcional; use ISO-8601 UTC." />
           </div>
           <IGRPModalDialogFooter>
