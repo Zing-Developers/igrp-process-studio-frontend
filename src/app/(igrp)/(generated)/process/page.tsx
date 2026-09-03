@@ -6,10 +6,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { use, useState, useEffect, useRef, useMemo } from 'react';
-import { cn, useIGRPMenuNavigation, useIGRPToast } from '@igrp/igrp-framework-react-design-system';
-import { IGRPDataTableFacetedFilterFn, IGRPDataTableDateRangeFilterFn } from "@igrp/igrp-framework-react-design-system";
-import { IGRPDataTableHeaderSortToggle, IGRPDataTableHeaderSortDropdown, IGRPDataTableHeaderRowsSelect } from "@igrp/igrp-framework-react-design-system";
+import { useState, useEffect, useMemo } from 'react';
+import { cn, useIGRPToast, IGRPDataTableFacetedFilterFn, IGRPIcon } from "@igrp/igrp-framework-react-design-system";
+import { IGRPDataTableHeaderSortToggle } from "@igrp/igrp-framework-react-design-system";
 import { IGRPOptionsProps } from "@igrp/igrp-framework-react-design-system";
 import { IgrpLoading } from '@/app/(myapp)/components/igrp-loading'
 import New from '@/app/(igrp)/(generated)/process/components/new'
@@ -33,14 +32,13 @@ import {
 import { deleteProcessDefinition } from '@/app/(myapp)/functions/process-definition'
 import z from 'zod';
 import { useProcessDefinition } from '@/app/(myapp)/hooks/process'
-import { IGRPLoadingSpinner } from '@igrp/igrp-framework-react-design-system'
-import { useRouter } from "next/navigation";
 import { useQueryClient } from '@tanstack/react-query';
 import { getStatusProcessDefinition } from '@/app/(myapp)/functions/domains'
 import { PageHeader } from '@/app/(myapp)/components/PageHeader';
 import { FiltersSection } from '@/app/(myapp)/components/filter-section';
 import { UserCell } from '@/app/(myapp)/components/user-cell';
 import type { UserProfileDTO } from '@irn/framework-process-studio-types';
+import Link from 'next/link';
 
 
 export default function PageProcessComponent() {
@@ -59,6 +57,8 @@ export default function PageProcessComponent() {
     status: string;
     userProfileCreatedBy?: UserProfileDTO;
     userProfileLastModifiedBy?: UserProfileDTO;
+    createdBy?: string;
+    lastModifiedBy?: string;
   }
 
   const [contentTabletable1, setContentTabletable1] = useState<Table1[]>([]);
@@ -166,31 +166,31 @@ export default function PageProcessComponent() {
 
         <div className="flex flex-wrap items-center justify-end gap-2">
           <IGRPButton
-              name={`button2`}
-              variant={`outline`}
-              size={`default`}
-              showIcon={true}
-              iconName={`Plus`}
-              className={cn()}
-              onClick={() => {
-                setOpenProject(!openProject)
-              }}
+            name={`button2`}
+            variant={`outline`}
+            size={`default`}
+            showIcon={true}
+            iconName={`Plus`}
+            className={cn()}
+            onClick={() => {
+              setOpenProject(!openProject)
+            }}
 
-            >
-              Novo projeto
-            </IGRPButton>
+          >
+            Novo projeto
+          </IGRPButton>
           <IGRPButton
-              name={`button1`}
-              variant={`default`}
-              size={`default`}
-              showIcon={true}
-              iconName={`Plus`}
-              className={cn()}
-              onClick={() => { setOpenProcess(!openProcess); setEditingProcess(undefined); setHasNewProcess(false) }}
+            name={`button1`}
+            variant={`default`}
+            size={`default`}
+            showIcon={true}
+            iconName={`Plus`}
+            className={cn()}
+            onClick={() => { setOpenProcess(!openProcess); setEditingProcess(undefined); setHasNewProcess(false) }}
 
-            >
-              Nova definição de processo
-            </IGRPButton>
+          >
+            Nova definição de processo
+          </IGRPButton>
           <FiltersSection
             hasAppliedFilters={processFilters.title !== '' || processFilters.projectName !== 'ALL' || processFilters.status !== 'ALL'}
             onApply={() => setProcessFilters(draftProcessFilters)}
@@ -246,15 +246,16 @@ export default function PageProcessComponent() {
                 variant={`outline`}
                 size={`default`}
                 showIcon={true}
-                iconName={`ChevronDown`}
-                className={cn()}
+                iconName={`Settings2`}
+                className={cn("gap-4")}
               >
-                Segurança
+                <span>Configurações</span>
+                <IGRPIcon iconName='ChevronDown' />
               </IGRPButton>
             </IGRPDropdownMenuTrigger>
             <IGRPDropdownMenuContent align="end">
               <IGRPDropdownMenuItem asChild>
-                <a href="/api-keys">Chaves M2M</a>
+                <Link href="/api-keys">  <IGRPIcon iconName='Key' />  <span> API Keys</span></Link>
               </IGRPDropdownMenuItem>
             </IGRPDropdownMenuContent>
           </IGRPDropdownMenu>
@@ -358,7 +359,9 @@ export default function PageProcessComponent() {
                   header: 'Modificado por',
                   accessorKey: 'userProfileLastModifiedBy',
                   cell: ({ row }) => (
-                    <UserCell user={row.original.userProfileLastModifiedBy ?? row.original.userProfileCreatedBy} />
+                    <UserCell
+                      user={row.original.userProfileLastModifiedBy ?? row.original.userProfileCreatedBy ?? row.original.lastModifiedBy ?? row.original.createdBy}
+                    />
                   ),
                   filterFn: IGRPDataTableFacetedFilterFn
                 },
