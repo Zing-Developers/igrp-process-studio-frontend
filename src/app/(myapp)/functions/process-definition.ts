@@ -1,5 +1,9 @@
 'use server';
-import { ProcessDefinition, VariableDefinition } from '@igrp/framework-process-studio-types';
+import {
+  ProcessDefinition,
+  ProcessDefinitionRequestDTO,
+  VariableDefinition,
+} from '@irn/framework-process-studio-types';
 import { createServerClient } from '../lib/server-client';
 import { convertCamundaToActiviti } from './utils';
 
@@ -11,7 +15,7 @@ export const getProcessDefinitionById = async (
 };
 
 export const createOrUpdateProcessDefinition = async (
-  processDefinition: ProcessDefinition,
+  processDefinition: ProcessDefinitionRequestDTO & { processDefinitionId?: string },
 ): Promise<ProcessDefinition> => {
   const client = await createServerClient();
   return await client.processDefinitions.createOrUpdate(processDefinition);

@@ -1,57 +1,66 @@
 'use server';
 
-import {
-  createM2mKeysClient,
-  M2mKeysApiClientError,
-  type CreateM2mKeyRequest,
-  type CreatedM2mKey,
-  type M2mKey,
-} from '@/app/(myapp)/client/m2m-keys';
-import { getServerConfig } from '@/app/(myapp)/lib/server-client';
-
-const getM2mKeysClient = async () => createM2mKeysClient(await getServerConfig());
+import type { CreateRequest, CreatedResponse, KeySummary } from '@irn/framework-process-studio-types';
+import { createServerClient } from '@/app/(myapp)/lib/server-client';
 
 export type M2mKeysActionResult<T> =
   | { success: true; data: T }
   | { success: false; error: string; status?: number };
 
-export const getM2mKeys = async (): Promise<M2mKeysActionResult<M2mKey[]>> => {
+const getErrorResult = (error: unknown): M2mKeysActionResult<never> => {
+  if (!error || typeof error !== 'object') throw error;
+
+  const apiError = error as { message?: unknown; status?: unknown; details?: unknown };
+  const details = apiError.details;
+  const detailMessage = details && typeof details === 'object' && 'error' in details
+    ? String(details.error)
+    : undefined;
+
+  return {
+    success: false,
+    error: detailMessage ?? (typeof apiError.message === 'string'
+      ? apiError.message
+      : 'Não foi possível comunicar com a API. Tente novamente.'),
+    ...(typeof apiError.status === 'number' ? { status: apiError.status } : {}),
+  };
+};
+
+export const getM2mKeys = async (): Promise<M2mKeysActionResult<KeySummary[]>> => {
   try {
-    return { success: true, data: await (await getM2mKeysClient()).m2mKeys.list() };
+    const client = await createServerClient();
+    const keys = await client.m2mKeys.list();
+    return { success: true, data: keys };
   } catch (error) {
-    if (error instanceof M2mKeysApiClientError) {
-      return { success: false, error: error.message, status: error.status };
-    }
-    throw error;
+    return getErrorResult(error);
   }
 };
 
 export const createM2mKey = async (
-  request: CreateM2mKeyRequest,
-): Promise<M2mKeysActionResult<CreatedM2mKey>> => {
+  request: CreateRequest,
+): Promise<M2mKeysActionResult<CreatedResponse>> => {
   try {
-    return { success: true, data: await (await getM2mKeysClient()).m2mKeys.create(request) };
+    const client = await createServerClient();
+    return { success: true, data: await client.m2mKeys.create(request) };
   } catch (error) {
-    if (error instanceof M2mKeysApiClientError) return { success: false, error: error.message, status: error.status };
-    throw error;
+    return getErrorResult(error);
   }
 };
 
 export const revokeM2mKey = async (id: string): Promise<M2mKeysActionResult<void>> => {
   try {
-    await (await getM2mKeysClient()).m2mKeys.revoke(id);
+    const client = await createServerClient();
+    await client.m2mKeys.revoke(id);
     return { success: true, data: undefined };
   } catch (error) {
-    if (error instanceof M2mKeysApiClientError) return { success: false, error: error.message, status: error.status };
-    throw error;
+    return getErrorResult(error);
   }
 };
 
-export const rotateM2mKey = async (id: string): Promise<M2mKeysActionResult<CreatedM2mKey>> => {
+export const rotateM2mKey = async (id: string): Promise<M2mKeysActionResult<CreatedResponse>> => {
   try {
-    return { success: true, data: await (await getM2mKeysClient()).m2mKeys.rotate(id) };
+    const client = await createServerClient();
+    return { success: true, data: await client.m2mKeys.rotate(id) };
   } catch (error) {
-    if (error instanceof M2mKeysApiClientError) return { success: false, error: error.message, status: error.status };
-    throw error;
+    return getErrorResult(error);
   }
 };
