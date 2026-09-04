@@ -2,10 +2,12 @@
 
 import { useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { z } from 'zod';
 import {
   cn,
   IGRPAlertDialog,
   IGRPButton,
+  IGRPDatePickerSingle,
   IGRPInputText,
   IGRPModalDialog,
   IGRPModalDialogContent,
@@ -29,6 +31,39 @@ import { IgrpLoading } from '@/app/(myapp)/components/igrp-loading';
 
 const clientNamePattern = /^[a-z0-9._-]+$/;
 const permissionPattern = /^[A-Z0-9_.]+:[a-z_]+$/;
+
+const createKeySchema = z.object({
+  clientName: z.string()
+    .min(1, 'O nome do cliente é obrigatório.')
+    .regex(clientNamePattern, 'Use apenas letras minúsculas, dígitos, ponto, _ ou -.'),
+  permissions: z.array(
+    z.string().regex(permissionPattern, 'Use o formato MODULO:ação.'),
+  )
+    .min(1, 'Adicione pelo menos uma permissão.')
+    .refine((values) => new Set(values).size === values.length, 'Não repita permissões.'),
+  email: z.string()
+    .refine((value) => !value || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value), 'Introduza um e-mail válido.'),
+  expiresAt: z.date()
+    .optional()
+    .refine(
+      (value) => !value || expirationDateToIso(value).getTime() > Date.now(),
+      'A data de expiração deve ser futura.',
+    ),
+});
+
+type CreateFormErrors = Partial<Record<keyof z.infer<typeof createKeySchema>, string>>;
+
+function expirationDateToIso(value: Date): Date {
+  return new Date(Date.UTC(
+    value.getFullYear(),
+    value.getMonth(),
+    value.getDate(),
+    23,
+    59,
+    59,
+    999,
+  ));
+}
 
 type KeyStatus = 'ativa' | 'revogada' | 'expirada' | 'a expirar';
 type AccessErrorStatus = 401 | 403;
@@ -96,9 +131,10 @@ export default function ApiKeysPage() {
   const [confirmAction, setConfirmAction] = useState<'revoke' | 'rotate' | null>(null);
   const [clientName, setClientName] = useState('');
   const [email, setEmail] = useState('');
-  const [expiresAt, setExpiresAt] = useState('');
+  const [expiresAt, setExpiresAt] = useState<Date>();
   const [permissions, setPermissions] = useState<string[]>([]);
   const [permissionInput, setPermissionInput] = useState('');
+  const [createErrors, setCreateErrors] = useState<CreateFormErrors>({});
   const [isCreating, setIsCreating] = useState(false);
   const [isRevoking, setIsRevoking] = useState(false);
   const [isRotating, setIsRotating] = useState(false);
@@ -111,9 +147,10 @@ export default function ApiKeysPage() {
   const resetCreateForm = () => {
     setClientName('');
     setEmail('');
-    setExpiresAt('');
+    setExpiresAt(undefined);
     setPermissions([]);
     setPermissionInput('');
+    setCreateErrors({});
   };
 
   const invalidateKeys = () => queryClient.invalidateQueries({ queryKey: ['m2m-keys'] });
@@ -123,32 +160,53 @@ export default function ApiKeysPage() {
   const addPermission = () => {
     const permission = permissionInput.trim();
     if (!permissionPattern.test(permission)) {
-      igrpToast({ title: 'Permissão inválida', description: 'Use o formato MODULO:acao.', type: 'error' });
+      setCreateErrors((current) => ({ ...current, permissions: 'Use o formato MODULO:ação.' }));
       return;
     }
     if (!permissions.includes(permission)) setPermissions((current) => [...current, permission]);
     setPermissionInput('');
+    setCreateErrors((current) => ({ ...current, permissions: undefined }));
   };
 
   const submitCreate = async () => {
-    if (!clientNamePattern.test(clientName)) {
-      igrpToast({ title: 'Nome inválido', description: 'O nome deve ser um slug com letras minúsculas, dígitos, ponto, _ ou -.', type: 'error' });
-      return;
-    }
-    if (permissions.length === 0) {
-      igrpToast({ title: 'Permissões obrigatórias', description: 'Adicione pelo menos uma permissão.', type: 'error' });
-      return;
-    }
-    if (expiresAt && Number.isNaN(new Date(expiresAt).getTime())) {
-      igrpToast({ title: 'Expiração inválida', description: 'Use uma data ISO-8601 válida.', type: 'error' });
+    if (isCreating) return;
+
+    const pendingPermission = permissionInput.trim();
+    if (pendingPermission && !permissionPattern.test(pendingPermission)) {
+      setCreateErrors((current) => ({ ...current, permissions: 'Use o formato MODULO:ação.' }));
       return;
     }
 
+    const normalizedPermissions = Array.from(new Set([
+      ...permissions,
+      ...(pendingPermission ? [pendingPermission] : []),
+    ]));
+    const formResult = createKeySchema.safeParse({
+      clientName: clientName.trim().toLowerCase(),
+      permissions: normalizedPermissions,
+      email: email.trim(),
+      expiresAt,
+    });
+    if (!formResult.success) {
+      const fieldErrors = formResult.error.flatten().fieldErrors;
+      setCreateErrors({
+        clientName: fieldErrors.clientName?.[0],
+        permissions: fieldErrors.permissions?.[0],
+        email: fieldErrors.email?.[0],
+        expiresAt: fieldErrors.expiresAt?.[0],
+      });
+      return;
+    }
+
+    setCreateErrors({});
+
     const request: CreateRequest = {
-      clientName,
-      permissions,
-      ...(email.trim() ? { email: email.trim() } : {}),
-      ...(expiresAt ? { expiresAt: new Date(expiresAt).toISOString() } : {}),
+      clientName: formResult.data.clientName,
+      permissions: formResult.data.permissions,
+      ...(formResult.data.email ? { email: formResult.data.email } : {}),
+      ...(formResult.data.expiresAt
+        ? { expiresAt: expirationDateToIso(formResult.data.expiresAt).toISOString() }
+        : {}),
     };
     setIsCreating(true);
     try {
@@ -349,39 +407,123 @@ export default function ApiKeysPage() {
 
       </div>
 
-      <IGRPModalDialog open={createOpen} onOpenChange={(open) => { setCreateOpen(open); if (!open) resetCreateForm(); }}>
+      <IGRPModalDialog
+        open={createOpen}
+        onOpenChange={(open) => {
+          if (isCreating) return;
+          setCreateOpen(open);
+          if (!open) resetCreateForm();
+        }}
+      >
         <IGRPModalDialogContent size="lg">
           <IGRPModalDialogHeader>
             <IGRPModalDialogTitle name="createM2mKeyTitle">Nova chave M2M</IGRPModalDialogTitle>
             <IGRPModalDialogDescription name="createM2mKeyDescription">A chave será mostrada apenas uma vez após a criação.</IGRPModalDialogDescription>
           </IGRPModalDialogHeader>
-          <div className="grid gap-4 py-2">
-            <IGRPInputText id="clientName" label="Nome do cliente" placeholder="fila-trabalho-job" value={clientName} onChange={(event) => setClientName(event.target.value)} required />
-            <div className="space-y-2">
+          <form noValidate onSubmit={(event) => { event.preventDefault(); void submitCreate(); }}>
+            <div className="grid gap-4 py-2">
               <IGRPInputText
-                id="permission"
-                label="Permissões"
-                placeholder="TASK_INSTANCES:visualizar"
-                value={permissionInput}
-                onChange={(event) => setPermissionInput(event.target.value)}
-                onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); addPermission(); } }}
-                helperText="Introduza MODULO:acao e pressione Enter."
+                id="clientName"
+                label="Nome do cliente"
+                placeholder="fila-trabalho-job"
+                value={clientName}
+                onChange={(event) => {
+                  setClientName(event.target.value);
+                  setCreateErrors((current) => ({ ...current, clientName: undefined }));
+                }}
+                error={createErrors.clientName}
+                disabled={isCreating}
+                required
               />
-              <div className="flex flex-wrap gap-2">
-                {permissions.map((permission) => (
-                  <button key={permission} type="button" className="rounded-full bg-muted px-2 py-1 text-xs" onClick={() => setPermissions((current) => current.filter((item) => item !== permission))}>
-                    {permission} ×
-                  </button>
-                ))}
+              <div className="space-y-2">
+                <div className="flex items-end gap-2">
+                  <IGRPInputText
+                    id="permission"
+                    label="Permissões"
+                    placeholder="TASK_INSTANCES:visualizar"
+                    value={permissionInput}
+                    onChange={(event) => {
+                      setPermissionInput(event.target.value);
+                      setCreateErrors((current) => ({ ...current, permissions: undefined }));
+                    }}
+                    onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); addPermission(); } }}
+                    helperText="Introduza MODULO:ação e pressione Enter."
+                    error={createErrors.permissions}
+                    disabled={isCreating}
+                    className="flex-1"
+                    required
+                  />
+                  <IGRPButton
+                    name="addM2mPermission"
+                    variant="outline"
+                    onClick={addPermission}
+                    disabled={isCreating || !permissionInput.trim()}
+                    className='mb-6'
+                  >
+                    Adicionar
+                  </IGRPButton>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {permissions.map((permission) => (
+                    <button
+                      key={permission}
+                      type="button"
+                      className="rounded-full bg-muted px-2 py-1 text-xs disabled:cursor-not-allowed disabled:opacity-50"
+                      onClick={() => setPermissions((current) => current.filter((item) => item !== permission))}
+                      disabled={isCreating}
+                      aria-label={`Remover permissão ${permission}`}
+                    >
+                      {permission} ×
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <IGRPInputText
+                id="email"
+                type="email"
+                label="E-mail de contacto"
+                value={email}
+                onChange={(event) => {
+                  setEmail(event.target.value);
+                  setCreateErrors((current) => ({ ...current, email: undefined }));
+                }}
+                error={createErrors.email}
+                disabled={isCreating}
+              />
+              <div className="space-y-1">
+                <IGRPDatePickerSingle
+                  id="expiresAt"
+                  label="Expiração"
+                  placeholder="Selecione uma data"
+                  date={expiresAt}
+                  onDateChange={(date) => {
+                    setExpiresAt(date);
+                    setCreateErrors((current) => ({ ...current, expiresAt: undefined }));
+                  }}
+                  dateFormat="dd/MM/yyyy"
+                  disableBefore={new Date()}
+                  disabled={isCreating}
+                  disabledPicker={isCreating}
+                  helperText={createErrors.expiresAt ? undefined : 'Opcional; a chave será válida até ao fim do dia selecionado (UTC).'}
+                />
+                {createErrors.expiresAt && (
+                  <p className="text-xs text-destructive" role="alert">{createErrors.expiresAt}</p>
+                )}
               </div>
             </div>
-            <IGRPInputText id="email" type="email" label="E-mail de contacto" value={email} onChange={(event) => setEmail(event.target.value)} />
-            <IGRPInputText id="expiresAt" label="Expiração" placeholder="2027-01-01T00:00:00Z" value={expiresAt} onChange={(event) => setExpiresAt(event.target.value)} helperText="Opcional; use ISO-8601 UTC." />
-          </div>
-          <IGRPModalDialogFooter>
-            <IGRPButton name="cancelCreateM2mKey" variant="outline" onClick={() => setCreateOpen(false)}>Cancelar</IGRPButton>
-            <IGRPButton name="submitCreateM2mKey" onClick={() => void submitCreate()} disabled={isCreating}>Criar chave</IGRPButton>
-          </IGRPModalDialogFooter>
+            <IGRPModalDialogFooter>
+              <IGRPButton name="cancelCreateM2mKey" variant="outline" onClick={() => setCreateOpen(false)} disabled={isCreating}>Cancelar</IGRPButton>
+              <IGRPButton
+                name="submitCreateM2mKey"
+                type="submit"
+                loading={isCreating}
+                loadingText="A criar..."
+                disabled={isCreating}
+              >
+                Criar chave
+              </IGRPButton>
+            </IGRPModalDialogFooter>
+          </form>
         </IGRPModalDialogContent>
       </IGRPModalDialog>
 

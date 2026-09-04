@@ -32,18 +32,18 @@ importers:
       '@igrp/framework-next-ui':
         specifier: 0.1.0-beta.91
         version: 0.1.0-beta.91(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(next-auth@4.24.15(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@igrp/framework-process-studio-bpmn-editor':
-        specifier: 0.0.1-beta.16
-        version: 0.0.1-beta.16(@tanstack/react-table@8.21.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(date-fns@4.4.0)(diagram-js@15.26.0(preact-render-to-string@5.2.6(preact@10.29.8)))(next-auth@4.24.15(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(preact-render-to-string@5.2.6(preact@10.29.8))(react-dom@19.2.8(react@19.2.8))(react-hook-form@7.87.0(react@19.2.8))(react@19.2.8)(zeebe-bpmn-moddle@2.0.0(moddle@8.2.1))
       '@igrp/igrp-framework-react-design-system':
         specifier: 0.1.0-beta.91
         version: 0.1.0-beta.91(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@irn/framework-process-studio-bpmn-editor':
+        specifier: 0.1.0-beta.16
+        version: 0.1.0-beta.16(@codemirror/state@6.7.2)(@codemirror/view@6.43.10)(@tanstack/react-table@8.21.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(date-fns@4.4.0)(diagram-js@15.26.0(preact-render-to-string@5.2.6(preact@10.29.8)))(next-auth@4.24.15(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(preact-render-to-string@5.2.6(preact@10.29.8))(react-dom@19.2.8(react@19.2.8))(react-hook-form@7.87.0(react@19.2.8))(react@19.2.8)(zeebe-bpmn-moddle@2.0.0(moddle@8.2.1))
       '@irn/framework-process-studio-client':
-        specifier: 0.0.1-beta.19
-        version: 0.0.1-beta.19
+        specifier: 0.0.1-beta.20
+        version: 0.0.1-beta.20
       '@irn/framework-process-studio-types':
-        specifier: 0.0.1-beta.19
-        version: 0.0.1-beta.19
+        specifier: 0.0.1-beta.20
+        version: 0.0.1-beta.20
       '@irn/irn-auth-sdk':
         specifier: 2.2.3
         version: 2.2.3(next-auth@4.24.15(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -452,15 +452,6 @@ packages:
       react: 19.2.3
       react-dom: 19.2.3
 
-  '@igrp/framework-process-studio-bpmn-editor@0.0.1-beta.16':
-    resolution: {integrity: sha512-BEPetHpblpC7L0c7iABHL2bgbsEv37WGnIkgJ8LmH6jWCT817Wksxe1ljU6DXEX8eHLVGei0Adt7x8wALt0JLA==}
-    engines: {node: '>=20.x.x'}
-    peerDependencies:
-      next: 15.4.6
-      next-auth: ^4.24.11
-      react: 19.1.1
-      react-dom: 19.1.1
-
   '@igrp/igrp-framework-react-design-system@0.1.0-beta.143':
     resolution: {integrity: sha512-Lfpnh5waKANZZZthGK79Rd3kfjlZFH+gT3GM/xLbX6y4cdh0yQAZVXcIY5GNves9wUYOMjW+GUfhc6+wU4HvRg==}
     engines: {node: '>=22'}
@@ -639,12 +630,21 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@irn/framework-process-studio-client@0.0.1-beta.19':
-    resolution: {integrity: sha512-RUdLwe1PdN1kcR3D4Kv7NZM/xV8iSqhMie+5O/Xw9m1MpmcFhZ3TtASu2pPA4bXO+cPcDHm1Cc/lql9ss05BVw==}
+  '@irn/framework-process-studio-bpmn-editor@0.1.0-beta.16':
+    resolution: {integrity: sha512-rRbL6f9HDXm7ijrTbNnVbqnXxIAzES5envlRPN5e6ay4RC5T4WDACxYwhNEL3S4i6gw4qIX3ld0DsJWjly95DQ==}
+    engines: {node: '>=20.x.x'}
+    peerDependencies:
+      next: ^15.4.6
+      next-auth: ^4.24.11
+      react: ^19.1.0
+      react-dom: ^19.1.0
+
+  '@irn/framework-process-studio-client@0.0.1-beta.20':
+    resolution: {integrity: sha512-4Ka67S9CeSOAR2ykt1WzhY6OXcLQ57aJUHKONfoE6WNClC5r1fSAT3l8ZYZrxbsAiNYUddKKSHJb2av0aK/35g==}
     engines: {node: '>=20.x.x'}
 
-  '@irn/framework-process-studio-types@0.0.1-beta.19':
-    resolution: {integrity: sha512-iEOb4JaPGXzo3743A2OJ7ffddhZ83NzIoSK14ykW/svW7hxhcdQXO13PUQ0xDAw/94IIPPWCscQ3wRajdAw7CA==}
+  '@irn/framework-process-studio-types@0.0.1-beta.20':
+    resolution: {integrity: sha512-cv9ROgq/18qw3DW5tGjlsLdfBeJI0G5d1DIeQ4kZWDq6cS1q/hW0OpEPFyebxGUKiVVJp2ASCZLPcr4sxmjNtw==}
     engines: {node: '>=20.x.x'}
 
   '@irn/irn-auth-sdk@2.2.3':
@@ -4016,58 +4016,6 @@ snapshots:
       - vest
       - yup
 
-  '@igrp/framework-process-studio-bpmn-editor@0.0.1-beta.16(@tanstack/react-table@8.21.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(date-fns@4.4.0)(diagram-js@15.26.0(preact-render-to-string@5.2.6(preact@10.29.8)))(next-auth@4.24.15(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(preact-render-to-string@5.2.6(preact@10.29.8))(react-dom@19.2.8(react@19.2.8))(react-hook-form@7.87.0(react@19.2.8))(react@19.2.8)(zeebe-bpmn-moddle@2.0.0(moddle@8.2.1))':
-    dependencies:
-      '@bpmn-io/properties-panel': 3.53.0
-      '@igrp/igrp-framework-react-design-system': 0.1.0-beta.143(@tanstack/react-table@8.21.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(date-fns@4.4.0)(lucide-react@0.518.0(react@19.2.8))(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react-hook-form@7.87.0(react@19.2.8))(react@19.2.8)(zod@3.25.76)
-      bpmn-js: 18.27.0(preact-render-to-string@5.2.6(preact@10.29.8))
-      bpmn-js-properties-panel: 5.65.0(@bpmn-io/properties-panel@3.53.0)(bpmn-js@18.27.0(preact-render-to-string@5.2.6(preact@10.29.8)))(camunda-bpmn-js-behaviors@1.18.0(bpmn-js@18.27.0(preact-render-to-string@5.2.6(preact@10.29.8)))(camunda-bpmn-moddle@7.0.2)(zeebe-bpmn-moddle@2.0.0(moddle@8.2.1)))(diagram-js@15.26.0(preact-render-to-string@5.2.6(preact@10.29.8)))
-      bpmn-js-token-simulation: 0.38.2
-      camunda-bpmn-js-behaviors: 1.18.0(bpmn-js@18.27.0(preact-render-to-string@5.2.6(preact@10.29.8)))(camunda-bpmn-moddle@7.0.2)(zeebe-bpmn-moddle@2.0.0(moddle@8.2.1))
-      camunda-bpmn-moddle: 7.0.2
-      class-variance-authority: 0.7.1
-      clsx: 2.1.1
-      lucide-react: 0.518.0(react@19.2.8)
-      next: 15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      next-auth: 4.24.15(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      react: 19.2.8
-      react-dom: 19.2.8(react@19.2.8)
-      tailwind-merge: 3.6.0
-      zod: 3.25.76
-    transitivePeerDependencies:
-      - '@sinclair/typebox'
-      - '@standard-schema/spec'
-      - '@tanstack/react-table'
-      - '@types/react'
-      - '@types/react-dom'
-      - '@typeschema/main'
-      - '@vinejs/vine'
-      - ajv
-      - ajv-errors
-      - ajv-formats
-      - arktype
-      - ata-validator
-      - class-transformer
-      - class-validator
-      - computed-types
-      - date-fns
-      - diagram-js
-      - effect
-      - fluentvalidation-ts
-      - fp-ts
-      - io-ts
-      - joi
-      - nope-validator
-      - preact-render-to-string
-      - react-hook-form
-      - recharts
-      - superstruct
-      - typanion
-      - valibot
-      - vest
-      - yup
-      - zeebe-bpmn-moddle
-
   '@igrp/igrp-framework-react-design-system@0.1.0-beta.143(@tanstack/react-table@8.21.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(date-fns@4.4.0)(lucide-react@0.518.0(react@19.2.8))(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react-hook-form@7.87.0(react@19.2.8))(react@19.2.8)(zod@3.25.76)':
     dependencies:
       '@hookform/resolvers': 5.9.1(react-hook-form@7.87.0(react@19.2.8))(zod@3.25.76)
@@ -4324,11 +4272,67 @@ snapshots:
   '@img/sharp-win32-x64@0.34.5':
     optional: true
 
-  '@irn/framework-process-studio-client@0.0.1-beta.19':
+  '@irn/framework-process-studio-bpmn-editor@0.1.0-beta.16(@codemirror/state@6.7.2)(@codemirror/view@6.43.10)(@tanstack/react-table@8.21.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(date-fns@4.4.0)(diagram-js@15.26.0(preact-render-to-string@5.2.6(preact@10.29.8)))(next-auth@4.24.15(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(preact-render-to-string@5.2.6(preact@10.29.8))(react-dom@19.2.8(react@19.2.8))(react-hook-form@7.87.0(react@19.2.8))(react@19.2.8)(zeebe-bpmn-moddle@2.0.0(moddle@8.2.1))':
     dependencies:
-      '@irn/framework-process-studio-types': 0.0.1-beta.19
+      '@bpmn-io/cm-theme': 0.2.0(@codemirror/state@6.7.2)(@codemirror/view@6.43.10)
+      '@bpmn-io/feel-editor': 2.7.1
+      '@bpmn-io/properties-panel': 3.53.0
+      '@igrp/igrp-framework-react-design-system': 0.1.0-beta.143(@tanstack/react-table@8.21.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(date-fns@4.4.0)(lucide-react@0.518.0(react@19.2.8))(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react-hook-form@7.87.0(react@19.2.8))(react@19.2.8)(zod@3.25.76)
+      bpmn-js: 18.27.0(preact-render-to-string@5.2.6(preact@10.29.8))
+      bpmn-js-properties-panel: 5.65.0(@bpmn-io/properties-panel@3.53.0)(bpmn-js@18.27.0(preact-render-to-string@5.2.6(preact@10.29.8)))(camunda-bpmn-js-behaviors@1.18.0(bpmn-js@18.27.0(preact-render-to-string@5.2.6(preact@10.29.8)))(camunda-bpmn-moddle@7.0.2)(zeebe-bpmn-moddle@2.0.0(moddle@8.2.1)))(diagram-js@15.26.0(preact-render-to-string@5.2.6(preact@10.29.8)))
+      bpmn-js-token-simulation: 0.38.2
+      camunda-bpmn-js-behaviors: 1.18.0(bpmn-js@18.27.0(preact-render-to-string@5.2.6(preact@10.29.8)))(camunda-bpmn-moddle@7.0.2)(zeebe-bpmn-moddle@2.0.0(moddle@8.2.1))
+      camunda-bpmn-moddle: 7.0.2
+      class-variance-authority: 0.7.1
+      clsx: 2.1.1
+      lucide-react: 0.518.0(react@19.2.8)
+      next: 15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      next-auth: 4.24.15(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+      tailwind-merge: 3.6.0
+      zod: 3.25.76
+    transitivePeerDependencies:
+      - '@codemirror/state'
+      - '@codemirror/view'
+      - '@sinclair/typebox'
+      - '@standard-schema/spec'
+      - '@tanstack/react-table'
+      - '@types/react'
+      - '@types/react-dom'
+      - '@typeschema/main'
+      - '@vinejs/vine'
+      - ajv
+      - ajv-errors
+      - ajv-formats
+      - arktype
+      - ata-validator
+      - class-transformer
+      - class-validator
+      - computed-types
+      - date-fns
+      - diagram-js
+      - effect
+      - fluentvalidation-ts
+      - fp-ts
+      - io-ts
+      - joi
+      - nope-validator
+      - preact-render-to-string
+      - react-hook-form
+      - recharts
+      - superstruct
+      - typanion
+      - valibot
+      - vest
+      - yup
+      - zeebe-bpmn-moddle
 
-  '@irn/framework-process-studio-types@0.0.1-beta.19': {}
+  '@irn/framework-process-studio-client@0.0.1-beta.20':
+    dependencies:
+      '@irn/framework-process-studio-types': 0.0.1-beta.20
+
+  '@irn/framework-process-studio-types@0.0.1-beta.20': {}
 
   '@irn/irn-auth-sdk@2.2.3(next-auth@4.24.15(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(next@15.5.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:

@@ -40,6 +40,23 @@ import { UserCell } from '@/app/(myapp)/components/user-cell';
 import type { UserProfileDTO } from '@irn/framework-process-studio-types';
 import Link from 'next/link';
 
+const formatAuditDate = (value?: string) => {
+  if (!value) return '-';
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '-';
+
+  return new Intl.DateTimeFormat('pt-PT', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23',
+  }).format(date);
+};
+
 
 export default function PageProcessComponent() {
 
@@ -55,6 +72,8 @@ export default function PageProcessComponent() {
     statusDesc: string;
     description: string;
     status: string;
+    createdAt?: string;
+    updatedAt?: string;
     userProfileCreatedBy?: UserProfileDTO;
     userProfileLastModifiedBy?: UserProfileDTO;
     createdBy?: string;
@@ -354,6 +373,12 @@ export default function PageProcessComponent() {
                     if (!filterValue || filterValue === 'ALL') return true;
                     return filterValue === row.getValue(columnId);
                   }
+                },
+                {
+                  header: 'Ultima modificação',
+                  accessorKey: 'updatedAt',
+                  cell: ({ row }) => formatAuditDate(row.original.updatedAt ?? row.original.createdAt),
+                  filterFn: IGRPDataTableFacetedFilterFn
                 },
                 {
                   header: 'Modificado por',
