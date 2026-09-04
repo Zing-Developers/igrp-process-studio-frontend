@@ -19,14 +19,13 @@ export function AccessDeniedPage({
     <section className="relative flex min-h-[calc(100vh-8rem)] items-center justify-center overflow-hidden px-4 py-12">
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(239,68,68,0.10),transparent_42%)]"
+        className="absolute inset-0"
       />
 
       <div className="relative w-full max-w-lg overflow-hidden rounded-2xl border border-border bg-card text-card-foreground shadow-xl shadow-black/5">
-        <div className="h-1.5 bg-destructive" />
 
         <div className="px-6 py-10 text-center sm:px-10">
-          <div className="mx-auto flex size-20 items-center justify-center rounded-full bg-destructive/10 ring-8 ring-destructive/5">
+          <div className="mb-6 mx-auto flex size-20 items-center justify-center rounded-full bg-destructive/10 ring-8 ring-destructive/5">
             <ShieldX className="size-10 text-destructive" aria-hidden="true" />
           </div>
           
@@ -47,11 +46,7 @@ export function AccessDeniedPage({
               <ArrowLeft className="size-4" aria-hidden="true" />
               Voltar à página anterior
             </IGRPButton>
-          </div>
-
-          <p className="mt-6 text-xs leading-5 text-muted-foreground">
-            Se considera que deveria ter acesso, contacte o administrador do sistema.
-          </p>
+          </div> 
         </div>
       </div>
     </section>
