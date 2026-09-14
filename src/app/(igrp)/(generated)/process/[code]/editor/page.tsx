@@ -85,8 +85,10 @@ const handleSave = useCallback(async (dataToSave?: any, xmlToSave?: string, isAu
 async function handleDeploy (): Promise<void  | undefined> {
 
   try {
-   if (!data) return
-  await deployProcessDefinition(data.processKey,{content: bpmnXml});
+  const processKey = data?.processKey;
+  if (!processKey || !bpmnXml) return;
+
+  await deployProcessDefinition(processKey, { content: bpmnXml });
   igrpToast({
     title: 'Sucesso',
     description: 'A definição do processo foi publicada com sucesso.',
@@ -220,7 +222,7 @@ iconName={ `Save` }
           label: `Editor do diagrama`,
           icon: `Workflow`,
 content: (<>
-            <BpmnModeler  processName={ data.title } processKey={ data.processKey } xml={ bpmnXml }  onChange={ handleBpmnChange } ></BpmnModeler>
+            <BpmnModeler  processName={ data.title ?? '' } processKey={ data.processKey ?? '' } xml={ bpmnXml }  onChange={ handleBpmnChange } ></BpmnModeler>
 </>),
         },
         {
