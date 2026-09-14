@@ -1,0 +1,145 @@
+Use the `verify-spec` skill to define the specification for a new CRUD feature.
+
+I want to add **Customer Categories Management** to the application.
+
+Do not implement the feature yet. Your goal is to produce an implementation-ready specification and save it under `specs/customer-categories-management.md`.
+
+## Goal
+
+Administrators need a page where they can manage customer categories.
+
+The feature should allow users with the appropriate permissions to:
+
+* list customer categories;
+* search/filter categories;
+* create a category;
+* view category details;
+* edit an existing category;
+* delete a category.
+
+## Available Context
+
+I am providing the following resources.
+
+### Final UI reference
+
+`references/customer-categories.html`
+
+This HTML represents the **approved final UI/UX reference**.
+
+Use it to understand:
+
+* page layout;
+* table structure;
+* fields;
+* buttons and actions;
+* forms;
+* dialogs;
+* labels;
+* interaction flow;
+* loading/empty/error states when represented.
+
+Do not redesign the UI unless something in the HTML is technically impossible or conflicts with another authoritative requirement.
+
+If something visible in the HTML is ambiguous, ask me instead of inventing behavior.
+
+### API endpoints
+
+The backend endpoints already exist and should be consumed by this feature.
+
+API reference:
+
+`references/customer-categories-api.yaml`
+
+It contains the available query and mutation operations for:
+
+* listing categories;
+* retrieving a category;
+* creating a category;
+* updating a category;
+* deleting a category.
+
+Treat the available API as an existing technical constraint.
+
+Do not propose new backend endpoints unless you identify a requirement that cannot be satisfied with the existing API. If that happens, surface the gap explicitly.
+
+### Data contracts
+
+The relevant request, response, enum, validation, and entity contracts are available at:
+
+`references/customer-categories-contracts.ts`
+
+Use these contracts as the source for:
+
+* available fields;
+* field types;
+* required/optional properties;
+* enums;
+* identifiers;
+* request payloads;
+* response shapes.
+
+Do not invent fields that are not present in the contracts unless the UI or stated business requirement clearly requires them. Surface any mismatch between the UI, API, and contracts.
+
+## Existing project context
+
+Before asking architecture questions:
+
+1. check `specs/` for directly related specifications;
+2. inspect only the relevant specifications you find;
+3. inspect the resources listed above;
+4. inspect implementation code only when a concrete specification question requires it.
+
+Do not perform a broad repository scan.
+
+If you need implementation context and cannot identify the relevant location through a narrow search, ask me where to look.
+
+## Expected specification
+
+The final specification must clearly establish at minimum:
+
+* objective;
+* actors and permissions;
+* in-scope and out-of-scope behavior;
+* CRUD behaviors;
+* fields and validation;
+* list/search/filter behavior;
+* create flow;
+* detail/view flow;
+* edit flow;
+* delete flow;
+* confirmation behavior where applicable;
+* loading states;
+* empty states;
+* error states;
+* API operations involved;
+* relevant data contracts;
+* important edge cases;
+* acceptance criteria;
+* Definition of Done.
+
+Include optional sections from the `verify-spec` template only when they materially contribute to the feature.
+
+## Source conflicts
+
+If the HTML, API definition, data contracts, existing specifications, or current implementation contradict each other, do not silently choose one.
+
+Identify the conflict and ask me to resolve it when it materially affects the feature.
+
+## Clarification
+
+Ask me only questions that block or materially affect implementation.
+
+Ask no more than 3 questions per round and include your recommended answer and reason for each.
+
+Continue clarification rounds until the specification passes the readiness gate.
+
+Once there is enough information:
+
+1. create/update `specs/customer-categories-management.md`;
+2. run the specification readiness gate;
+3. mark it `READY FOR APPROVAL`;
+4. summarize the key decisions and remaining assumptions;
+5. ask me to explicitly approve the specification.
+
+Do not implement the feature.

@@ -1,4 +1,4 @@
-import { createProcessStudioClient } from '@igrp/framework-process-studio-client';
+import { createProcessStudioClient } from '@irn/framework-process-studio-client';
 import { getAccessToken } from '@/lib/auth-helpers';
 import { getOrFetchToken } from './rsa-token-handlers';
 import { LRUCache } from 'lru-cache';
