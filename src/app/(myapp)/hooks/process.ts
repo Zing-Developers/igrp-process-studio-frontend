@@ -7,38 +7,47 @@ import {
   getVariables,
   saveDiagramProcessDefinition,
 } from '../functions/process-definition';
-import {
+import { 
   PaginatedResponse,
   ProcessDefinition,
+  ProcessVariableResponseDTO,
   Project,
-  VariableDefinition,
-} from '@igrp/framework-process-studio-types';
-import { convertToMapOptions } from '@igrp/framework-process-studio-client';
+} from '@irn/framework-process-studio-types';
+import { convertToMapOptions } from '@irn/framework-process-studio-client';
 
 export const useProcessDefinition = () => {
   const queryResult = useQuery<PaginatedResponse<Project>>({
     queryKey: ['process'],
     queryFn: () => getProject(),
   });
-
+ 
   const processDefinitions = useMemo(() => {
     if (!queryResult.data) return null;
+    const projects = queryResult.data.content ?? [];
 
     // Calculate total of processDefinitions and processes
-    const allProcessDefinitions = queryResult.data?.content.flatMap((project) =>
-      project.processDefinitions.map((processDefinition) => ({
+    const allProcessDefinitions = projects.flatMap((project) =>
+      (project.processDefinitions ?? []).map((processDefinition) => ({
         ...processDefinition,
         deploymentDate: Array.isArray(processDefinition.deploymentDate)
           ? processDefinition.deploymentDate.join('-')
           : processDefinition.deploymentDate || '',
-        version: processDefinition.version || 'N/D',
-        projectName: project.name,
+        version: String(processDefinition.version ?? 'N/D'),
+        projectName: project.name ?? '',
+        title: processDefinition.title ?? '',
+        processKey: processDefinition.processKey ?? '',
+        processDefinitionId: processDefinition.processDefinitionId ?? '',
+        statusDesc: processDefinition.statusDesc ?? '',
+        description: processDefinition.description ?? '',
+        status: processDefinition.status ?? '',
       })),
     );
-    const projectOptions = queryResult.data?.content.map((project) => {
+
+    console.info("allProcessDefinitions", allProcessDefinitions)
+    const projectOptions = projects.map((project) => {
       return {
-        value: project.name,
-        label: project.name,
+        value: project.name ?? '',
+        label: project.name ?? '',
       };
     });
 
@@ -76,31 +85,22 @@ export const useDetailProcessDefinition = (processDefinitionId: string) => {
 };
 
 export function useProjectConfiguration() {
-  try {
-    const process = useProject();
+  const process = useProject();
+  const processOptions = useMemo(
+    () => convertToMapOptions(process.data?.content || [], 'name', 'projectId'),
+    [process.data?.content],
+  );
 
-    const processOptions = convertToMapOptions(process.data?.content || [], 'name', 'projectId');
-
-    const isLoading = process.isLoading;
-    const isError = process.isError;
-
-    return {
-      isLoading,
-      isError,
-      processOptions,
-    };
-  } catch (error: unknown) {
-    console.error(error);
-    return {
-      isLoading: false,
-      isError: true,
-      processOptions: [],
-    };
-  }
+  return {
+    isLoading: process.isLoading,
+    isError: process.isError,
+    processOptions,
+  };
 }
 
+
 export const useGetVariables = (processDefinitionId: string) => {
-  return useQuery<VariableDefinition[]>({
+  return useQuery<ProcessVariableResponseDTO>({
     queryKey: ['variables'],
     queryFn: () => getVariables(processDefinitionId),
     enabled: !!processDefinitionId,
