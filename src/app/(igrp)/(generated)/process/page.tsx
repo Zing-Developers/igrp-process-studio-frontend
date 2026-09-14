@@ -59,6 +59,28 @@ function StatusFilter<TData>({
   );
 }
 
+function ProjectFilter<TData>({
+  column,
+  options,
+}: {
+  column: Column<TData, unknown>;
+  options: IGRPOptionsProps[];
+}) {
+  useEffect(() => {
+    if (column.getFilterValue() === undefined) {
+      column.setFilterValue('ALL');
+    }
+  }, [column]);
+
+  return (
+    <IGRPDataTableFilterDropdown
+      column={column}
+      placeholder={`Filtrar por projeto...`}
+      options={options}
+    />
+  );
+}
+
 
 export default function PageProcessComponent() {
 
@@ -138,7 +160,10 @@ export default function PageProcessComponent() {
     setStatstatsCard3Value(totalPublished || 0)
 
     setDropdownFiltertableDropdownFilter1Options(getStatusProcessDefinition() || [])
-    setDropdownFiltertableDropdownFilter2Options(projectOptions || [])
+    setDropdownFiltertableDropdownFilter2Options([
+      { label: 'Todos', value: 'ALL' },
+      ...(projectOptions || []),
+    ])
 
 
 
@@ -265,7 +290,10 @@ export default function PageProcessComponent() {
                   cell: ({ row }) => {
                     return row.getValue("projectName")
                   },
-                  filterFn: IGRPDataTableFacetedFilterFn
+                  filterFn: (row, columnId, filterValue: string) => {
+                    if (!filterValue || filterValue === 'ALL') return true;
+                    return filterValue === row.getValue(columnId);
+                  }
                 },
                 {
                   header: ({ column }) => (<IGRPDataTableHeaderSortToggle column={column} title={`Nome do processo`} />)
@@ -273,7 +301,22 @@ export default function PageProcessComponent() {
                   cell: ({ row }) => {
                     return row.getValue("title")
                   },
-                  filterFn: IGRPDataTableFacetedFilterFn
+                  filterFn: (row, _columnId, filterValue: string) => {
+                    const searchTerm = filterValue
+                      ?.toLocaleLowerCase()
+                      .normalize('NFD')
+                      .replace(/[\u0300-\u036f]/g, '');
+
+                    if (!searchTerm) return true;
+
+                    return Object.values(row.original).some((value) =>
+                      String(value ?? '')
+                        .toLocaleLowerCase()
+                        .normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '')
+                        .includes(searchTerm),
+                    );
+                  }
                 },
                 {
                   header: 'Chave do processo'
@@ -388,10 +431,8 @@ export default function PageProcessComponent() {
                 {
                   columnId: `projectName`,
                   component: (column) => (
-                    <IGRPDataTableFilterDropdown
+                    <ProjectFilter
                       column={column}
-                      placeholder={`Filtrar por projeto...`}
-
                       options={dropdownFiltertableDropdownFilter2Options}
                     />
                   )
