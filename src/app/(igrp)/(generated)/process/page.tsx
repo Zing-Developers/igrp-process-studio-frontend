@@ -61,7 +61,6 @@ const formatAuditDate = (value?: string) => {
 export default function PageProcessComponent() {
 
 
-
   type Table1 = {
     projectName: string;
     title: string;
@@ -297,6 +296,29 @@ export default function PageProcessComponent() {
                     if (!filterValue || filterValue === 'ALL') return true;
                     return filterValue === row.getValue(columnId);
                   }
+                },
+                {
+                  header: ({ column }) => (<IGRPDataTableHeaderSortToggle column={column} title={`Nome do processo`} />)
+                  , accessorKey: 'title',
+                  cell: ({ row }) => {
+                    return row.getValue("title")
+                  },
+                  filterFn: (row, _columnId, filterValue: string) => {
+                    const searchTerm = filterValue
+                      ?.toLocaleLowerCase()
+                      .normalize('NFD')
+                      .replace(/[\u0300-\u036f]/g, '');
+
+                    if (!searchTerm) return true;
+
+                    return Object.values(row.original).some((value) =>
+                      String(value ?? '')
+                        .toLocaleLowerCase()
+                        .normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '')
+                        .includes(searchTerm),
+                    );
+                  } 
                 },
                 {
                   header: ({ column }) => (<IGRPDataTableHeaderSortToggle column={column} title={`Nome do processo`} />)
