@@ -24,84 +24,22 @@ jobs:
         run: |
           pip install git-filter-repo
 
-      - name: Configure Git
-        run: |
-          git config user.email "actions@github.com"
-          git config user.name "GitHub Actions"
-
-      - name: Verify IRN dev is already reconciled
-        env:
-          EXTERNAL_REPO_URL: https://oauth2:${{ secrets.EXT_REPO_PAT }}@code.irn.justica.gov.pt/plataforma-de-registos/backoffice-componentes-transversais/igrp-process-studio-frontend.git
-        run: |
-          git remote remove external 2>/dev/null || true
-          git remote add external "$EXTERNAL_REPO_URL"
-          git fetch --no-tags external \
-            +refs/heads/dev:refs/remotes/external/dev
-
-          IRN_DEV_SHA="$(git rev-parse refs/remotes/external/dev)"
-
-          if ! git merge-base --is-ancestor "$IRN_DEV_SHA" HEAD; then
-            echo "IRN dev $IRN_DEV_SHA is not contained in the Zing release history."
-            echo "Merge IRN dev into origin/develop and resolve it locally before retrying."
-            exit 1
-          fi
-
-          echo "IRN_DEV_SHA=$IRN_DEV_SHA" >> "$GITHUB_ENV"
-
       - name: Rewrite history (remove .github/workflows)
         run: |
           git filter-repo \
             --path .github/workflows \
             --invert-paths
 
-      - name: Repair filtered IRN ancestry
-        env:
-          EXTERNAL_REPO_URL: https://oauth2:${{ secrets.EXT_REPO_PAT }}@code.irn.justica.gov.pt/plataforma-de-registos/backoffice-componentes-transversais/igrp-process-studio-frontend.git
+      - name: Configure Git
         run: |
-          git remote remove external 2>/dev/null || true
-          git remote add external "$EXTERNAL_REPO_URL"
-          git fetch --no-tags external \
-            +refs/heads/dev:refs/remotes/external/dev \
-            +refs/heads/feature/zing-commits:refs/remotes/external/feature/zing-commits
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
 
-          CURRENT_IRN_DEV_SHA="$(git rev-parse refs/remotes/external/dev)"
-          IRN_FEATURE_SHA="$(git rev-parse refs/remotes/external/feature/zing-commits)"
-
-          if [ "$CURRENT_IRN_DEV_SHA" != "$IRN_DEV_SHA" ]; then
-            echo "IRN dev moved from $IRN_DEV_SHA to $CURRENT_IRN_DEV_SHA during synchronization."
-            echo "Stopping before the IRN feature branch is updated."
-            exit 1
-          fi
-
-          FILTERED_TREE_SHA="$(git rev-parse HEAD^{tree})"
-
-          if ! git merge-base --is-ancestor "$IRN_DEV_SHA" HEAD; then
-            git merge \
-              --strategy=ours \
-              --no-edit \
-              --allow-unrelated-histories \
-              "$IRN_DEV_SHA"
-          fi
-
-          REPAIRED_TREE_SHA="$(git rev-parse HEAD^{tree})"
-
-          if [ "$FILTERED_TREE_SHA" != "$REPAIRED_TREE_SHA" ]; then
-            echo "Ancestry repair changed the synchronized source tree."
-            echo "Stopping to prevent application code loss."
-            exit 1
-          fi
-
-          if ! git merge-base --is-ancestor "$IRN_DEV_SHA" HEAD; then
-            echo "IRN dev is still not an ancestor after the repair step."
-            exit 1
-          fi
-
-          echo "IRN_FEATURE_SHA=$IRN_FEATURE_SHA" >> "$GITHUB_ENV"
-
-      - name: Push synchronized history to IRN
+      - name: Add external repo and push
         run: |
-          git push external HEAD:feature/zing-commits \
-            --force-with-lease=refs/heads/feature/zing-commits:"$IRN_FEATURE_SHA" \
+          git remote add external https://oauth2:${{ secrets.EXT_REPO_PAT }}@code.irn.justica.gov.pt/plataforma-de-registos/backoffice-componentes-transversais/igrp-process-studio-frontend.git
+
+          git push external HEAD:feature/zing-commits --force \
             -o merge_request.create \
             -o merge_request.target=dev \
             -o merge_request.assign="carlos.marques" \
