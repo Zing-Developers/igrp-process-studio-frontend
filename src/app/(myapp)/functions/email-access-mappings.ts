@@ -2,8 +2,10 @@
 
 import type {
   EmailAccessMappingDTO,
+  EmailAccessMappingFilter,
   EmailAccessMappingRequestDTO,
   ProcessStudioClient,
+  WrapperListaEmailAccessMappingDTO,
 } from '@irn/framework-process-studio-types';
 import { createServerClient } from '@/app/(myapp)/lib/server-client';
 
@@ -15,9 +17,7 @@ const fallbackError = 'Não foi possível comunicar com a API. Tente novamente.'
 type EmailAccessMappingsClient = Pick<ProcessStudioClient, 'emailAccessMappings'>;
 
 const createEmailAccessMappingsClient = async (): Promise<EmailAccessMappingsClient> => {
-  const client = await createServerClient();
-  // Client beta.21 ships runtime support for this API but references beta.20 type declarations.
-  return client as unknown as EmailAccessMappingsClient;
+  return createServerClient();
 };
 
 const asNonEmptyString = (value: unknown): string | undefined => {
@@ -59,12 +59,12 @@ const logDevelopmentResponse = (operation: string, response: unknown): void => {
   }
 };
 
-export const getEmailAccessMappings = async (): Promise<
-  EmailAccessMappingsActionResult<EmailAccessMappingDTO[]>
-> => {
+export const getEmailAccessMappings = async (
+  filter?: EmailAccessMappingFilter,
+): Promise<EmailAccessMappingsActionResult<WrapperListaEmailAccessMappingDTO>> => {
   try {
     const client = await createEmailAccessMappingsClient();
-    const mappings = await client.emailAccessMappings.list();
+    const mappings = await client.emailAccessMappings.list(filter);
     logDevelopmentResponse('list', mappings);
     return { success: true, data: mappings };
   } catch (error) {
