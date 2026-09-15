@@ -49,3 +49,4 @@ igrp-next-template.zip
 
 config
 _resources
+.env.local
