@@ -1,6 +1,6 @@
 # IRN MR !37 History-Safe Synchronization
 
-**SPEC STATUS: READY FOR APPROVAL**
+**SPEC STATUS: APPROVED FOR IMPLEMENTATION**
 
 ## 1. Objective
 
