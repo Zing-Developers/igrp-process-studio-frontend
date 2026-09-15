@@ -19,14 +19,14 @@ Resolve IRN GitLab merge request !37 through the approved Zing delivery path whi
 - The synchronized IRN source tree at `8da6a679409fa9fc728705f812199b58759ee457` matches `origin/develop` outside `.github`, but `git filter-repo` rewrote the imported IRN commits. This changed their identities and left MR !37 with the older merge base `369aa5623f26faf66f895b044bbe057620601dbe`.
 - The resulting MR conflict is limited to `pnpm-lock.yaml`. IRN `dev` contains twelve pre-existing conflict-marker groups in that generated file; `origin/develop` contains a clean, newer lockfile aligned with its current `package.json`.
 - A local experimental direct-IRN resolution is preserved at `archive/irn-mr-37-direct-resolution` and must not be pushed.
-- The working resolution branch `resolve/irn-mr-37` is based on `origin/develop`.
+- The working resolution branch `fix/irn-mr-37-reconcile-v2` is based on `origin/develop`.
 - `origin/irn-releases` already permits workflow-only changes to trigger synchronization by commenting out the `.github/**` path exclusion. The final workflow change must retain this release-branch behavior.
 
 ## 3. Scope
 
 ### In Scope
 
-- Update the Zing-owned synchronization workflow on a branch based on `origin/develop`.
+- Keep `.github/workflows/deploy.yaml` byte-for-byte identical to `origin/irn-releases` and add a companion Zing-owned workflow on a branch based on `origin/develop`.
 - Preserve the complete application tree from the Zing release commit after its existing workflow-path filtering.
 - Verify before filtering that the exact fetched IRN `dev` tip is already contained in the Zing release history.
 - After filtering, record that exact IRN `dev` tip as a parent of the synchronized commit without reapplying or discarding file content.
@@ -45,17 +45,17 @@ Resolve IRN GitLab merge request !37 through the approved Zing delivery path whi
 
 ## 4. Functional Requirements
 
-- **FR-01:** Resolution work shall originate from `origin/develop`, using `resolve/irn-mr-37` as the local preparation branch.
-- **FR-02:** The workflow shall fetch the current IRN `dev` tip before rewriting history.
+- **FR-01:** Resolution work shall originate from `origin/develop`, using `fix/irn-mr-37-reconcile-v2` as the local preparation branch.
+- **FR-02:** A companion workflow shall trigger on the same `irn-releases` push, wait for the unchanged `deploy.yaml` run at that exact SHA to succeed, and fetch the current IRN `dev` tip before reproducing the history rewrite.
 - **FR-03:** The workflow shall verify that the fetched IRN `dev` tip is an ancestor of the checked-out Zing release commit before filtering. If it is not, the workflow shall fail before any push and instruct the operator to reconcile IRN `dev` into `origin/develop` locally.
 - **FR-04:** The workflow shall retain the current intentional exclusion of `.github/workflows` from the synchronized IRN tree.
 - **FR-05:** After filtering, the workflow shall fetch IRN `dev` again and verify that it has not moved since FR-02. A moved target shall fail the workflow before any push.
 - **FR-06:** When the exact IRN `dev` tip is not an ancestor only because filtering rewrote commit identities, the workflow shall create an ancestry-only merge commit whose first parent is the filtered Zing source and whose second parent is the verified IRN `dev` tip. The merge commit shall retain the filtered Zing tree byte-for-byte.
 - **FR-07:** The workflow shall not use an ancestry-only merge when FR-03 has not proved that the IRN target history was already reconciled into the unfiltered Zing history.
-- **FR-08:** The workflow shall fetch the current `feature/zing-commits` destination SHA and update it with `--force-with-lease` pinned to that SHA. It shall not use raw `--force`.
+- **FR-08:** The companion workflow shall fetch the current `feature/zing-commits` destination SHA, verify that its tree equals the reproduced deployment output, and update it with `--force-with-lease` pinned to that SHA.
 - **FR-09:** If the destination branch moves after it is fetched, the leased push shall fail without overwriting the new remote history.
 - **FR-10:** The workflow shall retain the existing GitLab merge-request options targeting `dev`, including the configured title, assignee, and reviewer.
-- **FR-11:** The workflow shall retain the `origin/irn-releases` behavior that allows workflow-file changes to trigger synchronization.
+- **FR-11:** `.github/workflows/deploy.yaml` shall remain byte-for-byte identical to the version on `origin/irn-releases`, retaining the release-branch trigger required by the existing pipeline.
 - **FR-12:** No local or manual command in this resolution shall push directly to `up-stream/feature/zing-commits` or another IRN branch.
 
 ## 5. Failure Behavior
@@ -70,7 +70,7 @@ Resolve IRN GitLab merge request !37 through the approved Zing delivery path whi
 
 **AC-01 — Primary-history base**
 
-- Given the local `resolve/irn-mr-37` branch
+- Given the local `fix/irn-mr-37-reconcile-v2` branch
 - Then its base is `origin/develop`, not the filtered IRN feature branch.
 
 **AC-02 — Upstream containment guard**
@@ -123,9 +123,9 @@ Resolve IRN GitLab merge request !37 through the approved Zing delivery path whi
 
 ## 7. Definition of Done
 
-- [ ] `resolve/irn-mr-37` is based on the latest fetched `origin/develop`.
+- [ ] `fix/irn-mr-37-reconcile-v2` is based on the latest fetched `origin/develop`.
 - [ ] The prior direct-IRN experimental commit remains preserved on its archive branch and is not published.
-- [ ] The synchronization workflow implements FR-02 through FR-11.
+- [ ] The companion synchronization workflow implements FR-02 through FR-10 without changing `.github/workflows/deploy.yaml`.
 - [ ] No application or lockfile content changes are present in the implementation diff.
 - [ ] Local workflow validation and ancestry/tree-invariant tests pass.
 - [ ] The production build passes, or any unrelated pre-existing failures are recorded separately.
@@ -139,7 +139,8 @@ Resolve IRN GitLab merge request !37 through the approved Zing delivery path whi
 - The primary Zing tree is preserved exactly; no application-side conflict choice is made.
 - IRN `dev` is attached as ancestry only after a pre-filter containment proof establishes that its code is already present in Zing history.
 - Direct IRN pushes are prohibited.
-- Automated history replacement uses a pinned lease and stops if either relevant IRN ref moves.
+- The existing deployment workflow remains unchanged; a post-success companion workflow performs the ancestry-only repair.
+- Automated history replacement by the companion workflow uses a pinned lease and stops if either relevant IRN ref moves or the deployed tree does not match.
 
 ## 9. Remaining Assumptions
 
