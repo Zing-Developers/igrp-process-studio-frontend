@@ -39,11 +39,11 @@ importers:
         specifier: 0.1.0-beta.17
         version: 0.1.0-beta.17(@codemirror/state@6.7.5)(@codemirror/view@6.43.12)(@tanstack/react-table@8.21.3(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(date-fns@4.4.0)(diagram-js@15.26.0(preact-render-to-string@5.2.6(preact@10.29.8)))(next-auth@4.24.15(next@15.5.9(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(next@15.5.9(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(preact-render-to-string@5.2.6(preact@10.29.8))(react-dom@19.3.0(react@19.3.0))(react-hook-form@7.88.0(react@19.3.0))(react@19.3.0)(zeebe-bpmn-moddle@2.0.0(moddle@8.2.1))
       '@irn/framework-process-studio-client':
-        specifier: 0.0.1-beta.22
-        version: 0.0.1-beta.22
+        specifier: 0.0.1-beta.23
+        version: 0.0.1-beta.23
       '@irn/framework-process-studio-types':
-        specifier: 0.0.1-beta.22
-        version: 0.0.1-beta.22
+        specifier: 0.0.1-beta.23
+        version: 0.0.1-beta.23
       '@irn/irn-auth-sdk':
         specifier: 2.2.3
         version: 2.2.3(next-auth@4.24.15(next@15.5.9(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(next@15.5.9(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -622,12 +622,12 @@ packages:
       react: ^19.1.0
       react-dom: ^19.1.0
 
-  '@irn/framework-process-studio-client@0.0.1-beta.22':
-    resolution: {integrity: sha512-A03gHRcqZeh8BMf4R17uE1UdTaF/uCQJeZNJYKZFsLRdoyoyRqKndsCTQKSpxTbGwq7Az+jNAEX2fdUXRWGbEQ==}
+  '@irn/framework-process-studio-client@0.0.1-beta.23':
+    resolution: {integrity: sha512-YlK2lmJRFtkxqz1dq075h16kM7BM+MOEVySY6Sxe92GhxWJE85xH3YYNz92LfqORQJTBDC9y74TPa9Y0Ro4/kw==}
     engines: {node: '>=20.x.x'}
 
-  '@irn/framework-process-studio-types@0.0.1-beta.22':
-    resolution: {integrity: sha512-P9AXUsHMEWXInu6rrAnJK3QmkF3Taw8MYQWi8jnxB6HZlXGFe5Q6k5udwzBW/RvgLIiMag5g9GAqiparADu3/w==}
+  '@irn/framework-process-studio-types@0.0.1-beta.23':
+    resolution: {integrity: sha512-bK6KFBseawS6vMAS5i2IXZOnFNEfyvs927sPOKTkqlFwh/qhVpQdkVbmBjFxPbWL3IUWbg377zv2t0MZ3Z2SNQ==}
     engines: {node: '>=20.x.x'}
 
   '@irn/irn-auth-sdk@2.2.3':
@@ -4304,11 +4304,11 @@ snapshots:
       - yup
       - zeebe-bpmn-moddle
 
-  '@irn/framework-process-studio-client@0.0.1-beta.22':
+  '@irn/framework-process-studio-client@0.0.1-beta.23':
     dependencies:
-      '@irn/framework-process-studio-types': 0.0.1-beta.22
+      '@irn/framework-process-studio-types': 0.0.1-beta.23
 
-  '@irn/framework-process-studio-types@0.0.1-beta.22': {}
+  '@irn/framework-process-studio-types@0.0.1-beta.23': {}
 
   '@irn/irn-auth-sdk@2.2.3(next-auth@4.24.15(next@15.5.9(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(next@15.5.9(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)':
     dependencies:
