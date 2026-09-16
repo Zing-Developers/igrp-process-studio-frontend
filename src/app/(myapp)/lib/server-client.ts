@@ -1,4 +1,4 @@
-import { createProcessStudioClient } from '@igrp/framework-process-studio-client';
+import { createProcessStudioClient } from '@irn/framework-process-studio-client';
 import { getAccessToken } from '@/lib/auth-helpers';
 import { getOrFetchToken } from './rsa-token-handlers';
 import { LRUCache } from 'lru-cache';
@@ -9,7 +9,13 @@ const cache = new LRUCache<string, string>({
 });
 
 // Environment configuration for server-side
-const getServerConfig = async () => {
+export type ServerClientConfig = {
+  baseUrl: string;
+  timeout: number;
+  headers: Record<string, string>;
+};
+
+export const getServerConfig = async (): Promise<ServerClientConfig> => {
   const token = await getAccessToken();
 
 
