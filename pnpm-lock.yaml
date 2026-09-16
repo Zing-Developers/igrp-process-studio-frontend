@@ -36,8 +36,8 @@ importers:
         specifier: 0.1.0-beta.91
         version: 0.1.0-beta.91(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(next@15.5.9(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@irn/framework-process-studio-bpmn-editor':
-        specifier: 0.1.0-beta.16
-        version: 0.1.0-beta.16(@codemirror/state@6.7.5)(@codemirror/view@6.43.12)(@tanstack/react-table@8.21.3(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(date-fns@4.4.0)(diagram-js@15.26.0(preact-render-to-string@5.2.6(preact@10.29.8)))(next-auth@4.24.15(next@15.5.9(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(next@15.5.9(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(preact-render-to-string@5.2.6(preact@10.29.8))(react-dom@19.3.0(react@19.3.0))(react-hook-form@7.88.0(react@19.3.0))(react@19.3.0)(zeebe-bpmn-moddle@2.0.0(moddle@8.2.1))
+        specifier: 0.1.0-beta.17
+        version: 0.1.0-beta.17(@codemirror/state@6.7.5)(@codemirror/view@6.43.12)(@tanstack/react-table@8.21.3(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(date-fns@4.4.0)(diagram-js@15.26.0(preact-render-to-string@5.2.6(preact@10.29.8)))(next-auth@4.24.15(next@15.5.9(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(next@15.5.9(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(preact-render-to-string@5.2.6(preact@10.29.8))(react-dom@19.3.0(react@19.3.0))(react-hook-form@7.88.0(react@19.3.0))(react@19.3.0)(zeebe-bpmn-moddle@2.0.0(moddle@8.2.1))
       '@irn/framework-process-studio-client':
         specifier: 0.0.1-beta.22
         version: 0.0.1-beta.22
@@ -613,8 +613,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@irn/framework-process-studio-bpmn-editor@0.1.0-beta.16':
-    resolution: {integrity: sha512-rRbL6f9HDXm7ijrTbNnVbqnXxIAzES5envlRPN5e6ay4RC5T4WDACxYwhNEL3S4i6gw4qIX3ld0DsJWjly95DQ==}
+  '@irn/framework-process-studio-bpmn-editor@0.1.0-beta.17':
+    resolution: {integrity: sha512-Q3FjgZsdOL6dm/vAOKQUUdlssOIIeuinqYrUB25tsLkjJZBfmvpOqFPAW08TdOn4ZbFsNV85XCHudLa8Dk9FtQ==}
     engines: {node: '>=20.x.x'}
     peerDependencies:
       next: ^15.4.6
@@ -4248,7 +4248,7 @@ snapshots:
   '@img/sharp-win32-x64@0.34.5':
     optional: true
 
-  '@irn/framework-process-studio-bpmn-editor@0.1.0-beta.16(@codemirror/state@6.7.5)(@codemirror/view@6.43.12)(@tanstack/react-table@8.21.3(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(date-fns@4.4.0)(diagram-js@15.26.0(preact-render-to-string@5.2.6(preact@10.29.8)))(next-auth@4.24.15(next@15.5.9(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(next@15.5.9(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(preact-render-to-string@5.2.6(preact@10.29.8))(react-dom@19.3.0(react@19.3.0))(react-hook-form@7.88.0(react@19.3.0))(react@19.3.0)(zeebe-bpmn-moddle@2.0.0(moddle@8.2.1))':
+  '@irn/framework-process-studio-bpmn-editor@0.1.0-beta.17(@codemirror/state@6.7.5)(@codemirror/view@6.43.12)(@tanstack/react-table@8.21.3(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(date-fns@4.4.0)(diagram-js@15.26.0(preact-render-to-string@5.2.6(preact@10.29.8)))(next-auth@4.24.15(next@15.5.9(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(next@15.5.9(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(preact-render-to-string@5.2.6(preact@10.29.8))(react-dom@19.3.0(react@19.3.0))(react-hook-form@7.88.0(react@19.3.0))(react@19.3.0)(zeebe-bpmn-moddle@2.0.0(moddle@8.2.1))':
     dependencies:
       '@bpmn-io/cm-theme': 0.2.0(@codemirror/state@6.7.5)(@codemirror/view@6.43.12)
       '@bpmn-io/feel-editor': 2.8.0
