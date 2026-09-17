@@ -1,0 +1,172 @@
+name: Repair IRN Sync Ancestry
+
+on:
+  push:
+    branches:
+      - irn-releases
+    paths-ignore:
+      - 'k8s/**'
+      - '.gitattributes'
+      - 'docs/**'
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: repair-irn-sync-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout synchronized release
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Wait for the deployment workflow
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const headSha = context.sha;
+            const maximumAttempts = 60;
+
+            for (let attempt = 1; attempt <= maximumAttempts; attempt += 1) {
+              const { data } = await github.rest.actions.listWorkflowRuns({
+                owner,
+                repo,
+                workflow_id: 'deploy.yaml',
+                event: 'push',
+                head_sha: headSha,
+                per_page: 20,
+              });
+
+              const deploymentRun = data.workflow_runs.find(
+                (run) => run.head_sha === headSha,
+              );
+
+              if (deploymentRun?.status === 'completed') {
+                if (deploymentRun.conclusion !== 'success') {
+                  core.setFailed(
+                    `Deployment workflow ${deploymentRun.id} finished with ${deploymentRun.conclusion}.`,
+                  );
+                  return;
+                }
+
+                core.info(`Deployment workflow ${deploymentRun.id} succeeded.`);
+                return;
+              }
+
+              core.info(
+                `Waiting for deploy.yaml at ${headSha} (${attempt}/${maximumAttempts}).`,
+              );
+              await new Promise((resolve) => setTimeout(resolve, 10_000));
+            }
+
+            core.setFailed(`Timed out waiting for deploy.yaml at ${headSha}.`);
+
+      - name: Install git-filter-repo
+        run: |
+          pip install git-filter-repo
+
+      - name: Configure Git
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+
+      - name: Verify IRN dev was reconciled before filtering
+        env:
+          EXTERNAL_REPO_URL: https://oauth2:${{ secrets.EXT_REPO_PAT }}@code.irn.justica.gov.pt/plataforma-de-registos/backoffice-componentes-transversais/igrp-process-studio-frontend.git
+        run: |
+          git remote remove external 2>/dev/null || true
+          git remote add external "$EXTERNAL_REPO_URL"
+          git fetch --no-tags external \
+            +refs/heads/dev:refs/remotes/external/dev
+
+          IRN_DEV_SHA="$(git rev-parse refs/remotes/external/dev)"
+
+          if ! git merge-base --is-ancestor "$IRN_DEV_SHA" HEAD; then
+            echo "IRN dev $IRN_DEV_SHA is not contained in the Zing release history."
+            echo "Merge IRN dev into origin/develop and resolve it locally before retrying."
+            exit 1
+          fi
+
+          echo "IRN_DEV_SHA=$IRN_DEV_SHA" >> "$GITHUB_ENV"
+
+      - name: Reproduce the deployed filtered history
+        run: |
+          git filter-repo \
+            --path .github/workflows \
+            --invert-paths
+
+      - name: Attach verified IRN ancestry without changing files
+        env:
+          EXTERNAL_REPO_URL: https://oauth2:${{ secrets.EXT_REPO_PAT }}@code.irn.justica.gov.pt/plataforma-de-registos/backoffice-componentes-transversais/igrp-process-studio-frontend.git
+        run: |
+          git remote remove external 2>/dev/null || true
+          git remote add external "$EXTERNAL_REPO_URL"
+          git fetch --no-tags external \
+            +refs/heads/dev:refs/remotes/external/dev \
+            +refs/heads/feature/zing-commits:refs/remotes/external/feature/zing-commits
+
+          CURRENT_IRN_DEV_SHA="$(git rev-parse refs/remotes/external/dev)"
+          IRN_FEATURE_SHA="$(git rev-parse refs/remotes/external/feature/zing-commits)"
+
+          if [ "$CURRENT_IRN_DEV_SHA" != "$IRN_DEV_SHA" ]; then
+            echo "IRN dev moved from $IRN_DEV_SHA to $CURRENT_IRN_DEV_SHA during synchronization."
+            echo "Stopping before the IRN feature branch is updated."
+            exit 1
+          fi
+
+          FILTERED_TREE_SHA="$(git rev-parse HEAD^{tree})"
+          IRN_FEATURE_TREE_SHA="$(git rev-parse "$IRN_FEATURE_SHA^{tree}")"
+
+          if [ "$IRN_FEATURE_TREE_SHA" != "$FILTERED_TREE_SHA" ]; then
+            echo "The IRN feature branch does not match the completed deployment output."
+            echo "Expected tree: $FILTERED_TREE_SHA"
+            echo "Current tree:  $IRN_FEATURE_TREE_SHA"
+            exit 1
+          fi
+
+          REPAIR_NEEDED=false
+
+          if ! git merge-base --is-ancestor "$IRN_DEV_SHA" HEAD; then
+            git merge \
+              --strategy=ours \
+              --no-edit \
+              --allow-unrelated-histories \
+              "$IRN_DEV_SHA"
+            REPAIR_NEEDED=true
+          fi
+
+          REPAIRED_TREE_SHA="$(git rev-parse HEAD^{tree})"
+
+          if [ "$FILTERED_TREE_SHA" != "$REPAIRED_TREE_SHA" ]; then
+            echo "Ancestry repair changed the synchronized source tree."
+            echo "Stopping to prevent application code loss."
+            exit 1
+          fi
+
+          if ! git merge-base --is-ancestor "$IRN_DEV_SHA" HEAD; then
+            echo "IRN dev is still not an ancestor after the repair step."
+            exit 1
+          fi
+
+          echo "IRN_FEATURE_SHA=$IRN_FEATURE_SHA" >> "$GITHUB_ENV"
+          echo "REPAIR_NEEDED=$REPAIR_NEEDED" >> "$GITHUB_ENV"
+
+      - name: Push ancestry-repaired history to IRN
+        if: env.REPAIR_NEEDED == 'true'
+        run: |
+          git push external HEAD:feature/zing-commits \
+            --force-with-lease=refs/heads/feature/zing-commits:"$IRN_FEATURE_SHA" \
+            -o merge_request.create \
+            -o merge_request.target=dev \
+            -o merge_request.assign="carlos.marques" \
+            -o merge_request.reviewer="379" \
+            -o merge_request.title="Feature/zing-commits"
