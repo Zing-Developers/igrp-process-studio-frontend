@@ -1,3 +1,13 @@
+## [1.0.1](https://gitlab.tools.irn.internal/plataforma-de-registos/backoffice-componentes-transversais/igrp-process-studio-frontend/compare/v1.0.0...v1.0.1) (2026-09-17)
+
+
+### Bug Fixes
+
+* preserve IRN ancestry during synchronization ([77949ed](https://gitlab.tools.irn.internal/plataforma-de-registos/backoffice-componentes-transversais/igrp-process-studio-frontend/commit/77949ed56eeacf7ad64ab1e55cc53e85933a92fe))
+* preserve IRN ancestry during synchronization ([a5da2a1](https://gitlab.tools.irn.internal/plataforma-de-registos/backoffice-componentes-transversais/igrp-process-studio-frontend/commit/a5da2a1e81106baa8e572900da4f25cb2ae8cda4))
+* repair IRN ancestry after deployment ([9fe2e1a](https://gitlab.tools.irn.internal/plataforma-de-registos/backoffice-componentes-transversais/igrp-process-studio-frontend/commit/9fe2e1a648db7420f8857c55338ee01f1dad6638))
+* repair IRN ancestry after deployment ([e4f94b0](https://gitlab.tools.irn.internal/plataforma-de-registos/backoffice-componentes-transversais/igrp-process-studio-frontend/commit/e4f94b0b012e07f71570a227b7a4e856ec4452bb))
+
 # 1.0.0 (2026-06-18)
 
 
