@@ -15,7 +15,7 @@ WORKDIR /app
 
 # Install dependencies based on the preferred package manager
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml*  ./
-RUN npm install -g pnpm@9.15.9 && \
+RUN npm install -g pnpm@10.23.0 && \
     pnpm install \
       --no-frozen-lockfile \
       --strict-peer-dependencies=false
@@ -49,7 +49,7 @@ ENV NEXT_PUBLIC_ALLOWED_DOMAINS="backoffice.irn.lan,ppr-backoffice.irn.lan,qld-b
 
 RUN \
     if [ -f yarn.lock ]; then yarn run build; \
-    elif [ -f pnpm-lock.yaml ]; then npm i -g pnpm@9.15.9 && pnpm run build; \
+    elif [ -f pnpm-lock.yaml ]; then npm i -g pnpm@10.23.0 && pnpm run build; \
     elif [ -f package-lock.json ]; then npm run build; \
     else echo "Lockfile not found." && exit 1; \
     fi
