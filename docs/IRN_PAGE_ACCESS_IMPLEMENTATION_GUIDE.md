@@ -17,8 +17,9 @@ For every protected route, the implementation must ensure all of the following:
 5. Tokens, cookies, session IDs, and plaintext secrets are never logged.
 
 Do not treat a hidden menu item, disabled button, or client-only role check as
-an authorization boundary. The upstream API and a server-side page guard are
-the authorization boundaries.
+an authorization boundary. The upstream API is the current authorization
+boundary; dynamic page authorization must be provided by the IRN auth SDK and
+its centrally managed route mappings.
 
 ## Project authentication model
 
@@ -27,15 +28,13 @@ There are two related layers in this repository.
 | Concern                     | Project mechanism                               | Responsibility                                                                   |
 | --------------------------- | ----------------------------------------------- | -------------------------------------------------------------------------------- |
 | Browser session             | NextAuth JWT cookie, read by `getAccessToken()` | Supplies the access token and `session_id` for server-side API calls.            |
-| IRN session and permissions | `@irn/irn-auth-sdk/server`                      | Validates the session and resolves permissions for server-rendered route guards. |
+| IRN session and permissions | `@irn/irn-auth-sdk`                             | Validates sessions and provides centrally resolved route authorization.           |
 | IRN Experience API          | `getSecureESAApiClient(sessionId)`              | Calls System Administration APIs with the session cookie and interceptor.        |
 | Process Studio gateway      | `createServerClient()` / `getServerConfig()`    | Forwards the authenticated user credentials to `API_GATEWAY`.                    |
 
 Relevant implementation files:
 
 - [auth-helpers.ts](../src/lib/auth-helpers.ts) reads the NextAuth JWT.
-- [page-permissions.ts](../src/lib/page-permissions.ts) implements the project
-  server-side permission guard using `getSession()` from the IRN auth SDK.
 - [server-client.ts](<../src/app/(myapp)/lib/server-client.ts>) constructs
   authenticated gateway clients.
 - [middleware.ts](../src/middleware.ts) redirects a refresh-token failure to
@@ -49,47 +48,29 @@ Relevant implementation files:
 
 Before writing the page, identify and record:
 
-- the route and its server-side layout boundary;
-- the canonical permission or role required by the backend;
+- the route and its central route-mapping entry;
+- the canonical resource and action represented by that central mapping;
 - the endpoint(s) used by the page and their expected `401` and `403` behavior;
 - whether a `401` should redirect to login, display a session-expired screen,
   or use the existing session-renegotiation flow;
 - whether the page creates or displays secrets that must never be logged or
   cached.
 
-Do not invent a permission string. Use the permission/role enforced by the
-backend contract. If the backend uses a role but the auth SDK exposes only
-permissions, stop and obtain the canonical mapping before adding a page guard.
+Do not invent or embed a permission string in this frontend. If the required
+central route mapping does not exist, stop and have it provisioned by the
+owning System Administration workflow.
 
-### 2. Add a server-side page guard
+### 2. Do not hardcode page permissions in route files
 
-Use the project helper in a route `layout.tsx` so every page below the route is
-checked before it renders. The existing process route is the reference:
+Page components and route layouts must not embed a fixed permission string or
+maintain their own route-to-permission table. Route access must be resolved from
+the central route mappings and current-session permissions exposed through
+`@irn/irn-auth-sdk`.
 
-```tsx
-import { requirePagePermission } from '@/lib/page-permissions';
-
-const PROCESS_VIEW_PERMISSION = 'STUDIO_PROCESS_DEFINITIONS:visualizar';
-
-export const dynamic = 'force-dynamic';
-
-export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
-  await requirePagePermission(PROCESS_VIEW_PERMISSION);
-  return children;
-}
-```
-
-`requirePagePermission()` obtains the current IRN SDK session, resolves the
-user through the secure Experience System Administration client, and redirects
-to `/forbidden` when the permission is missing or the permission lookup fails.
-It supports exact permissions plus `RESOURCE:*`, `ADMIN:*`, and `*:*` grants.
-
-The IRN SDK also exposes `requirePermission()` from
-`@irn/irn-auth-sdk/server`. Do not mix it with the local helper in the same
-route until its redirect targets and wildcard semantics have been agreed. This
-project currently standardizes on `requirePagePermission()`.
-
-Never catch `redirect()` without rethrowing it. A guard must fail closed.
+Until that SDK middleware integration is implemented, the authenticated layout
+continues to validate the session and each upstream API remains the
+authorization boundary for its own data and operations. Do not add a temporary
+fixed-permission guard to compensate for a missing route mapping.
 
 ### 3. Use a server-side authenticated API client
 
@@ -211,9 +192,9 @@ recursively redact sensitive fields. Never log a create/rotate plaintext key.
 An AI agent must check every item before declaring a protected page complete.
 
 - [ ] The backend endpoint enforces the required permission/role.
-- [ ] The permission or role string was confirmed from the backend contract.
-- [ ] A server `layout.tsx` or server page guard protects the route before
-      content renders.
+- [ ] The route is present in the centrally managed SDK route mappings.
+- [ ] The SDK resolves the route mapping and current-session permission before
+      protected content renders.
 - [ ] The route is dynamic when it reads session/permission data.
 - [ ] Server actions use `createServerClient()` or a local adapter built from
       `getServerConfig()`.
@@ -233,16 +214,15 @@ The following checks have been applied to `igrp-process-studio-frontend`:
 | Check                                     | Status                            | Evidence                                                                                                                                                                                                                    |
 | ----------------------------------------- | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Authentication/session lifecycle          | Pass                              | Middleware handles refresh-token failure; the IRN layout closes or renegotiates invalid sessions.                                                                                                                           |
-| Server permission guard pattern           | Pass for `/process`               | `src/app/(igrp)/(generated)/process/layout.tsx` uses `requirePagePermission()`.                                                                                                                                             |
+| Dynamic page permission resolution        | Pending SDK middleware integration | Fixed route permissions were removed from `/process`; route access must be resolved from central mappings through `@irn/irn-auth-sdk`.                                                                                       |
 | Authenticated gateway client              | Pass                              | `getServerConfig()` reads the session and supplies gateway headers.                                                                                                                                                         |
 | Preserved M2M API status                  | Pass                              | `M2mKeysApiClientError` exposes `status`; M2M server actions return it.                                                                                                                                                     |
 | `/api-keys` query 401/403 invalidation    | Pass                              | The page renders `AccessDeniedPage` for either status.                                                                                                                                                                      |
 | `/api-keys` mutation 401/403 invalidation | Pass                              | Create, revoke, and rotate store an access-error state and block the page.                                                                                                                                                  |
 | Accurate 401/403 screen                   | Pass                              | `AccessDeniedPage` accepts and displays the status.                                                                                                                                                                         |
 | Development logging redaction             | Pass                              | The local M2M client redacts credentials and secrets, and logs only in development.                                                                                                                                         |
-| Dedicated server guard for `/api-keys`    | Needs a confirmed backend mapping | The M2M endpoint itself enforces the super-admin role, and the page blocks its 401/403 response. Add a route-level guard only after the canonical SDK permission/role mapping for `ROLE_DEPT_IGRP.superadmin` is confirmed. |
+| Dynamic route mapping for `/api-keys`     | Pending SDK middleware integration | The M2M endpoint itself enforces the super-admin role, and the page blocks its 401/403 response. Page access must come from the central SDK route mapping rather than a fixed frontend permission.                      |
 
 The final audit item is intentionally not marked as complete: a client-side
-response block cannot provide the same server-rendering guarantee as a route
-guard, and this repository does not currently define a confirmed permission
-mapping for the M2M super-admin role. An AI agent must not guess that mapping.
+response block cannot replace dynamic route authorization, and this repository
+must not invent the missing central mapping.
