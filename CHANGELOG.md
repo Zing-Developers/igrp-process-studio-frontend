@@ -1,3 +1,5 @@
+## [1.0.2](https://gitlab.tools.irn.internal/plataforma-de-registos/backoffice-componentes-transversais/igrp-process-studio-frontend/compare/v1.0.1...v1.0.2) (2026-09-19)
+
 ## [1.0.1](https://gitlab.tools.irn.internal/plataforma-de-registos/backoffice-componentes-transversais/igrp-process-studio-frontend/compare/v1.0.0...v1.0.1) (2026-09-17)
 
 
