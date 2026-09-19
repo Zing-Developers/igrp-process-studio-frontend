@@ -1,0 +1,5 @@
+@igrp:registry=https://sonatype.nosi.cv/repository/igrp/
+
+@irn:registry=https://nexus-1.zingaistudio.com/repository/npm-repo/
+# Base64 of "user:password". Export NPM_AUTH_IRN in your shell; never commit a literal value.
+//nexus-1.zingaistudio.com/repository/npm-repo/:_auth=${NPM_AUTH_IRN}
