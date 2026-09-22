@@ -1,5 +1,6 @@
-import { AccessDeniedPage } from '@/app/(myapp)/components/access-denied-page';
+import { IRNErrorPage } from '@irn/irn-backoffice-design-system';
 
 export default function ForbiddenPage() {
-  return <AccessDeniedPage />;
+  return <IRNErrorPage errorCode={403}
+  />;
 }

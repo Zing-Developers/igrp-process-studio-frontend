@@ -33,7 +33,7 @@ import {
 } from '@/app/(myapp)/functions/email-access-mappings';
 import { useEmailAccessMappings } from '@/app/(myapp)/hooks/email-access-mappings';
 import { PageHeader } from '@/app/(myapp)/components/PageHeader';
-import { AccessDeniedPage } from '@/app/(myapp)/components/access-denied-page';
+import { IRNErrorPage } from '@irn/irn-backoffice-design-system';
 import { UserCell } from '@/app/(myapp)/components/user-cell';
 import { IgrpLoading } from '@/app/(myapp)/components/igrp-loading';
 
@@ -410,9 +410,9 @@ export default function EmailAccessMappingsPage() {
           : editingMapping?.id
             ? await updateEmailAccessMapping(editingMapping.id, request)
             : {
-                success: false as const,
-                error: 'O identificador do mapeamento não está disponível.',
-              };
+              success: false as const,
+              error: 'O identificador do mapeamento não está disponível.',
+            };
 
       if (!result.success) {
         igrpToast({ title: 'Erro', description: result.error, type: 'error' });
@@ -481,9 +481,9 @@ export default function EmailAccessMappingsPage() {
 
   if (accessErrorStatus) {
     return (
-      <AccessDeniedPage
-        status={accessErrorStatus}
-        description={
+      <IRNErrorPage
+        errorCode={accessErrorStatus}
+        title={
           accessErrorStatus === 401
             ? 'A sua sessão não é válida ou expirou. Inicie sessão novamente para continuar.'
             : 'Não tem permissão para gerir mapeamentos de acesso por email.'
@@ -535,178 +535,178 @@ export default function EmailAccessMappingsPage() {
           <div className="rounded-md border bg-background">
             <div className="overflow-x-auto">
               <table className="w-full min-w-[1180px] text-sm">
-              <thead className="bg-muted/50 text-left">
-                <tr>
-                  <th scope="col" className="p-3 font-medium">
-                    Email
-                  </th>
-                  <th scope="col" className="p-3 font-medium">
-                    Permissões
-                  </th>
-                  <th scope="col" className="p-3 font-medium">
-                    Estado
-                  </th>
-                  <th scope="col" className="p-3 font-medium">
-                    Expira
-                  </th>
-                  <th scope="col" className="p-3 font-medium">
-                    Criado
-                  </th>
-                  <th scope="col" className="p-3 font-medium">
-                    Última alteração
-                  </th>
-                  <th scope="col" className="p-3 font-medium text-right">
-                    Ações
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {mappings.map((mapping, index) => {
-                  const rowKey = mappingKey(mapping, index);
-                  const status = statuses[index] ?? getMappingStatus(mapping, now);
-                  const isRevoked = status === 'revoked';
-                  const allPermissions = mapping.permissions ?? [];
-                  const permissionsOpen = expandedPermissions.has(rowKey);
-                  const visiblePermissions = permissionsOpen
-                    ? allPermissions
-                    : allPermissions.slice(0, 3);
-                  const descriptionOpen = expandedDescriptions.has(rowKey);
-                  const longDescription = (mapping.description?.length ?? 0) > 46;
-                  const visibleDescription =
-                    longDescription && !descriptionOpen
-                      ? `${mapping.description?.slice(0, 46)}...`
-                      : mapping.description;
-                  const lastChangedAt = isRevoked
-                    ? (mapping.revokedAt ?? mapping.updatedAt)
-                    : mapping.updatedAt;
-                  const lastChangedBy = isRevoked
-                    ? getAuditUser(
+                <thead className="bg-muted/50 text-left">
+                  <tr>
+                    <th scope="col" className="p-3 font-medium">
+                      Email
+                    </th>
+                    <th scope="col" className="p-3 font-medium">
+                      Permissões
+                    </th>
+                    <th scope="col" className="p-3 font-medium">
+                      Estado
+                    </th>
+                    <th scope="col" className="p-3 font-medium">
+                      Expira
+                    </th>
+                    <th scope="col" className="p-3 font-medium">
+                      Criado
+                    </th>
+                    <th scope="col" className="p-3 font-medium">
+                      Última alteração
+                    </th>
+                    <th scope="col" className="p-3 font-medium text-right">
+                      Ações
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {mappings.map((mapping, index) => {
+                    const rowKey = mappingKey(mapping, index);
+                    const status = statuses[index] ?? getMappingStatus(mapping, now);
+                    const isRevoked = status === 'revoked';
+                    const allPermissions = mapping.permissions ?? [];
+                    const permissionsOpen = expandedPermissions.has(rowKey);
+                    const visiblePermissions = permissionsOpen
+                      ? allPermissions
+                      : allPermissions.slice(0, 3);
+                    const descriptionOpen = expandedDescriptions.has(rowKey);
+                    const longDescription = (mapping.description?.length ?? 0) > 46;
+                    const visibleDescription =
+                      longDescription && !descriptionOpen
+                        ? `${mapping.description?.slice(0, 46)}...`
+                        : mapping.description;
+                    const lastChangedAt = isRevoked
+                      ? (mapping.revokedAt ?? mapping.updatedAt)
+                      : mapping.updatedAt;
+                    const lastChangedBy = isRevoked
+                      ? getAuditUser(
                         mapping.userProfileRevokedBy ?? mapping.userProfileUpdatedBy,
                         mapping.revokedBy ?? mapping.updatedBy,
                       )
-                    : getAuditUser(mapping.userProfileUpdatedBy, mapping.updatedBy);
+                      : getAuditUser(mapping.userProfileUpdatedBy, mapping.updatedBy);
 
-                  return (
-                    <tr
-                      key={rowKey}
-                      className={cn(
-                        'border-t align-top transition-colors hover:bg-muted/20',
-                        isRevoked && 'bg-muted/30 text-muted-foreground',
-                      )}
-                    >
-                      <td className="p-3">
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono font-medium text-foreground">
-                            {mapping.email ?? '-'}
-                          </span>
-                          {mapping.notes && (
-                            <button
-                              type="button"
-                              className="inline-flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                              title={mapping.notes}
-                              aria-label={`Notas: ${mapping.notes}`}
-                            >
-                              <FileText className="size-4" aria-hidden="true" />
-                            </button>
-                          )}
-                        </div>
-                        {visibleDescription && (
-                          <div className="mt-1 max-w-xs text-xs text-muted-foreground">
-                            <span>{visibleDescription}</span>
-                            {longDescription && (
+                    return (
+                      <tr
+                        key={rowKey}
+                        className={cn(
+                          'border-t align-top transition-colors hover:bg-muted/20',
+                          isRevoked && 'bg-muted/30 text-muted-foreground',
+                        )}
+                      >
+                        <td className="p-3">
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono font-medium text-foreground">
+                              {mapping.email ?? '-'}
+                            </span>
+                            {mapping.notes && (
                               <button
                                 type="button"
-                                className="ml-1 font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                                aria-expanded={descriptionOpen}
-                                onClick={() => toggleExpanded(rowKey, setExpandedDescriptions)}
+                                className="inline-flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                title={mapping.notes}
+                                aria-label={`Notas: ${mapping.notes}`}
                               >
-                                {descriptionOpen ? 'Ver menos' : 'Ver descrição completa'}
+                                <FileText className="size-4" aria-hidden="true" />
                               </button>
                             )}
                           </div>
-                        )}
-                      </td>
-                      <td className="p-3">
-                        <div className="flex max-w-md flex-wrap items-center gap-1.5">
-                          {visiblePermissions.map((permission) => (
-                            <span
-                              key={permission}
-                              className="inline-flex rounded-full bg-muted px-2 py-1 font-mono text-xs text-foreground"
-                            >
-                              {permission}
-                            </span>
-                          ))}
-                          {allPermissions.length === 0 && (
-                            <span className="text-muted-foreground">-</span>
+                          {visibleDescription && (
+                            <div className="mt-1 max-w-xs text-xs text-muted-foreground">
+                              <span>{visibleDescription}</span>
+                              {longDescription && (
+                                <button
+                                  type="button"
+                                  className="ml-1 font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                  aria-expanded={descriptionOpen}
+                                  onClick={() => toggleExpanded(rowKey, setExpandedDescriptions)}
+                                >
+                                  {descriptionOpen ? 'Ver menos' : 'Ver descrição completa'}
+                                </button>
+                              )}
+                            </div>
                           )}
-                          {allPermissions.length > 3 && (
-                            <button
-                              type="button"
-                              className="px-1 text-xs font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                              aria-expanded={permissionsOpen}
-                              onClick={() => toggleExpanded(rowKey, setExpandedPermissions)}
-                            >
-                              {permissionsOpen
-                                ? 'Ver menos'
-                                : `Ver todos (+${allPermissions.length - 3})`}
-                            </button>
+                        </td>
+                        <td className="p-3">
+                          <div className="flex max-w-md flex-wrap items-center gap-1.5">
+                            {visiblePermissions.map((permission) => (
+                              <span
+                                key={permission}
+                                className="inline-flex rounded-full bg-muted px-2 py-1 font-mono text-xs text-foreground"
+                              >
+                                {permission}
+                              </span>
+                            ))}
+                            {allPermissions.length === 0 && (
+                              <span className="text-muted-foreground">-</span>
+                            )}
+                            {allPermissions.length > 3 && (
+                              <button
+                                type="button"
+                                className="px-1 text-xs font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                aria-expanded={permissionsOpen}
+                                onClick={() => toggleExpanded(rowKey, setExpandedPermissions)}
+                              >
+                                {permissionsOpen
+                                  ? 'Ver menos'
+                                  : `Ver todos (+${allPermissions.length - 3})`}
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                        <td className="p-3">
+                          <StatusPill status={status} />
+                        </td>
+                        <td className="p-3 whitespace-nowrap">
+                          {mapping.expiresAt ? (
+                            formatDate(mapping.expiresAt)
+                          ) : (
+                            <span className="text-muted-foreground">sem expiração</span>
                           )}
-                        </div>
-                      </td>
-                      <td className="p-3">
-                        <StatusPill status={status} />
-                      </td>
-                      <td className="p-3 whitespace-nowrap">
-                        {mapping.expiresAt ? (
-                          formatDate(mapping.expiresAt)
-                        ) : (
-                          <span className="text-muted-foreground">sem expiração</span>
-                        )}
-                      </td>
-                      <td className="p-3">
-                        <AuditCell
-                          date={mapping.createdAt}
-                          user={getAuditUser(mapping.userProfileCreatedBy, mapping.createdBy)}
-                        />
-                      </td>
-                      <td className="p-3">
-                        <AuditCell date={lastChangedAt} user={lastChangedBy} />
-                      </td>
-                      <td className="p-3">
-                        <div className="flex justify-end gap-2">
-                          <IGRPButton
-                            name={`edit-email-access-${mapping.id ?? rowKey}`}
-                            variant="outline"
-                            size="sm"
-                            disabled={isRevoked || !mapping.id}
-                            onClick={() => openEditForm(mapping)}
-                          >
-                            Editar
-                          </IGRPButton>
-                          <IGRPButton
-                            name={`revoke-email-access-${mapping.id ?? rowKey}`}
-                            variant="destructive"
-                            size="sm"
-                            disabled={isRevoked || !mapping.id}
-                            onClick={() => setRevokingMapping(mapping)}
-                          >
-                            Revogar
-                          </IGRPButton>
-                        </div>
+                        </td>
+                        <td className="p-3">
+                          <AuditCell
+                            date={mapping.createdAt}
+                            user={getAuditUser(mapping.userProfileCreatedBy, mapping.createdBy)}
+                          />
+                        </td>
+                        <td className="p-3">
+                          <AuditCell date={lastChangedAt} user={lastChangedBy} />
+                        </td>
+                        <td className="p-3">
+                          <div className="flex justify-end gap-2">
+                            <IGRPButton
+                              name={`edit-email-access-${mapping.id ?? rowKey}`}
+                              variant="outline"
+                              size="sm"
+                              disabled={isRevoked || !mapping.id}
+                              onClick={() => openEditForm(mapping)}
+                            >
+                              Editar
+                            </IGRPButton>
+                            <IGRPButton
+                              name={`revoke-email-access-${mapping.id ?? rowKey}`}
+                              variant="destructive"
+                              size="sm"
+                              disabled={isRevoked || !mapping.id}
+                              onClick={() => setRevokingMapping(mapping)}
+                            >
+                              Revogar
+                            </IGRPButton>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                  {mappings.length === 0 && (
+                    <tr>
+                      <td colSpan={7} className="p-10 text-center text-muted-foreground">
+                        {totalMappings > 0
+                          ? 'Não há mapeamentos nesta página.'
+                          : 'Ainda não há mapeamentos neste backend.'}
                       </td>
                     </tr>
-                  );
-                })}
-                {mappings.length === 0 && (
-                  <tr>
-                    <td colSpan={7} className="p-10 text-center text-muted-foreground">
-                      {totalMappings > 0
-                        ? 'Não há mapeamentos nesta página.'
-                        : 'Ainda não há mapeamentos neste backend.'}
-                    </td>
-                  </tr>
-                )}
-              </tbody>
+                  )}
+                </tbody>
               </table>
             </div>
             {showPagination && (
