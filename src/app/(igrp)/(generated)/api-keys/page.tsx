@@ -25,7 +25,7 @@ import {
 } from '@/app/(myapp)/functions/m2m-keys';
 import type { CreateRequest, KeySummary, UserProfileDTO } from '@irn/framework-process-studio-types';
 import { PageHeader } from '@/app/(myapp)/components/PageHeader';
-import { AccessDeniedPage } from '@/app/(myapp)/components/access-denied-page';
+import { IRNErrorPage } from '@irn/irn-backoffice-design-system';
 import { UserCell } from '@/app/(myapp)/components/user-cell';
 import { IgrpLoading } from '@/app/(myapp)/components/igrp-loading';
 
@@ -308,9 +308,9 @@ export default function ApiKeysPage() {
 
   if (deniedStatus) {
     return (
-      <AccessDeniedPage
-        status={deniedStatus}
-        description={deniedStatus === 401
+      <IRNErrorPage 
+         errorCode={deniedStatus}
+        title={deniedStatus === 401
           ? 'A sua sessão não é válida ou expirou. Inicie sessão novamente para continuar.'
           : 'A gestão de chaves M2M está disponível apenas para superadministradores.'}
       />
