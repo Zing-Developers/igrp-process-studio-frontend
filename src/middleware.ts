@@ -1,4 +1,4 @@
-import { getToken } from 'next-auth/jwt';
+import { getIRNToken } from '@irn/irn-core-framework/server/token';
 import { NextRequest, NextResponse } from 'next/server';
 
 const PUBLIC_PATHS = ['/login', '/logout', '/api/auth'];
@@ -16,7 +16,6 @@ function isPublicPath(pathname: string) {
 export async function middleware(request: NextRequest) {
   const { pathname, origin, href } = request.nextUrl;
 
-
   //  ======= auth form flow
   // if AUTH_LOGIN_PATH_URL go there and login
   const authLoginPathUrl = process.env.AUTH_LOGIN_PATH_URL;
@@ -29,10 +28,12 @@ export async function middleware(request: NextRequest) {
 
   if (isPublicPath(pathname)) return NextResponse.next();
 
-  const token = await getToken({ req: request });
+  const token = await getIRNToken({ req: request });
 
   if (token?.error === 'RefreshAccessTokenError') {
-    return NextResponse.redirect(new URL('/login', process.env.NEXTAUTH_URL_INTERNAL ?? request.url));
+    return NextResponse.redirect(
+      new URL('/login', process.env.NEXTAUTH_URL_INTERNAL ?? request.url),
+    );
   }
 
   return NextResponse.next();

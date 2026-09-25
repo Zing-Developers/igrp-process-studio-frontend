@@ -4,24 +4,22 @@ import '@/styles/globals.css';
 /* end area to add custom styles */
 import '@irn/framework-process-studio-bpmn-editor/dist/styles.css';
 
-import '@igrp/framework-next-ui/dist/styles.css';
 import '@igrp/igrp-framework-react-design-system/dist/styles.css';
 
 import type { Metadata, Viewport } from 'next';
-import { IGRPRootLayout } from '@igrp/framework-next';
-import { IGRP_META_THEME_COLORS } from '@igrp/igrp-framework-react-design-system';
+import { IRNToastContainer } from '@irn/irn-backoffice-design-system';
+import { IRNRootLayout, IRN_META_THEME_COLORS } from '@irn/irn-core-framework';
 
 import { configLayout } from '@/actions/igrp/layout';
-import { createConfig } from '@/igrp.template.config';
-import { IGRPLayoutConfigArgs } from '@igrp/framework-next-types';
+import { fontVariables } from '@/lib/fonts';
 import { withBasePath } from './(myapp)/lib/url';
 
 export const metadata: Metadata = {
   title: {
-    default: "Home - PIR | Centro de Aplicações",
-    template: '%s - PIR | Centro de Aplicações'
+    default: 'Home - PIR | Centro de Aplicações',
+    template: '%s - PIR | Centro de Aplicações',
   },
-  description: "PIR | Centro de Aplicações",
+  description: 'PIR | Centro de Aplicações',
   manifest: withBasePath('/site.webmanifest'),
   icons: {
     icon: [
@@ -35,12 +33,22 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: IGRP_META_THEME_COLORS.light,
+  themeColor: IRN_META_THEME_COLORS.light,
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const layoutConfig = await configLayout();
-  const config = await createConfig(layoutConfig as IGRPLayoutConfigArgs);
 
-  return <IGRPRootLayout config={config}>{children}</IGRPRootLayout>;
+  return (
+    <IRNRootLayout
+      config={{
+        ...layoutConfig,
+        font: fontVariables,
+        basePath: process.env.NEXT_PUBLIC_BASE_PATH,
+      }}
+    >
+      <IRNToastContainer />
+      {children}
+    </IRNRootLayout>
+  );
 }

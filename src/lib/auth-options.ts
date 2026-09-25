@@ -1,11 +1,11 @@
-import { AuthOptions } from 'next-auth';
-import KeycloakProvider from 'next-auth/providers/keycloak';
+import { type IRNAuthOptions } from '@irn/irn-core-framework/server/auth';
+import { createIRNKeycloakProvider } from '@irn/irn-core-framework/server/keycloak';
 import { refreshAccessToken } from './auth-helpers';
 import { expSystemAdminAPIClient } from '@/app/(myapp)/lib/irn-sdk-clients';
 
-export const authOptions: AuthOptions = {
+export const authOptions: IRNAuthOptions = {
   providers: [
-    KeycloakProvider({
+    createIRNKeycloakProvider({
       clientId: process.env.KEYCLOAK_CLIENT_ID || '',
       clientSecret: process.env.KEYCLOAK_CLIENT_SECRET || '',
       issuer: process.env.KEYCLOAK_ISSUER || '',
@@ -16,13 +16,9 @@ export const authOptions: AuthOptions = {
 
   callbacks: {
     async jwt({ token, account, user }) {
-
       if (account && user) {
-
         try {
-
           if (!process.env.IRN_SYSTEM_ADMINISTRATION_DISABLED) {
-
             const sessionData = await expSystemAdminAPIClient.auth.login({
               accessToken: account.access_token,
               refreshToken: account.refresh_token,
@@ -34,12 +30,12 @@ export const authOptions: AuthOptions = {
             }
 
             token.session_id = sessionData.sessionId;
-
           }
 
-
           token.accessToken = account.access_token;
-          token.expiresAt = account.expires_at ? account.expires_at * 1000 : Date.now() + 3600 * 1000;
+          token.expiresAt = account.expires_at
+            ? account.expires_at * 1000
+            : Date.now() + 3600 * 1000;
           token.refreshToken = account.refresh_token;
         } catch (error) {
           console.error('[Auth] Backend login failed:', error);

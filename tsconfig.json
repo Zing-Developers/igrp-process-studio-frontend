@@ -20,7 +20,8 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@igrp/template-config": ["./src/igrp.template.config.ts"]
+      "@irn/irn-core-framework": ["./libs/irn-core-framework/index.ts"],
+      "@irn/irn-core-framework/*": ["./libs/irn-core-framework/*"]
     },
     "composite": true
   },

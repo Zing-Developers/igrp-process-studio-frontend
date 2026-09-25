@@ -1,11 +1,11 @@
 import { NextApiRequest } from 'next';
-import { getToken, JWT } from 'next-auth/jwt';
+import { getIRNToken, type IRNJWT } from '@irn/irn-core-framework/server/token';
 import { cookies } from 'next/headers';
 
 export async function getAccessToken() {
   const cookieStore = await cookies();
 
-  const token = await getToken({
+  const token = await getIRNToken({
     req: {
       cookies: Object.fromEntries(cookieStore.getAll().map((c) => [c.name, c.value])),
     } as NextApiRequest,
@@ -20,7 +20,7 @@ export async function getAccessToken() {
  * @param token The JWT token to refresh
  * @returns Promise with refreshed token data
  */
-export async function refreshAccessToken(token: JWT): Promise<JWT> {
+export async function refreshAccessToken(token: IRNJWT): Promise<IRNJWT> {
   try {
     const issuer = process.env.KEYCLOAK_ISSUER;
     const clientId = process.env.KEYCLOAK_CLIENT_ID;
