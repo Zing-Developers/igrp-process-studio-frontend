@@ -121,6 +121,13 @@ to an internal process-only environment slot.
   internals, the favicon, and file-extension assets. API exclusions remain
   acceptable only because BFF/upstream APIs authorize independently.
 
+### FR-07 — Stable header Server Actions
+
+The application header must keep the first `IRNHeader` handlers reference for
+its mounted lifetime. It must not provide a new Server Action handlers object
+after every server re-render, because `IRNHeader` responds by reloading user
+data and menu actions repeatedly.
+
 ## Acceptance Criteria
 
 - AC-01 — Middleware configures revocation, mappings, permissions, and
@@ -136,6 +143,8 @@ to an internal process-only environment slot.
 - AC-07 — Logs are redacted and middleware coverage follows FR-06.
 - AC-08 — TypeScript, targeted lint, focused key/config assertions, and the
   production build pass.
+- AC-09 — A server re-render does not change the header handlers reference or
+  retrigger header Server Actions solely due to that render.
 
 ## Reference Files
 
@@ -144,3 +153,4 @@ to an internal process-only environment slot.
 - `src/app/(myapp)/lib/rsa-token-handlers.ts`
 - `src/app/(auth)/login/page.tsx`
 - `.env-example`
+- `src/app/(myapp)/components/irn-ui-commons/stable-irn-header.tsx`

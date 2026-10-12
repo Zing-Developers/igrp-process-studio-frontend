@@ -10,6 +10,8 @@
 4. Document endpoint/JWT environment inputs in `.env-example`.
 5. Record evidence by acceptance criterion and publish the feature status in
    the project specification dashboard.
+6. Stabilize the header Server Action handlers reference, preserving middleware
+   authorization while preventing header re-render loops.
 
 ## App-Specific Inputs
 

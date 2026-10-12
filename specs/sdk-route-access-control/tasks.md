@@ -8,3 +8,4 @@ Status: Implemented; production-build verification blocked by the local Node run
 - [x] T-04 Preserve SDK `returnUrl` compatibility in the local login page — AC-04.
 - [x] T-05 Document the required environment contract — AC-02, AC-05, AC-06.
 - [ ] T-06 Run focused assertions, type/lint/build checks, update verification, and converge — AC-08. Focused checks passed; the production build requires the declared Node 22 runtime.
+- [x] T-07 Stabilize the `IRNHeader` Server Action handlers reference and verify the header re-render loop is eliminated — AC-09.
