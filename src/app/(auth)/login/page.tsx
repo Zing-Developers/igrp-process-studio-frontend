@@ -15,7 +15,10 @@ export default async function AuthPage({
   //const raw = (await searchParams)?.callbackUrl as string | undefined;
   //const callbackUrl = raw && raw.startsWith('/') ? raw : '/';
 
-  const raw = (await searchParams)?.callbackUrl as string | undefined;
+  const resolvedSearchParams = await searchParams;
+  const raw = (resolvedSearchParams?.callbackUrl ?? resolvedSearchParams?.returnUrl) as
+    | string
+    | undefined;
   const base = (process.env.NEXTAUTH_URL ?? '').replace(/\/$/, '');
   let callbackUrl = '/';
   if (raw) {
