@@ -29,24 +29,21 @@ import { useRouter } from 'next/navigation';
 
 export default function New({ open, setOpen, initialData, setNewProcess, invalidateQueries } : { open: boolean, setOpen: (prompt: boolean) => void, initialData?: any, setNewProcess: (prompt: boolean) => void, invalidateQueries: () => void }) {
 
-
   
-  z.config(z.locales.en());
-
-const form1 = z.object({
-    title: z.string().nonempty(),
-    processKey: z.string().nonempty(),
+  const form1 = z.object({
+    title: z.string().optional(),
+    processKey: z.string().optional(),
     description: z.string().optional(),
-    projectId: z.string().nonempty()
+    projectId: z.string().optional()
 })
 
 type Form1ZodType = typeof form1;
 
 const initForm1: z.infer<Form1ZodType> = {
-    title: ``,
-    processKey: ``,
-    description: ``,
-    projectId: ``
+    title: undefined,
+    processKey: undefined,
+    description: undefined,
+    projectId: undefined
 }
 
 
@@ -91,7 +88,7 @@ const { processOptions, isLoading } = useProjectConfiguration();
 useEffect(() => {
   if (isLoading) return
   setSelectprojectIdOptions(processOptions || [])
-}, [isLoading,open])
+}, [isLoading, open, processOptions])
 
 useEffect(() => {
   setModalDialogTitle1Content('Criar novo processo')
@@ -124,7 +121,7 @@ useEffect(() => {
   
 >
   <IGRPModalDialogTitle
-  id={ `modalDialogTitle1` }
+  name={ `modalDialogTitle1` }
   
   
   
@@ -142,8 +139,8 @@ formRef={ formform1Ref }
 >
   <>
   <IGRPInputText
-  id={ `title` }
-  label={ `Title` }
+  name={ `title` }
+  label={ `Título` }
 showIcon={ false }
 required={ true }
 placeholder={ `Introduza o título do processo` }
@@ -153,8 +150,8 @@ placeholder={ `Introduza o título do processo` }
 >
 </IGRPInputText>
   <IGRPInputText
-  id={ `processKey` }
-  label={ `Process Key` }
+  name={ `processKey` }
+  label={ `Chave do processo` }
 showIcon={ false }
 required={ true }
 placeholder={ `Introduza a chave do processo` }
@@ -164,8 +161,8 @@ placeholder={ `Introduza a chave do processo` }
 >
 </IGRPInputText>
   <IGRPTextarea
-  id={ `description` }
-  label={ `Description` }
+  name={ `description` }
+  label={ `Descrição` }
 rows={ 3 }
 required={ false }
 placeholder={ `Introduza a descrição do processo` }
@@ -175,8 +172,8 @@ placeholder={ `Introduza a descrição do processo` }
 >
 </IGRPTextarea>
   <IGRPCombobox
-  id={ `projectId` }
-  label={ `Project` }
+  name={ `projectId` }
+  label={ `Projeto` }
 variant={ `single` }
 placeholder={ `Selecione uma opção...` }
 required={ true }
@@ -196,9 +193,9 @@ iconName={ `CornerDownRight` }
   
   
 >
-  <div className={ cn('flex',' flex-1 justify-end',)}    >
+  <div className={ cn('flex','flex flex-row flex-wrap items-center justify-end gap-2',)}    >
 	<IGRPButton
-  id={ `button1` }
+  name={ `button1` }
   variant={ `default` }
 size={ `default` }
 showIcon={ true }

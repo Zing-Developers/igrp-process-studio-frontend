@@ -1,19 +1,19 @@
 'use client';
 
 import type React from 'react';
+
 import { useState } from 'react';
-import { 
-  IGRPBadgePrimitive, 
-  IGRPButtonPrimitive, 
-  IGRPCardContentPrimitive, 
-  IGRPCardDescriptionPrimitive, 
-  IGRPCardHeaderPrimitive, 
-  IGRPCardPrimitive, 
-  IGRPCardTitlePrimitive, 
-  IGRPIcon,
-  IGRPIconName,
-  useIGRPToast 
+import { Copy, Check, Mail, Webhook, MessageSquare, FileJson } from 'lucide-react';
+import {
+  IGRPBadgePrimitive,
+  IGRPButtonPrimitive,
+  IGRPCardContentPrimitive,
+  IGRPCardDescriptionPrimitive,
+  IGRPCardHeaderPrimitive,
+  IGRPCardPrimitive,
+  IGRPCardTitlePrimitive,
 } from '@igrp/igrp-framework-react-design-system';
+import { toast } from '@irn/irn-backoffice-design-system';
 
 interface DelegateParameter {
   name: string;
@@ -23,7 +23,7 @@ interface DelegateParameter {
 interface Delegate {
   name: string;
   category: string;
-  icon: IGRPIconName | string ;
+  icon: React.ReactNode;
   description: string;
   syntax: string;
   parameters: DelegateParameter[];
@@ -34,7 +34,7 @@ const delegates: Delegate[] = [
   {
     name: 'igrpSendEmailDelegate',
     category: 'Mail',
-    icon: "Mail",
+    icon: <Mail className="size-4" />,
     description:
       'Envia uma mensagem de correio eletrónico para o destinatário indicado com o assunto e o conteúdo fornecidos.',
     syntax: '${igrpSendEmailDelegate}',
@@ -57,14 +57,16 @@ emailFrom: noreply@company.com`,
   {
     name: 'igrpMessageBrokerSenderDelegate',
     category: 'Message',
-    icon: "MessageSquare",
+    icon: <MessageSquare className="size-4" />,
     description:
       'Envia uma mensagem através do message broker configurado (por exemplo, Kafka ou RabbitMQ) com base nas definições de integração existentes.',
     syntax: '${igrpMessageBrokerSenderDelegate}',
-    parameters: [{
-      name: 'topic',
-      description: 'Tópico Kafka para onde a mensagem será enviada'
-    }],
+    parameters: [
+      {
+        name: 'topic',
+        description: 'Tópico Kafka para onde a mensagem será enviada',
+      },
+    ],
     example: `<!-- Configuração da tarefa de serviço -->
 Tipo de implementação: Delegate Expression
 Expressão do delegado: \${igrpMessageBrokerSenderDelegate}
@@ -75,7 +77,7 @@ topic: Envia uma mensagem através da configuração definida`,
   {
     name: 'igrpWebhookDelegate',
     category: 'Webhook',
-    icon: "Webhook",
+    icon: <Webhook className="size-4" />,
     description:
       'Executa um pedido HTTP para um endpoint webhook externo com método, parâmetros e payload configuráveis.',
     syntax: '${igrpWebhookDelegate}',
@@ -105,8 +107,8 @@ webhookPayloadHeader: {"Content-Type": "application/json", "Authorization": "Bea
   {
     name: 'igrpJsonParseDelegate',
     category: 'Parse',
-    icon: "FileBraces",
-    description: 'Extracts a payload into a data variable in the process.',
+    icon: <FileJson className="size-4" />,
+    description: 'Extrai um payload para uma variável de dados no processo.',
     syntax: '${igrpJsonParseDelegate}',
     parameters: [
       { name: 'json', description: 'Dados JSON estruturados (codificados em base64 ou não)' },
@@ -129,24 +131,20 @@ isBase64Encoded: true`,
   },
 ];
 
-export function DelegatesHelper() {
+function DelegatesHelper() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const { igrpToast } = useIGRPToast();
-
   const copyToClipboard = async (text: string, id: string, label: string) => {
     try {
       await navigator.clipboard.writeText(text);
       setCopiedId(id);
-      igrpToast({
-        type: 'success',
+      toast.success({
         title: 'Copiado',
         description: `${label} copiado para a área de transferência`,
       });
       setTimeout(() => setCopiedId(null), 2000);
     } catch (err) {
       console.error('Failed to copy', err);
-      igrpToast({
-        type: 'error',
+      toast.error({
         title: 'Falha ao copiar',
         description: 'Tente novamente.',
       });
@@ -159,9 +157,10 @@ export function DelegatesHelper() {
         <IGRPCardHeaderPrimitive>
           <IGRPCardTitlePrimitive>Delegados disponíveis</IGRPCardTitlePrimitive>
           <IGRPCardDescriptionPrimitive>
-            Os delegados permitem integrar lógica personalizada ou serviços externos diretamente
-            nos fluxos de processo BPMN. Utilize-os nas tarefas de serviço definindo o tipo de
-            implementação como <IGRPBadgePrimitive variant="secondary">Delegate Expression</IGRPBadgePrimitive>
+            Os delegados permitem integrar lógica personalizada ou serviços externos diretamente nos
+            fluxos de processo BPMN. Utilize-os nas tarefas de serviço definindo o tipo de
+            implementação como{' '}
+            <IGRPBadgePrimitive variant="secondary">Delegate Expression</IGRPBadgePrimitive>
           </IGRPCardDescriptionPrimitive>
         </IGRPCardHeaderPrimitive>
       </IGRPCardPrimitive>
@@ -172,16 +171,20 @@ export function DelegatesHelper() {
             <IGRPCardHeaderPrimitive>
               <div className="flex items-center gap-3">
                 <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <IGRPIcon iconName={delegate.icon} />
+                  {delegate.icon}
                 </div>
                 <div>
-                  <IGRPCardTitlePrimitive className="text-xl">{delegate.name}</IGRPCardTitlePrimitive>
+                  <IGRPCardTitlePrimitive className="text-xl">
+                    {delegate.name}
+                  </IGRPCardTitlePrimitive>
                   <IGRPBadgePrimitive variant="outline" className="mt-1">
                     {delegate.category}
                   </IGRPBadgePrimitive>
                 </div>
               </div>
-              <IGRPCardDescriptionPrimitive className="mt-3">{delegate.description}</IGRPCardDescriptionPrimitive>
+              <IGRPCardDescriptionPrimitive className="mt-3">
+                {delegate.description}
+              </IGRPCardDescriptionPrimitive>
             </IGRPCardHeaderPrimitive>
             <IGRPCardContentPrimitive className="space-y-4">
               {/* Syntax */}
@@ -194,13 +197,17 @@ export function DelegatesHelper() {
                     variant="ghost"
                     size="sm"
                     onClick={() =>
-                      copyToClipboard(delegate.syntax, `syntax-${delegate.name}`, 'Sintaxe do delegado')
+                      copyToClipboard(
+                        delegate.syntax,
+                        `syntax-${delegate.name}`,
+                        'Sintaxe do delegado',
+                      )
                     }
                   >
                     {copiedId === `syntax-${delegate.name}` ? (
-                      <IGRPIcon iconName="Check" />
+                      <Check className="size-4" />
                     ) : (
-                      <IGRPIcon iconName="Copy" />
+                      <Copy className="size-4" />
                     )}
                     Copiar sintaxe
                   </IGRPButtonPrimitive>
@@ -232,9 +239,9 @@ export function DelegatesHelper() {
                           }
                         >
                           {copiedId === `param-${delegate.name}-${param.name}` ? (
-                            <IGRPIcon iconName="Check" className="size-3.5" />
+                            <Check className="size-3.5" />
                           ) : (
-                            <IGRPIcon iconName="Copy" className="size-3.5" />
+                            <Copy className="size-3.5" />
                           )}
                         </IGRPButtonPrimitive>
                       </div>
@@ -261,7 +268,9 @@ export function DelegatesHelper() {
       <IGRPCardPrimitive>
         <IGRPCardHeaderPrimitive>
           <IGRPCardTitlePrimitive>Referência rápida</IGRPCardTitlePrimitive>
-          <IGRPCardDescriptionPrimitive>Como utilizar delegados no seu processo BPMN</IGRPCardDescriptionPrimitive>
+          <IGRPCardDescriptionPrimitive>
+            Como utilizar delegados no seu processo BPMN
+          </IGRPCardDescriptionPrimitive>
         </IGRPCardHeaderPrimitive>
         <IGRPCardContentPrimitive className="space-y-4">
           <div className="space-y-3">
@@ -309,8 +318,8 @@ export function DelegatesHelper() {
               <div>
                 <p className="font-medium text-foreground">Configure os parâmetros obrigatórios</p>
                 <p className="text-sm text-muted-foreground">
-                  Adicione variáveis de processo com os nomes dos parâmetros listados acima. Passe
-                  o cursor sobre cada parâmetro para copiar o respetivo nome individualmente.
+                  Adicione variáveis de processo com os nomes dos parâmetros listados acima. Passe o
+                  cursor sobre cada parâmetro para copiar o respetivo nome individualmente.
                 </p>
               </div>
             </div>
@@ -320,3 +329,5 @@ export function DelegatesHelper() {
     </div>
   );
 }
+
+export { DelegatesHelper };

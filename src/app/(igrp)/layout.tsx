@@ -2,17 +2,14 @@ import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
 
 import { configLayout } from '@/actions/igrp/layout';
-import { createConfig } from '@igrp/template-config';
-import { IGRPLayoutConfigArgs } from '@igrp/framework-next-types';
 import IRNLayout from '../(myapp)/components/irn-ui-commons/irn-layout';
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const layoutConfig = await configLayout();
-  const config = await createConfig(layoutConfig as IGRPLayoutConfigArgs);
 
   // TDOD: see to move this to the root-layout
-  const { layout, previewMode } = config;
-  const { session } = layout || {};
+  const { session } = layoutConfig;
+  const previewMode = process.env.IGRP_PREVIEW_MODE === 'true';
 
   const headersList = await headers();
   const currentPath =
@@ -29,16 +26,13 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 
   const isAlreadyOnLogin = currentPath.startsWith(loginPath);
 
-
   if (!previewMode && session === null && urlLogin && !isAlreadyOnLogin) {
     redirect(urlLogin);
   }
 
   return (
     <IRNLayout>
-      <main className="px-4">
-        {children}
-      </main>
+      <main className="px-4">{children}</main>
     </IRNLayout>
   );
 }

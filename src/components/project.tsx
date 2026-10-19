@@ -26,11 +26,8 @@ import { useRouter } from 'next/navigation';
 
 export default function Project({ open, setOpen, initialData, invalidateQueries } : { open: boolean, setOpen: (prompt: boolean) => void, initialData?: any, invalidateQueries: () => void }) {
 
-
   
-  z.config(z.locales.en());
-
-const form1 = z.object({
+  const form1 = z.object({
     code: z.string().nonempty(),
     name: z.string().nonempty(),
     description: z.string().optional()
@@ -41,7 +38,7 @@ type Form1ZodType = typeof form1;
 const initForm1: z.infer<Form1ZodType> = {
     code: ``,
     name: ``,
-    description: ``
+    description: undefined
 }
 
 
@@ -100,7 +97,7 @@ const router = useRouter();
   
 >
   <IGRPModalDialogTitle
-  id={ `modalDialogTitle1` }
+  name={ `modalDialogTitle1` }
   
   
   
@@ -118,7 +115,7 @@ formRef={ formform1Ref }
 >
   <>
   <IGRPInputText
-  id={ `code` }
+  name={ `code` }
   label={ `Code` }
 showIcon={ false }
 required={ true }
@@ -129,7 +126,7 @@ placeholder={ `Enter process code` }
 >
 </IGRPInputText>
   <IGRPInputText
-  id={ `name` }
+  name={ `name` }
   label={ `Name` }
 showIcon={ false }
 required={ true }
@@ -140,7 +137,7 @@ placeholder={ `Enter process name` }
 >
 </IGRPInputText>
   <IGRPTextarea
-  id={ `description` }
+  name={ `description` }
   label={ `Description` }
 rows={ 3 }
 required={ false }
@@ -157,9 +154,9 @@ placeholder={ `Enter process description` }
   
   
 >
-  <div className={ cn('flex',' flex-1 justify-end',)}    >
+  <div className={ cn('flex','flex flex-row flex-wrap items-center justify-end gap-2',)}    >
 	<IGRPButton
-  id={ `button1` }
+  name={ `button1` }
   variant={ `default` }
 size={ `default` }
 showIcon={ true }

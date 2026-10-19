@@ -32,7 +32,7 @@ export default function PageEditorComponent({ params } : { params: Promise<{ cod
 
   const { code } = use(params);
 
-  
+  const [tabstabs1Items, setTabstabs1Items] = useState<IGRPTabItem[]>([]);
   
   
 const [bpmnXml, setBpmnXml] = useState<any>(undefined);
@@ -47,7 +47,12 @@ const [copiedId, setCopiedId] = useState<string>('');
 
 const { igrpToast } = useIGRPToast()
 
-async function handleSave (dataToSave?: any, xmlToSave?: string, isAutoSave?: boolean): Promise<void  | undefined> {
+const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+const { data, isLoading, error } = useDetailProcessDefinition(code);
+
+const { mutateAsync: saveDraft } = useSaveDiagramProcessDefinition(code)
+
+const handleSave = useCallback(async (dataToSave?: any, xmlToSave?: string, isAutoSave?: boolean): Promise<void  | undefined> => {
 
   try {
   const xml = xmlToSave || bpmnXml;
@@ -75,13 +80,15 @@ async function handleSave (dataToSave?: any, xmlToSave?: string, isAutoSave?: bo
   setIsAutoSave(false)
 }
 
-}
+}, [bpmnXml, data?.processKey, igrpToast, saveDraft])
 
 async function handleDeploy (): Promise<void  | undefined> {
 
   try {
-   if (!data) return
-  await deployProcessDefinition(data.processKey,{content: bpmnXml});
+  const processKey = data?.processKey;
+  if (!processKey || !bpmnXml) return;
+
+  await deployProcessDefinition(processKey, { content: bpmnXml });
   igrpToast({
     title: 'Sucesso',
     description: 'A definição do processo foi publicada com sucesso.',
@@ -120,12 +127,6 @@ async function copyToClipboard (text: string, id: string, label: string): Promis
 
 }
 
-
-const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-const { data, isLoading, error } = useDetailProcessDefinition(code);
-
-const { mutateAsync: saveDraft } = useSaveDiagramProcessDefinition(code)
-
 const autoSave = useCallback((data: any, xml: string) => {
   // Clear existing timeout
   if (autoSaveTimeoutRef.current) {
@@ -138,7 +139,7 @@ const autoSave = useCallback((data: any, xml: string) => {
   autoSaveTimeoutRef.current = setTimeout(() => {
     handleSave(data, xml, true);
   }, 2000); // Wait 2 seconds after the user stops editing
-}, []);
+}, [handleSave]);
 
 const handleBpmnChange = useCallback(
   (xml: string) => {
@@ -151,12 +152,11 @@ const handleBpmnChange = useCallback(
 
 useEffect(() => {
   if (isLoading || !data) return;
-  const camundaXml = convertActivitiToCamunda(data.bpmFileContent);
-      setPageHeader1Description(`${data.title} [${data.processKey} - v${data.version}] - ${data.statusDesc}`);
-
+  const camundaXml = convertActivitiToCamunda(data.bpmFileContent ?? '');
+  setPageHeader1Description(`${data.title} [${data.processKey}] - ${data.statusDesc}`);
   setBpmnXml(camundaXml);
   setInputTextarea1Value(camundaXml);
-}, [isLoading]);
+}, [data, isLoading]);
 
 // Cleanup timeout on unmount
 useEffect(() => {
@@ -172,8 +172,8 @@ useEffect(() => {
 <div className={ cn('page','space-y-6',)}    >
 	<div className={ cn('section',' space-x-6 space-y-6',)}    >
 	<IGRPPageHeader
-  id={ `pageHeader1` }
-  title={ `Process Editor` }
+  name={ `pageHeader1` }
+  title={ `Editor do processo` }
   iconBackButton={ `ArrowLeft` }
   showBackButton={ true }
   urlBackButton={ `/process` }
@@ -183,7 +183,7 @@ useEffect(() => {
   <div className="flex items-center gap-2">
     <Spinner  isLoading={ isAutoSave }   ></Spinner>
     <IGRPButton
-  id={ `button2` }
+  name={ `button2` }
   variant={ `destructive` }
 size={ `default` }
 showIcon={ false }
@@ -191,10 +191,10 @@ showIcon={ false }
   onClick={ handleDeploy }
   
 >
-  Deploy
+  Publicar
 </IGRPButton>
     <IGRPButton
-  id={ `button1` }
+  name={ `button1` }
   variant={ `default` }
 size={ `default` }
 showIcon={ true }
@@ -203,7 +203,7 @@ iconName={ `Save` }
   onClick={ () => handleSave('','',false) }
   
 >
-  Save
+  Guardar
 </IGRPButton>
 </div>
 </IGRPPageHeader>
@@ -214,41 +214,34 @@ iconName={ `Save` }
   tabContentClassName={ `border rounded-lg border-transparent-none` }
   showIcon={ true }
   iconPlacement={ `start` }
-  badgePlacement={ `end` }
-  orientation={ `horizontal` }
-  
-  
   tabListClassName={ cn() }
   items={
-      [
-        
+    [
         {
           value: `tabsItem1-eM2k`,
-          label: `Diagram Editor`,
+          label: `Editor do diagrama`,
           icon: `Workflow`,
 content: (<>
-            <BpmnModeler  processName={ data.title } processKey={ data.processKey } xml={ bpmnXml }  onChange={ handleBpmnChange } ></BpmnModeler>
+            <BpmnModeler  processName={ data.title ?? '' } processKey={ data.processKey ?? '' } xml={ bpmnXml }  onChange={ handleBpmnChange } ></BpmnModeler>
 </>),
         },
-        
         {
           value: `tabsItem2-sYqo`,
           label: `XML`,
           icon: `CodeXml`,
 content: (<>
             <IGRPTextarea
-  id={ `inputTextarea1` }
+  name={ `inputTextarea1` }
   label={ `XML` }
-rows={ 20 }
+rows={ 20}
 required={ false }
-  className={ cn() }
   
   value={ inputTextarea1Value }
 >
 </IGRPTextarea>
             <div className={ cn('flex','flex flex-row flex-wrap-reverse items-end justify-end gap-2',' mt-3',)}    >
 	<IGRPButton
-  id={ `button3` }
+  name={ `button3` }
   variant={ `outline` }
 size={ `default` }
 showIcon={ true }
@@ -257,20 +250,19 @@ iconName={ `Copy` }
   onClick={ () => {copyToClipboard(bpmnXml,'bpmn-xml','bpmn-xml');} }
   
 >
-  Copy XML
+  Copiar XML
 </IGRPButton></div>
 </>),
         },
-        
         {
           value: `tabsItem3-D9am`,
-          label: `Delegates & Variables`,
+          label: `Delegados e variáveis`,
           icon: `BookOpen`,
 content: (<>
             <DelegatesHelper    ></DelegatesHelper>
 </>),
         },
-      ]
+]
   }
 />)}</div>
   );

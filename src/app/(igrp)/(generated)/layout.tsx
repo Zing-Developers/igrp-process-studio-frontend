@@ -9,8 +9,11 @@ export default function GeneratedLayout({ children }: Readonly<{ children: React
 
   return (
     <QueryClientProvider client={queryClient}>
-      {children}
-      <IGRPToaster richColors />
+
+      <main className="px-2">
+        {children}
+        <IGRPToaster richColors />
+      </main>
     </QueryClientProvider>
   );
 }

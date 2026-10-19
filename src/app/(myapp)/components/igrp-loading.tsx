@@ -1,11 +1,17 @@
-import { IGRPLoadingSpinner } from '@igrp/igrp-framework-react-design-system';
+import { IRNSpinner } from '@irn/irn-backoffice-design-system';
 
-function IgrpLoading({ loading }: { loading: boolean }) {
+function IgrpLoading({
+  loading,
+  message = 'A carregar definições de processo...',
+}: {
+  loading: boolean;
+  message?: string;
+}) {
   if (!loading) return null;
   return (
     <div className="flex items-center gap2 flex-col">
-      <IGRPLoadingSpinner />
-      <span>A carregar definições de processo...</span>
+      <IRNSpinner size="lg" />
+      <span>{message}</span>
     </div>
   );
 }
