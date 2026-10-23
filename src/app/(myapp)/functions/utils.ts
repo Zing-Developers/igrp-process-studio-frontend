@@ -14,6 +14,22 @@ export function convertCamundaToActiviti(xml: string): string {
 
   let convertedXml = xml;
 
+  // Activiti has one async flag for service tasks. Collapse both Camunda flags
+  // before the general namespace conversion so the attribute cannot be duplicated.
+  convertedXml = convertedXml.replace(
+    /<bpmn2:serviceTask\b(?:[^"'<>]|"[^"]*"|'[^']*')*>/g,
+    (serviceTask) => {
+      const camundaAsync = /\s+camunda:async(?:Before|After)\s*=\s*(["'])(true|false)\1/g;
+      const values = [...serviceTask.matchAll(camundaAsync)].map((match) => match[2]);
+      if (values.length === 0) return serviceTask;
+
+      const asyncValue = values.includes('true') ? 'true' : 'false';
+      return serviceTask
+        .replace(/\s+(?:camunda:async(?:Before|After)|activiti:async)\s*=\s*(["'])(?:true|false)\1/g, '')
+        .replace(/(\/?>)$/, ` activiti:async="${asyncValue}"$1`);
+    },
+  );
+
   // Check if XML already has Activiti namespace to avoid duplicates
   const hasActivitiNamespace = convertedXml.includes('xmlns:activiti=');
   
