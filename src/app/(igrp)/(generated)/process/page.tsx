@@ -321,29 +321,6 @@ export default function PageProcessComponent() {
                   } 
                 },
                 {
-                  header: ({ column }) => (<IGRPDataTableHeaderSortToggle column={column} title={`Nome do processo`} />)
-                  , accessorKey: 'title',
-                  cell: ({ row }) => {
-                    return row.getValue("title")
-                  },
-                  filterFn: (row, _columnId, filterValue: string) => {
-                    const searchTerm = filterValue
-                      ?.toLocaleLowerCase()
-                      .normalize('NFD')
-                      .replace(/[\u0300-\u036f]/g, '');
-
-                    if (!searchTerm) return true;
-
-                    return Object.values(row.original).some((value) =>
-                      String(value ?? '')
-                        .toLocaleLowerCase()
-                        .normalize('NFD')
-                        .replace(/[\u0300-\u036f]/g, '')
-                        .includes(searchTerm),
-                    );
-                  }
-                },
-                {
                   header: 'Chave do processo'
                   , accessorKey: 'processKey',
                   cell: ({ row }) => {
