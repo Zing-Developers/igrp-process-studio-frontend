@@ -7,6 +7,7 @@ settings:
 overrides:
   feelers>@bpmn-io/cm-theme: 0.1.0-alpha.2
   postcss: ^8.5.28
+  react-resizable-panels@^4.0.0: 4.14.5
   sharp: ^0.35.4
 
 packageExtensionsChecksum: sha256-buCY+oYuIJZZKx4sPNGOuRxP11cXBrLupiA4s97oIXM=
