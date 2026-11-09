@@ -19,7 +19,7 @@ COPY package.json .npmrc pnpm-lock.yaml ./
 RUN --mount=type=secret,id=npm_token,required=true \
     npm install -g pnpm@10.23.0 && \
     NPM_TOKEN="$(cat /run/secrets/npm_token)" pnpm install \
-      --frozen-lockfile \
+      --no-frozen-lockfile \
       --strict-peer-dependencies=false
 
 
